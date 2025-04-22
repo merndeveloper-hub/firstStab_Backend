@@ -8,6 +8,8 @@ const schema = Joi.object({
   state: Joi.string(),
   city: Joi.string(),
   zipCode: Joi.string(),
+   longitude: Joi.string(),
+    latitude: Joi.string(),
   mobile: Joi.string().pattern(new RegExp("^\\+?[0-9]{8,15}$")).messages({
     "string.pattern.base": "Mobile number must be 8-15 digits",
     "any.required": "Mobile number is required.",

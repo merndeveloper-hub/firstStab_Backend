@@ -3,15 +3,24 @@ import schemaType from "../../types/index.js";
 
 const proBookingServiceSchema = new mongoose.Schema(
   {
-
     media: {
       type: schemaType.TypeArray,
     },
+      serviceImage: {
+          type: schemaType.TypeArray,
+        },
+        inPersonOTP:{
+          type: schemaType.TypeString
+        },
     userId: {
       type: schemaType.ObjectID,
       ref: "user",
       // required: true,
     },
+     addressId: {
+          type: schemaType.ObjectID,
+          ref: "address",
+        },
     professsionalId: {
       type: schemaType.ObjectID,
       ref: "user",
@@ -32,14 +41,14 @@ const proBookingServiceSchema = new mongoose.Schema(
       type: schemaType.ObjectID,
       ref: "subCategory",
     },
-    addInstruction: { type: schemaType.TypeString,default:""},
-    
+    addInstruction: { type: schemaType.TypeString, default: "" },
+
     StartedTime: { type: schemaType.TypeString, default: null },
     FinishedTime: { type: schemaType.TypeString, default: null },
     CancelDateTime: { type: schemaType.TypeString, default: null },
     CancelCharges: { type: schemaType.TypeNumber, default: 0.0 },
     CancelSlot: { type: schemaType.TypeNumber, default: 0 },
-    ExtendedTime: { type: schemaType.TypeString,default:null },
+    ExtendedTime: { type: schemaType.TypeString, default: null },
     ExtensionCharges: { type: schemaType.TypeNumber, default: 0.0 },
 
     requestId: {
@@ -56,7 +65,7 @@ const proBookingServiceSchema = new mongoose.Schema(
     quoteInfo: { type: schemaType.TypeString, maxlength: 2000 },
     quoteDetail: { type: schemaType.TypeString }, // Text in MongoDB is stored as a long string
 
-    quoteCreatedDateTime: { type: schemaType.TypeString,  },
+    quoteCreatedDateTime: { type: schemaType.TypeString },
 
     cancelledReason: {
       type: schemaType.TypeString,
@@ -97,32 +106,41 @@ const proBookingServiceSchema = new mongoose.Schema(
     },
     orderRescheduleStatus: {
       type: schemaType.TypeString,
-     default: "NA"
-    },  orderRescheduleStartTime: {
+      default: "NA",
+    },
+    orderRescheduleStartTime: {
       type: schemaType.TypeString,
       default: "",
-    
-    },  orderRescheduleDate: {
+    },
+    orderRescheduleDate: {
       type: schemaType.TypeString,
       default: "",
-    },  orderExtendStatus: {
+    },
+    orderExtendStatus: {
       type: schemaType.TypeString,
       default: "",
-    },  orderExtendEndTime: {
+    },
+    orderExtendEndTime: {
       type: schemaType.TypeString,
       default: "",
-    }, 
+    },
     status: {
       type: schemaType.TypeString,
-      enum: ["Cancelled", "Accepted", "Completed", "OnGoing", "Pending","Rejected","Delivered"],
+      enum: [
+        "Cancelled",
+        "Accepted",
+        "Completed",
+        "OnGoing",
+        "Pending",
+        "Rejected",
+        "Delivered",
+      ],
       default: "OnGoing",
     },
-     videoRoomName:{
-      type:schemaType.TypeString,
-
-     } ,
-     chatChannelName: { type: schemaType.TypeString },
-  
+    videoRoomName: {
+      type: schemaType.TypeString,
+    },
+    chatChannelName: { type: schemaType.TypeString },
   },
   { timestamps: true }
 );

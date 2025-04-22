@@ -30,6 +30,12 @@ const addressSchema = new mongoose.Schema(
     mobile: {
       type: schemaType.TypeString
     },
+    longitude: {
+      type: schemaType.TypeString
+    },
+    latitude: {
+      type: schemaType.TypeString
+    },
     created_date: {
       type: schemaType.TypeDate,
       default: Date.now,

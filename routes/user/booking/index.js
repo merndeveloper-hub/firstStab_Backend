@@ -12,6 +12,7 @@ import proServiceRequest from "./getProServiceReq.js";
 import userAcceptProServiceRequest from "./userAcceptProServiceRequest.js";
 import twilioToken from "./twilioVideoToken.js";
 import twilioChatToken from "./twilioChatToken.js";
+import completedBooking from "./completedBooking.js";
 //import tokenVerification from "../../../middleware/token-verification/index.js";
 //import mostPopularCategory from "../home/mostPopularCategory.js";
 // import releasePayment from "./releasePayment.js";
@@ -49,5 +50,7 @@ router.put("/useraccept/:id", userAcceptProServiceRequest);
 //----Get Pro Accepted services----//
 router.get("/proaccept/:id", proServiceRequest);
 
+ //----- User completed service--------//
+ router.put("/completed/:id", completedBooking);
 
 export default router;

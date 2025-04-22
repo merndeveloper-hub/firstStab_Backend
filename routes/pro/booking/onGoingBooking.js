@@ -44,6 +44,27 @@ const getOnGoingBooking = async (req, res) => {
         },
         {
           $lookup: {
+            from: "addresses", // Join with "users" collection
+            let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$addressId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  longitude: 1,
+                  latitude: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "userAddress",
+          },
+        },
+        {
+          $lookup: {
             from: "users", // Join with "user" collection
             let: { professsionalId: { $toObjectId: "$professsionalId" } }, // Extract userId from proBookingService
             pipeline: [
@@ -53,7 +74,8 @@ const getOnGoingBooking = async (req, res) => {
                 }, // Compare userId with _id in user collection
               },
               {
-                $project: { businessname: 1, totalReviewsPro: 1, avgReviewsPro: 1,first_Name:1,last_Name:1 }, // Return only firstName & lastName
+                $project: { businessname: 1, totalReviewsPro: 1, avgReviewsPro: 1,first_Name:1,last_Name:1,  longitude: 1,
+                  latitude: 1,}, // Return only firstName & lastName
               },
             ],
             as: "proDetails",
@@ -125,6 +147,27 @@ const getOnGoingBooking = async (req, res) => {
         },
         {
           $lookup: {
+            from: "addresses", // Join with "users" collection
+            let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$addressId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  longitude: 1,
+                  latitude: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "userAddress",
+          },
+        },
+        {
+          $lookup: {
             from: "users", // Join with "user" collection
             let: { professsionalId: { $toObjectId: "$professsionalId" } }, // Extract userId from proBookingService
             pipeline: [
@@ -134,7 +177,8 @@ const getOnGoingBooking = async (req, res) => {
                 }, // Compare userId with _id in user collection
               },
               {
-                $project: { businessname: 1, totalReviewsPro: 1, avgReviewsPro: 1,first_Name:1,last_Name:1 }, // Return only firstName & lastName
+                $project: { businessname: 1, totalReviewsPro: 1, avgReviewsPro: 1,first_Name:1,last_Name:1, longitude: 1,
+                  latitude: 1, }, // Return only firstName & lastName
               },
             ],
             as: "proDetails",

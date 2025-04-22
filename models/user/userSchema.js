@@ -76,6 +76,14 @@ const userSchema = new mongoose.Schema(
     password: {
       type: schemaType.TypeString,
     },
+    longitude: {
+      type: schemaType.TypeString,
+      unique: true,
+    },
+    latitude: {
+      type: schemaType.TypeString,
+      unique: true,
+    },
     businessname: {
       type: schemaType.TypeString,
     },

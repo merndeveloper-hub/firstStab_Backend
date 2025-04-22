@@ -13,7 +13,11 @@ import cancelledBooking from "./cancelBooking.js";
 import getOnGoingBooking from "./onGoingBooking.js";
 import twilioToken from "./twilioVideoToken.js";
 import twilioChatToken from "./twilioChatToken.js";
+import deliveredBooking from "./deliveredService.js";
 // import historyBooking from "./historyBooking.js";
+import multipart from "connect-multiparty";
+
+const multipartMiddleware = multipart();
 
 
 const router = express.Router();
@@ -24,7 +28,12 @@ const router = express.Router();
 //-----Update User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
  router.put("/newrequest/:id",updateNewRequestBooking);
  
-//-----Cancelled User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
+
+ //----- Pro delivered service--------//
+ router.put("/delivered/:id", multipartMiddleware, deliveredBooking);
+
+
+ //-----Cancelled User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
  router.delete("/:id", cancelledBooking);
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//

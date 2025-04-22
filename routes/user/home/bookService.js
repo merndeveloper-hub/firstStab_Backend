@@ -204,6 +204,11 @@ console.log(req.body.subCategories.orderStartTime,"orderStartDate");
     //--------Generate RequestID-------------//
     const genrateRequestID = generateUniqueNumber();
 
+   let inPersonOTP
+    //-------INPERSONOTP---------//
+    if(req.body.subCategories.serviceType == "isInPerson"){
+      inPersonOTP  = generateUniqueNumber();
+    }
 
     //------professionalId------//
     let findprofessionalId;
@@ -220,6 +225,7 @@ console.log(req.body.subCategories.orderStartTime,"orderStartDate");
     const bookServ = await insertNewDocument("userBookServ", {
       ...req.body,
       media: uploadedFiles ?  uploadedFiles : undefined,
+      inPersonOTP:inPersonOTP ? inPersonOTP : undefined,
       requestId: genrateRequestID,
       serviceName: findCategorie.name,
       typeOfWork: findSubCategorie.name,
@@ -306,13 +312,14 @@ if(!getProCategory || getProCategory.length == 0){
   
   const probookService = await insertNewDocument("proBookingService", {
     ...req.body,
+    inPersonOTP:inPersonOTP ? inPersonOTP : undefined,
     proServiceId: getProCategory._id,
     media: uploadedFiles ?  uploadedFiles : undefined,
     professsionalId: findprofessionalId,
     bookServiceId: bookServ._id,
     categoryId:req.body.categoryId,
       subCategoryId:req.body.subCategories.id,
-    media: uploadedFiles ? uploadedFiles : undefined,
+
     requestId: genrateRequestID,
     serviceType: req.body.subCategories.serviceType,
     serviceName: findCategorie.name,
@@ -332,13 +339,14 @@ for (const doc of getProCategory) {
         console.log(findSubCategorie._id,"findSubCategorie._id");
         const probookService = await insertNewDocument("proBookingService", {
           ...req.body,
+          inPersonOTP:inPersonOTP ? inPersonOTP : undefined,
           media: uploadedFiles ?  uploadedFiles : undefined,
           proServiceId: doc._id,
           professsionalId: doc.proId,
           bookServiceId: bookServ._id,
           categoryId:req.body.categoryId,
           subCategoryId:req.body.subCategories.id,
-          media: uploadedFiles ? uploadedFiles : undefined,
+       
           requestId: genrateRequestID,
           serviceType: req.body.subCategories.serviceType,
           serviceName: findCategorie.name,
@@ -402,7 +410,8 @@ for (const doc of getProCategory) {
         bookServiceId: bookServ._id,
         categoryId:req.body.categoryId,
           subCategoryId:req.body.subCategories.id,
-        media: uploadedFiles ? uploadedFiles : undefined,
+      
+        inPersonOTP:inPersonOTP ? inPersonOTP : undefined,
         requestId: genrateRequestID,
         serviceAssign:"Professional",
         serviceType: req.body.subCategories.serviceType,

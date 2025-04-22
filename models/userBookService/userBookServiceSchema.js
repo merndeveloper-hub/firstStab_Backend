@@ -12,6 +12,9 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.ObjectID,
       ref: "address",
     },
+      inPersonOTP:{
+              type: schemaType.TypeString
+            },
     requestId: {
       type: schemaType.TypeString,
       deafult: 0,
@@ -113,6 +116,9 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
     },
     media: {
+      type: schemaType.TypeArray,
+    },
+    serviceImage: {
       type: schemaType.TypeArray,
     },
     problemDescription: {

@@ -69,11 +69,34 @@ if(status == "onGoing"){
                 businessname: 1,
                 businessaddress: 1,
                 businessphoneNo: 1,
+                longitude: 1,
+                latitude: 1,
                 _id: 1,
               }, // Return only required fields
             },
           ],
           as: "proDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "addresses", // Join with "users" collection
+          let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$addressId"] },
+              }, // Compare userId with _id in users collection
+            },
+            {
+              $project: {
+                longitude: 1,
+                latitude: 1,
+                _id: 0,
+              }, // Return only required fields
+            },
+          ],
+          as: "userAddress",
         },
       },
     ]);
@@ -136,11 +159,34 @@ if(status == "onGoing"){
                 businessname: 1,
                 businessaddress: 1,
                 businessphoneNo: 1,
+                longitude: 1,
+                latitude: 1,
                 _id: 0,
               }, // Return only required fields
             },
           ],
           as: "proDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "addresses", // Join with "users" collection
+          let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$addressId"] },
+              }, // Compare userId with _id in users collection
+            },
+            {
+              $project: {
+                longitude: 1,
+                latitude: 1,
+                _id: 0,
+              }, // Return only required fields
+            },
+          ],
+          as: "userAddress",
         },
       },
     ]);
