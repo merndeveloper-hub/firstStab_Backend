@@ -38,10 +38,9 @@ const schema = Joi.object({
       "string.pattern.base": "Invalid email structure",
     }),
   mobile: Joi.string()
-    .pattern(new RegExp("^\\+?[0-9]{8,15}$"))
     .required()
     .messages({
-      "string.pattern.base": "Mobile number must be 8-15 digits",
+      "string.pattern.base": "Mobile number must be digits",
       "any.required": "Mobile number is required.",
     }),
   password: Joi.string()

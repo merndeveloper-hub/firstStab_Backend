@@ -183,8 +183,11 @@ console.log(req.body,"body");
     
 
 
-    let extractedDate, extractedTime, extractedEndDate, extractedEndTime;
-console.log(req.body.subCategories.orderStartTime,"orderStartDate");
+    let extractedDate
+    let extractedTime 
+    let extractedEndDate 
+    let extractedEndTime
+
 
 
 
@@ -197,9 +200,7 @@ console.log(req.body.subCategories.orderStartTime,"orderStartDate");
       extractedEndTime = extractTime(req.body.subCategories.orderEndTime);
     }
     
-    console.log(extractedDate,"extractedDate");
-    console.log(extractedTime,"extractedTime");
-    
+  
     
     //--------Generate RequestID-------------//
     const genrateRequestID = generateUniqueNumber();

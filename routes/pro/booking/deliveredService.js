@@ -109,11 +109,15 @@ const deliveredBooking = async (req, res) => {
       .json({ status: 400, message: "No Booking Found!" });
     }
     
+    console.log(deliveredBooking.bookServiceId,"deliveredBooking.bookServiceId");
+    
     const deliveredRandomProBooking = await updateDocument(
       "userBookServ",
       { _id: deliveredBooking.bookServiceId,status:"Accepted"||"Pending" },
       { status: "Delivered", serviceImage: uploadedFiles ?  uploadedFiles : undefined, }
     );
+    console.log(deliveredRandomProBooking,"deliveredRandomProBooking");
+    
     
     return res
       .status(200)
