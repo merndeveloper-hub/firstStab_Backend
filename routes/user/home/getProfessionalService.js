@@ -243,6 +243,7 @@ const getProfessionalService = async (req, res) => {
           proId: { $first: "$proId" },
           rating: { $first: "$rating" },
           price: { $first: "$price" },
+          categoryId: { $first: "$categoryId" },
           avgRating: { $first: "$avgReviewsPro" },
           first_Name: { $first: "$proDetails.first_Name" },
           last_Name: { $first: "$proDetails.last_Name" },
@@ -269,6 +270,7 @@ const getProfessionalService = async (req, res) => {
       {
         $project: {
           _id: 1,
+          categoryId:1,
           subCategories:1,
           proId: 1,
           rating: 1,

@@ -25,6 +25,7 @@ import serviceDetail from "./serviceDetail/index.js";
 import chatRole from "./chatRole/index.js";
 import chatMessage from "./chatMessage/index.js";
 import chat from "./chat/index.js";
+import review from "./reviews/index.js";
 
 
  const db = {};
@@ -45,6 +46,7 @@ db.serviceDetail=serviceDetail
  db.userOTP=userOTP;
  db.category=category
  db.subCategory=subCategory
+ db.review=review
  //db.subSubCategory=subSubCategory
 
  db.proCategory=proCategory

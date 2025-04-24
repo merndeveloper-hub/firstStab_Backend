@@ -24,6 +24,10 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "",
     },
+     orderRatingPending: {
+           type: schemaType.TypeString,
+                default: "Yes",
+        },
     // serviceType: {
     //   type: schemaType.TypeString,
     //   enum: ["isChat", "isVirtual", "isRemote", "inInPerson"],

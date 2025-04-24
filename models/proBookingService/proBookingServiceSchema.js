@@ -140,6 +140,10 @@ const proBookingServiceSchema = new mongoose.Schema(
     videoRoomName: {
       type: schemaType.TypeString,
     },
+     orderRatingPending: {
+               type: schemaType.TypeString,
+                    default: "Yes",
+            },
     chatChannelName: { type: schemaType.TypeString },
   },
   { timestamps: true }

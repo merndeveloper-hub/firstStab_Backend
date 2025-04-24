@@ -3,7 +3,7 @@ import express from "express";
 import address from "./address/index.js";
 import profile from "./profile/index.js";
 import payment from "./paymentMethod/index.js";
-
+import reviews from "./reviews/index.js";
 
 
 const router = express.Router();
@@ -12,6 +12,8 @@ const router = express.Router();
 router.use("/address",address);
 router.use("/profile", profile);
 router.use("/payment", payment);
+router.use("/review", reviews);
+
  //router.put("/:id",multipartMiddleware, updateCategory);
  //router.delete("/:id", deleteCategory);
 // Get Single Blog
