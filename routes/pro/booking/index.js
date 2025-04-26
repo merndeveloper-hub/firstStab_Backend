@@ -34,7 +34,10 @@ const router = express.Router();
 
 
  //-----Cancelled User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
- router.delete("/:id", cancelledBooking);
+ 
+
+router.put("/cancelled/:id", cancelledBooking);
+
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
 router.get("/newrequest/:id", newRequestBooking);

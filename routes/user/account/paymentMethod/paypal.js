@@ -10,7 +10,12 @@ const schema = Joi.object({
   professsionalId: Joi.string(),
   bookServiceId: Joi.string(),
   userAccpetBookingId: Joi.string(),
+  paymentMethod: Joi.string(),
+  sender: Joi.string(),
+  reciever: Joi.string(),
+  type: Joi.string(),
 });
+
 
 const createPaypalOrder = async (req, res) => {
   try {
@@ -21,9 +26,14 @@ const createPaypalOrder = async (req, res) => {
       proServiceId,
       professsionalId,
       bookServiceId,
-      userAccpetBookingId,
+      userAccpetBookingId,paymentMethod,
+      sender,
+      reciever,
+      type
     } = req.body;
     const getToken = await getAccessToken();
+    console.log(getToken,"getToken---------");
+    
     if (!getToken || getToken.length == 0) {
       return res
         .status(400)
@@ -80,6 +90,10 @@ const createPaypalOrder = async (req, res) => {
 
     const userPayment = await insertNewDocument("userPayment", {
       ...req.body,
+      paymentMethod:"Paypal",
+sender:"User",
+reciever:"Admin",
+type:"UserBooking",
       paypalOrderId: response.data.id,
       status: "Success",
     });

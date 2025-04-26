@@ -22,6 +22,11 @@ const userPaymentSchema = new mongoose.Schema(
       //  required: true
     },
 
+    paymentMethod: { type: SchemaType.TypeString },
+    sender: { type: SchemaType.TypeString },
+    reciever: { type: SchemaType.TypeString },
+    type: { type: SchemaType.TypeString },
+
     holdingName: {
       type: SchemaType.TypeString,
     },

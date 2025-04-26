@@ -23,7 +23,7 @@ const cancelledBooking = async (req, res) => {
     const cancelbooking = await updateDocument(
       "userBookServ",
       { _id: id },
-      { status: "Cancelled", cancelledReason: "Cancelled By You" }
+      { status: "Cancelled", cancelledReason: "Cancelled By User" }
     );
 
     
@@ -47,7 +47,7 @@ const cancelledBooking = async (req, res) => {
         cancelbooking,
       });
   } catch (e) {
-    console.log(e);
+   
     return res.status(400).json({ status: 400, message: e.message });
   }
 };

@@ -23,7 +23,7 @@ const cancelledBooking = async (req, res) => {
     const cancelbooking = await updateDocument(
       "proBookingService",
       { _id: id },
-      { status: "Cancelled", cancelledReason: "Cancelled By You" }
+      { status: "Cancelled", cancelledReason: "Cancelled By Professional" }
     );
 
     
@@ -43,7 +43,7 @@ const cancelledBooking = async (req, res) => {
       .status(200)
       .json({
         status: 200,
-        message: "Cancelled Booking By User",
+        message: "Cancelled Booking By Professional",
         cancelbooking,
       });
   } catch (e) {

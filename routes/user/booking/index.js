@@ -40,7 +40,7 @@ router.post("/twilio/token", twilioToken);
 
 
 ///--------Remove get (created,requested,accepted services)------///
-router.delete("/:id", cancelledBooking);
+router.put("/cancelled/:id", cancelledBooking);
 
 
 //----User accepted Pro Accepted services----//
