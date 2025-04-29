@@ -21,6 +21,7 @@ const getAccessToken = async (req, res) => {
         .json({ status: 400, message: "Authorization failed!" });
     }
 
+
     return response.data.access_token;
   } catch (error) {
     console.log(error, "error");

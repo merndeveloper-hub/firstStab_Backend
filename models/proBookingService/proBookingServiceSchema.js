@@ -123,7 +123,10 @@ const proBookingServiceSchema = new mongoose.Schema(
     orderExtendEndTime: {
       type: schemaType.TypeString,
       default: "",
-    },
+    }, orderRescheduleRequest: {
+          type: schemaType.TypeString,
+          default: "NA",
+        },
     status: {
       type: schemaType.TypeString,
       enum: [

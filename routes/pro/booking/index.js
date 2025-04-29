@@ -16,6 +16,7 @@ import twilioChatToken from "./twilioChatToken.js";
 import deliveredBooking from "./deliveredService.js";
 // import historyBooking from "./historyBooking.js";
 import multipart from "connect-multiparty";
+import userResheduleRequest from "./reshedule.js";
 
 const multipartMiddleware = multipart();
 
@@ -52,5 +53,8 @@ router.post("/twilio/token", twilioToken);
 
 //create twilio chat token
 router.post("/twilio/chattoken", twilioChatToken);
+
+//-----Reshedule Request -----//
+router.put("/reshedule", userResheduleRequest);
 
 export default router;

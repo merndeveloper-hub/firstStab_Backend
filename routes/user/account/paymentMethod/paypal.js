@@ -16,7 +16,6 @@ const schema = Joi.object({
   type: Joi.string(),
 });
 
-
 const createPaypalOrder = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
@@ -26,14 +25,15 @@ const createPaypalOrder = async (req, res) => {
       proServiceId,
       professsionalId,
       bookServiceId,
-      userAccpetBookingId,paymentMethod,
+      userAccpetBookingId,
+      paymentMethod,
       sender,
       reciever,
-      type
+      type,
     } = req.body;
     const getToken = await getAccessToken();
-    console.log(getToken,"getToken---------");
-    
+    console.log(getToken, "getToken---------");
+
     if (!getToken || getToken.length == 0) {
       return res
         .status(400)
@@ -42,22 +42,47 @@ const createPaypalOrder = async (req, res) => {
     const BASE_URL = process.env.PAYPAL_API_DEVELOPMENT_URL; // Use live URL in production
 
     const orderData = {
-        intent: "CAPTURE", // Use "CAPTURE" instead of "sale"
+      intent: "CAPTURE", // Use "CAPTURE" instead of "sale"
       //intent: "AUTHORIZE", // This will authorize the amount but not transfer it yet.
       purchase_units: [
+        // {
+        //   amount: {
+        //     currency_code: "USD",
+        //     value: amount,
+        //   },
+        //   description: "Payment for service",
+        // },
         {
+         
           amount: {
             currency_code: "USD",
             value: amount,
+            breakdown: {
+              item_total: { currency_code: "USD", value: amount },
+             
+            },
           },
-          description: "Payment for service",
+          items: [
+            {
+              name: "Website service",
+              description: "crate a website wiht fully functional",
+              unit_amount: { currency_code: "USD", value: amount },
+              quantity: "1",
+            }
+          
+          ],
         },
       ],
       application_context: {
         return_url:
-          "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
-        cancel_url:
-          "http://3.110.42.187:5000/api/v1/user/account/payment/paypalcancel",
+       //   "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
+        "http://localhost:5000/api/v1/user/account/payment/paypalsuccess",
+        
+       cancel_url:
+         "http://localhost:5000/api/v1/user/account/payment/paypalcancel",
+         shipping_preference:'NO_SHIPPING',
+         user_action:'PAY_NOW',
+         brand_name:'firststab'
       },
     };
 
@@ -90,10 +115,10 @@ const createPaypalOrder = async (req, res) => {
 
     const userPayment = await insertNewDocument("userPayment", {
       ...req.body,
-      paymentMethod:"Paypal",
-sender:"User",
-reciever:"Admin",
-type:"UserBooking",
+      paymentMethod: "Paypal",
+      sender: "User",
+      reciever: "Admin",
+      type: "UserBooking",
       paypalOrderId: response.data.id,
       status: "Success",
     });
@@ -105,3 +130,69 @@ type:"UserBooking",
 };
 
 export default createPaypalOrder;
+
+// var fetch = require("node-fetch");
+
+// fetch("https://api-m.sandbox.paypal.com/v2/checkout/orders", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//     "PayPal-Request-Id": "7b92603e-77ed-4896-8e78-5dea2050476a",
+//     Authorization:
+//       "Bearer 6V7rbVwmlM1gFZKW_8QtzWXqpcwQ6T5vhEGYNJDAAdn3paCgRpdeMdVYmWzgbKSsECednupJ3Zx5Xd-g",
+//   },
+//   body: JSON.stringify({
+//     intent: "CAPTURE",
+//     payment_source: {
+//       paypal: {
+//         experience_context: {
+//           payment_method_preference: "IMMEDIATE_PAYMENT_REQUIRED",
+//           landing_page: "LOGIN",
+//           shipping_preference: "GET_FROM_FILE",
+//           user_action: "PAY_NOW",
+//           return_url: "https://example.com/returnUrl",
+//           cancel_url: "https://example.com/cancelUrl",
+//         },
+//       },
+//     },
+//     purchase_units: [
+//       {
+//         invoice_id: "90210",
+//         amount: {
+//           currency_code: "USD",
+//           value: "230.00",
+//           breakdown: {
+//             item_total: { currency_code: "USD", value: "220.00" },
+//             shipping: { currency_code: "USD", value: "10.00" },
+//           },
+//         },
+//         items: [
+//           {
+//             name: "T-Shirt",
+//             description: "Super Fresh Shirt",
+//             unit_amount: { currency_code: "USD", value: "20.00" },
+//             quantity: "1",
+//             category: "PHYSICAL_GOODS",
+//             sku: "sku01",
+//             image_url:
+//               "https://example.com/static/images/items/1/tshirt_green.jpg",
+//             url: "https://example.com/url-to-the-item-being-purchased-1",
+//             upc: { type: "UPC-A", code: "123456789012" },
+//           },
+//           {
+//             name: "Shoes",
+//             description: "Running, Size 10.5",
+//             sku: "sku02",
+//             unit_amount: { currency_code: "USD", value: "100.00" },
+//             quantity: "2",
+//             category: "PHYSICAL_GOODS",
+//             image_url:
+//               "https://example.com/static/images/items/1/shoes_running.jpg",
+//             url: "https://example.com/url-to-the-item-being-purchased-2",
+//             upc: { type: "UPC-A", code: "987654321012" },
+//           },
+//         ],
+//       },
+//     ],
+//   }),
+// });
