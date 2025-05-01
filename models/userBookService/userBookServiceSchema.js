@@ -100,6 +100,10 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "",
     }, 
+    orderRescheduleEndDate: {
+          type: schemaType.TypeString,
+          default: "",
+        },
     orderRescheduleRequest: {
       type: schemaType.TypeString,
       default: "NA",

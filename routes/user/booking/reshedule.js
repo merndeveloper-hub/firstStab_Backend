@@ -7,14 +7,15 @@ import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schemaBody = Joi.object().keys({
  // orderRescheduleStatus: Joi.string(),
-  userId: Joi.string(),
-  professsionalId: Joi.string(),
+  userId: Joi.string().allow("").optional(),
+  professsionalId: Joi.string().allow("").optional(),
   bookServiceId: Joi.string(),
   orderRescheduleStartTime: Joi.string(),
-  serviceType: Joi.string().required(),
+  serviceType:Joi.string().allow("").optional(),
   orderRescheduleDate: Joi.string(),
+  orderRescheduleEndDate:Joi.string().allow("").optional(),
  // orderExtendStatus: Joi.string(),
-  orderExtendEndTime: Joi.string(),
+  orderExtendEndTime: Joi.string().allow("").optional(),
  // orderRescheduleRequest: Joi.string(),
 });
 
@@ -33,6 +34,7 @@ const userResheduleRequest = async (req, res) => {
       orderRescheduleStartTime,
       orderRescheduleDate,
       orderExtendStatus,
+      orderRescheduleEndDate,
       orderExtendEndTime,
       orderRescheduleRequest,
     } = req.body;
@@ -41,12 +43,15 @@ const userResheduleRequest = async (req, res) => {
     const userBooking = await findOne("userBookServ", {
       _id: bookServiceId,
     });
+    console.log("1");
+    
     if (!userBooking || userBooking.length == 0) {
       return res.status(400).json({
         status: 400,
         message: "Booking Not Found",
       });
     }
+    console.log("2");
     const proBooking = await findOne("proBookingService", {
       bookServiceId,
     });
@@ -56,7 +61,7 @@ const userResheduleRequest = async (req, res) => {
         message: "Booking Not Found",
       });
     }
-
+    console.log("3");
     const findUserBooking = await findOne("userBookServ", {
       _id: bookServiceId,
       status: "Completed",
@@ -69,7 +74,7 @@ const userResheduleRequest = async (req, res) => {
         message: "Booking already completed",
       });
     }
-   
+    console.log("4");
     const findProBooking = await findOne("proBookingService", {
       bookServiceId,
       status: "Completed",
@@ -80,7 +85,7 @@ const userResheduleRequest = async (req, res) => {
         message: "Booking already completed",
       });
     }
-   
+    console.log("5");
     const findResheduleProBooking = await findOne("proBookingService", {
       bookServiceId,
       status: "Requested",
@@ -93,14 +98,14 @@ const userResheduleRequest = async (req, res) => {
       orderRescheduleStatus: "Requested",
       orderRescheduleRequest:"professional"
     });
-   
+    console.log("6");
     if (findResheduleProBooking && findResheduleUserBooking) {
       return res.status(400).json({
         status: 400,
         message: "Professional already requested reshedule booking",
       });
     }
-
+    console.log("7");
     const findBooking = await findOne("userBookServ", {
       _id: bookServiceId,
       status: "Accepted",
@@ -139,6 +144,19 @@ const userResheduleRequest = async (req, res) => {
         message: "User requested reshdule booking",
       });
     }
+
+    console.log(findBooking,"findBooking------");
+    console.log(findproBooking,"findproBooking-------");
+    
+    
+if(!findBooking  || !findproBooking ){
+  return res.status(400).json({
+    status: 400,
+    message: "Booking Not Found",
+  });
+}
+    
+    console.log("8");
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

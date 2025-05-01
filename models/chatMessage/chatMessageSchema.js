@@ -15,6 +15,7 @@ const chatMessageSchema = new mongoose.Schema(
       type: schemaType.TypeString,
      // ref: "chatRole",
     },
+   
     message: {
       type: schemaType.TypeString,
     },

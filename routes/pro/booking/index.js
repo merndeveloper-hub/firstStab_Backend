@@ -17,6 +17,9 @@ import deliveredBooking from "./deliveredService.js";
 // import historyBooking from "./historyBooking.js";
 import multipart from "connect-multiparty";
 import userResheduleRequest from "./reshedule.js";
+import resheduleAcceptBooking from "./resheduleAccept.js";
+import cancelledRescheduleBooking from "./resheduleReject.js";
+import resheduleDeliveredBooking from "./resheduleDeliveredService.js";
 
 const multipartMiddleware = multipart();
 
@@ -56,5 +59,16 @@ router.post("/twilio/chattoken", twilioChatToken);
 
 //-----Reshedule Request -----//
 router.put("/reshedule", userResheduleRequest);
+
+//-----Reshedule Request accept -----//
+router.put("/resheduleaccept", resheduleAcceptBooking);
+
+
+//-----Reshedule Request cancel -----//
+router.put("/reshedulecancel/:id", cancelledRescheduleBooking);
+
+
+ //----- Pro delivered reshedule service--------//
+ router.put("/deliveredreshedule/:id", multipartMiddleware, resheduleDeliveredBooking);
 
 export default router;

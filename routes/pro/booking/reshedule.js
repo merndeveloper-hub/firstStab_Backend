@@ -7,14 +7,15 @@ import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schemaBody = Joi.object().keys({
  // orderRescheduleStatus: Joi.string(),
-  userId: Joi.string(),
-  professsionalId: Joi.string(),
+  userId: Joi.string().allow("").optional(),
+  professsionalId: Joi.string().allow("").optional(),
   bookServiceId: Joi.string(),
   orderRescheduleStartTime: Joi.string(),
-  serviceType: Joi.string().required(),
+  serviceType:Joi.string().allow("").optional(),
   orderRescheduleDate: Joi.string(),
+  orderRescheduleEndDate:Joi.string().allow("").optional(),
  // orderExtendStatus: Joi.string(),
-  orderExtendEndTime: Joi.string(),
+  orderExtendEndTime: Joi.string().allow("").optional(),
  // orderRescheduleRequest: Joi.string(),
 });
 
@@ -33,6 +34,7 @@ const userResheduleRequest = async (req, res) => {
       orderRescheduleStartTime,
       orderRescheduleDate,
       orderExtendStatus,
+      orderRescheduleEndDate,
       orderExtendEndTime,
       orderRescheduleRequest,
     } = req.body;
@@ -137,6 +139,13 @@ const userResheduleRequest = async (req, res) => {
         status: 200,
         data: { getProBookService, userBookServiceUpdate },
         message: "User requested reshdule booking",
+      });
+    }
+
+    if(!findBooking  || !findproBooking ){
+      return res.status(400).json({
+        status: 400,
+        message: "Booking Not Found",
       });
     }
   } catch (e) {

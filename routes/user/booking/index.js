@@ -14,6 +14,8 @@ import twilioToken from "./twilioVideoToken.js";
 import twilioChatToken from "./twilioChatToken.js";
 import completedBooking from "./completedBooking.js";
 import userResheduleRequest from "./reshedule.js";
+import resheduleAcceptBooking from "./resheduleAccept.js";
+import cancelledRescheduleBooking from "./resheduleReject.js";
 //import tokenVerification from "../../../middleware/token-verification/index.js";
 //import mostPopularCategory from "../home/mostPopularCategory.js";
 // import releasePayment from "./releasePayment.js";
@@ -55,7 +57,14 @@ router.get("/proaccept/:id", proServiceRequest);
  router.put("/completed/:id", completedBooking);
 
 //-----Reshedule Request -----//
-
 router.put("/reshedule", userResheduleRequest);
+
+
+//-----Reshedule Request accept -----//
+router.put("/resheduleaccept", resheduleAcceptBooking);
+
+
+//-----Reshedule Request cancel -----//
+router.put("/reshedulecancel/:id", cancelledRescheduleBooking);
 
 export default router;

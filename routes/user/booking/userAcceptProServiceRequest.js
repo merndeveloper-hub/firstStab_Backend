@@ -42,7 +42,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const getProBookService = await updateDocument(
         "proBookingService",
         { _id: id },
-        { status: "Accepted", videoRoomName,orderRescheduleStatus:"Accepted" }
+        { status: "Accepted", videoRoomName }
       );
 
       if (!getProBookService || getProBookService.length == 0) {
@@ -55,7 +55,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const userBookServiceUpdate = await updateDocument(
         "userBookServ",
         { _id: getProBookService.bookServiceId },
-        { status: "Accepted", videoRoomName, professionalId: professsionalId,orderRescheduleStatus:"Accepted"  }
+        { status: "Accepted", videoRoomName, professionalId: professsionalId  }
       );
 
       const remainingProRejected = await updateDocuments(
@@ -75,7 +75,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const getProBookService = await updateDocument(
         "proBookingService",
         { _id: id },
-        { status: "Accepted", chatChannelName,orderRescheduleStatus:"Accepted"  }
+        { status: "Accepted", chatChannelName  }
       );
 
       if (!getProBookService || getProBookService.length == 0) {
@@ -88,7 +88,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const userBookServiceUpdate = await updateDocument(
         "userBookServ",
         { _id: getProBookService.bookServiceId },
-        { status: "Accepted", chatChannelName, professionalId: professsionalId,orderRescheduleStatus:"Accepted"  }
+        { status: "Accepted", chatChannelName, professionalId: professsionalId }
       );
 
       const remainingProRejected = await updateDocuments(

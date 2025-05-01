@@ -1,0 +1,161 @@
+import Joi from "joi";
+import { findOne, updateDocument } from "../../../helpers/index.js";
+
+const schemaBody = Joi.object().keys({
+  // orderRescheduleStatus: Joi.string(),
+  userId: Joi.string().allow("").optional(),
+  professsionalId: Joi.string().allow("").optional(),
+  bookServiceId: Joi.string(),
+  orderRescheduleStartTime: Joi.string(),
+  serviceType: Joi.string().allow("").optional(),
+  orderRescheduleDate: Joi.string(),
+  orderRescheduleEndDate: Joi.string().allow("").optional(),
+  // orderExtendStatus: Joi.string(),
+  orderExtendEndTime: Joi.string().allow("").optional(),
+  // orderRescheduleRequest: Joi.string(),
+});
+const resheduleAcceptBooking = async (req, res) => {
+  try {
+    await schemaBody.validateAsync(req.body);
+
+    const {
+      bookServiceId,
+      userId,
+      professsionalId,
+      serviceType,
+      orderRescheduleStatus,
+      orderRescheduleStartTime,
+      orderRescheduleDate,
+      orderRescheduleEndDate,
+      orderExtendStatus,
+      orderExtendEndTime,
+      orderRescheduleRequest,
+    } = req.body;
+
+    const findProResheduleService = await findOne(
+      "proBookingService",
+
+      {
+        bookServiceId,
+        status: "Requested",
+        orderRescheduleStatus: "Requested",
+        orderRescheduleRequest: "professional",
+      }
+    );
+
+    const findUserResheduleService = await findOne("userBookServ", {
+      _id: bookServiceId,
+      status: "Requested",
+      orderRescheduleStatus: "Requested",
+      orderRescheduleRequest: "professional",
+    });
+
+    if (findProResheduleService && findUserResheduleService) {
+      return res.json({
+        status: 400,
+        message: "Professional has not requested to reshedule meeting",
+      });
+    }
+
+    const acceptProResheduleService = await findOne(
+      "proBookingService",
+
+      {
+        bookServiceId,
+        status: "Accepted",
+        orderRescheduleStatus: "Accepted",
+        orderRescheduleRequest: "user",
+      }
+    );
+
+    const acceptUserResheduleService = await findOne("userBookServ", {
+      _id: bookServiceId,
+      status: "Accepted",
+      orderRescheduleStatus: "Accepted",
+      orderRescheduleRequest: "user",
+    });
+
+    if (acceptProResheduleService && acceptUserResheduleService) {
+      return res.json({
+        status: 400,
+        message: "Professional has already requested to reshedule meeting",
+      });
+    }
+
+    const findResheduleService = await findOne(
+      "proBookingService",
+
+      {
+        bookServiceId,
+        status: "Requested",
+        orderRescheduleStatus: "Requested",
+      }
+    );
+
+    const findResheduleProService = await findOne("userBookServ", {
+      _id: bookServiceId,
+      status: "Requested",
+      orderRescheduleStatus: "Requested",
+    });
+    if (!findResheduleService && !findResheduleProService) {
+      return res.json({
+        status: 400,
+        message: "No Reshedule Booking Found",
+      });
+    }
+
+    const updateProResheduleService = await updateDocument(
+      "proBookingService",
+
+      {
+        bookServiceId,
+        status: "Requested",
+        orderRescheduleStatus: "Requested",
+        orderRescheduleRequest: "user",
+      },
+      {
+        status: "Accepted",
+        orderRescheduleStatus: "Accepted",
+        orderStartTime: orderRescheduleStartTime,
+        orderStartDate: orderRescheduleDate,
+        orderEndDate: orderRescheduleEndDate
+          ? orderRescheduleEndDate
+          : undefined,
+        orderEndTime: orderExtendEndTime ? orderExtendEndTime : undefined,
+        ...req.body,
+      }
+    );
+
+    let subCategories = {
+      orderStartTime: orderRescheduleStartTime,
+      orderStartDate: orderRescheduleDate,
+      orderEndDate: orderRescheduleEndDate ? orderRescheduleEndDate : undefined,
+      orderEndTime: orderExtendEndTime ? orderExtendEndTime : undefined,
+    };
+    const userBookServiceReshedule = await updateDocument(
+      "userBookServ",
+
+      {
+        _id: bookServiceId,
+        status: "Requested",
+        orderRescheduleStatus: "Requested",
+        orderRescheduleRequest: "user",
+      },
+      {
+        status: "Accepted",
+        orderRescheduleStatus: "Accepted",
+        subCategories,
+        ...req.body,
+      }
+    );
+
+    return res.json({
+      status: 200,
+      message: "Professional has accepted reshedule meeting",
+    });
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
+
+export default resheduleAcceptBooking;

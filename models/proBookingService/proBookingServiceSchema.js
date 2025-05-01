@@ -116,6 +116,10 @@ const proBookingServiceSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "",
     },
+    orderRescheduleEndDate: {
+      type: schemaType.TypeString,
+      default: "",
+    },
     orderExtendStatus: {
       type: schemaType.TypeString,
       default: "",
