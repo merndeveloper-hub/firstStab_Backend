@@ -125,6 +125,7 @@ const resheduleAcceptBooking = async (req, res) => {
     );
 
     let subCategories = {
+      ...findResheduleProService.subCategories,
       orderStartTime: orderRescheduleStartTime,
       orderStartDate: orderRescheduleStartDate,
       orderEndDate: orderRescheduleEndDate ? orderRescheduleEndDate : undefined,

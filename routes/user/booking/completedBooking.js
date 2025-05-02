@@ -11,38 +11,38 @@ const schema = Joi.object().keys({
   id: Joi.string().required(),
 });
 
-const schemaBody = Joi.object({
-  amount: Joi.number().required(),
-  userId: Joi.string(),
-  proServiceId: Joi.string(),
-  professsionalId: Joi.string(),
-  bookServiceId: Joi.string(),
-  userAccpetBookingId: Joi.string(),
-  paymentMethod: Joi.string(),
-  sender: Joi.string(),
-  reciever: Joi.string(),
-  type: Joi.string(),
-  receiverEmail: Joi.string(),
-});
+// const schemaBody = Joi.object({
+//   amount: Joi.number().required(),
+//   userId: Joi.string(),
+//   proServiceId: Joi.string(),
+//   professsionalId: Joi.string(),
+//   bookServiceId: Joi.string(),
+//   userAccpetBookingId: Joi.string(),
+//   paymentMethod: Joi.string(),
+//   sender: Joi.string(),
+//   reciever: Joi.string(),
+//   type: Joi.string(),
+//   receiverEmail: Joi.string(),
+// });
 
 
 //serviceImage
 const completedBooking = async (req, res) => {
   try {
-    await schemaBody.validateAsync(req.body);
-    const {
-      amount,
-      userId,
-      proServiceId,
-      professsionalId,
-      bookServiceId,
-      userAccpetBookingId,
-      paymentMethod,
-      sender,
-      reciever,
-      type,
-      receiverEmail,
-    } = req.body;
+   // await schemaBody.validateAsync(req.body);
+    // const {
+    //   amount,
+    //   userId,
+    //   proServiceId,
+    //   professsionalId,
+    //   bookServiceId,
+    //   userAccpetBookingId,
+    //   paymentMethod,
+    //   sender,
+    //   reciever,
+    //   type,
+    //   receiverEmail,
+    // } = req.body;
     const getToken = await getAccessToken();
     console.log(getToken, "getToken-------");
 
@@ -102,10 +102,10 @@ const completedBooking = async (req, res) => {
           {
             recipient_type: "EMAIL",
             amount: {
-              value: amount,
+              value: "1",
               currency: "USD",
             },
-            receiver: receiverEmail,
+            receiver: "sb-koped40938811@personal.example.com",
             note: "Thank you for your service!",
             sender_item_id: `item-${Date.now()}`,
           },

@@ -124,11 +124,15 @@ const resheduleAcceptBooking = async (req, res) => {
     );
 
     let subCategories = {
+      ...findResheduleProService.subCategories,
       orderStartTime: orderRescheduleStartTime,
       orderStartDate: orderRescheduleStartDate,
       orderEndDate: orderRescheduleEndDate ? orderRescheduleEndDate : undefined,
       orderEndTime: orderRescheduleEndTime ? orderRescheduleEndTime : undefined,
     };
+
+   
+
     const userBookServiceReshedule = await updateDocument(
       "userBookServ",
 
@@ -142,6 +146,7 @@ const resheduleAcceptBooking = async (req, res) => {
         status: "Accepted",
         orderRescheduleStatus: "Accepted",
         subCategories,
+        
         ...req.body,
       }
     );
