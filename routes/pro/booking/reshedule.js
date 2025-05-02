@@ -1,22 +1,17 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 
-// const schema = Joi.object().keys({
-//   id: Joi.string().required(),
-// });
+
 
 const schemaBody = Joi.object().keys({
- // orderRescheduleStatus: Joi.string(),
   userId: Joi.string().allow("").optional(),
   professsionalId: Joi.string().allow("").optional(),
   bookServiceId: Joi.string(),
   orderRescheduleStartTime: Joi.string(),
-  serviceType:Joi.string().allow("").optional(),
-  orderRescheduleDate: Joi.string(),
-  orderRescheduleEndDate:Joi.string().allow("").optional(),
- // orderExtendStatus: Joi.string(),
-  orderExtendEndTime: Joi.string().allow("").optional(),
- // orderRescheduleRequest: Joi.string(),
+  serviceType: Joi.string().allow("").optional(),
+  orderRescheduleStartDate: Joi.string(),
+  orderRescheduleEndDate: Joi.string().allow("").optional(),
+  orderRescheduleEndTime: Joi.string().allow("").optional(),
 });
 
 //Rejected
@@ -32,13 +27,13 @@ const userResheduleRequest = async (req, res) => {
       serviceType,
       orderRescheduleStatus,
       orderRescheduleStartTime,
-      orderRescheduleDate,
+      orderRescheduleStartDate,
       orderExtendStatus,
       orderRescheduleEndDate,
-      orderExtendEndTime,
       orderRescheduleRequest,
+      orderRescheduleEndTime,
     } = req.body;
-    const { id } = req.params;
+   
 
     const userBooking = await findOne("userBookServ", {
       _id: bookServiceId,
@@ -142,7 +137,7 @@ const userResheduleRequest = async (req, res) => {
       });
     }
 
-    if(!findBooking  || !findproBooking ){
+    if(!findBooking  && !findproBooking ){
       return res.status(400).json({
         status: 400,
         message: "Booking Not Found",

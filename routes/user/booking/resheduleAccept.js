@@ -2,17 +2,14 @@ import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schemaBody = Joi.object().keys({
-  // orderRescheduleStatus: Joi.string(),
   userId: Joi.string().allow("").optional(),
   professsionalId: Joi.string().allow("").optional(),
   bookServiceId: Joi.string(),
   orderRescheduleStartTime: Joi.string(),
   serviceType: Joi.string().allow("").optional(),
-  orderRescheduleDate: Joi.string(),
+  orderRescheduleStartDate: Joi.string(),
   orderRescheduleEndDate: Joi.string().allow("").optional(),
-  // orderExtendStatus: Joi.string(),
-  orderExtendEndTime: Joi.string().allow("").optional(),
-  // orderRescheduleRequest: Joi.string(),
+  orderRescheduleEndTime: Joi.string().allow("").optional(),
 });
 const resheduleAcceptBooking = async (req, res) => {
   try {
@@ -25,10 +22,10 @@ const resheduleAcceptBooking = async (req, res) => {
       serviceType,
       orderRescheduleStatus,
       orderRescheduleStartTime,
-      orderRescheduleDate,
+      orderRescheduleStartDate,
       orderRescheduleEndDate,
       orderExtendStatus,
-      orderExtendEndTime,
+      orderRescheduleEndTime,
       orderRescheduleRequest,
     } = req.body;
 
@@ -117,20 +114,20 @@ const resheduleAcceptBooking = async (req, res) => {
         status: "Accepted",
         orderRescheduleStatus: "Accepted",
         orderStartTime: orderRescheduleStartTime,
-        orderStartDate: orderRescheduleDate,
+        orderStartDate: orderRescheduleStartDate,
         orderEndDate: orderRescheduleEndDate
           ? orderRescheduleEndDate
           : undefined,
-        orderEndTime: orderExtendEndTime ? orderExtendEndTime : undefined,
+          orderEndTime: orderRescheduleEndTime ? orderRescheduleEndTime : undefined,
         ...req.body,
       }
     );
 
     let subCategories = {
       orderStartTime: orderRescheduleStartTime,
-      orderStartDate: orderRescheduleDate,
+      orderStartDate: orderRescheduleStartDate,
       orderEndDate: orderRescheduleEndDate ? orderRescheduleEndDate : undefined,
-      orderEndTime: orderExtendEndTime ? orderExtendEndTime : undefined,
+      orderEndTime: orderRescheduleEndTime ? orderRescheduleEndTime : undefined,
     };
     const userBookServiceReshedule = await updateDocument(
       "userBookServ",
