@@ -17,10 +17,10 @@ const handleSocket = (io) => {
 
     socket.on('send_message', async ({ chatId, senderId, receiverId, message,role }) => {
       
-      const findChatRoom = await findOne("proBookingService",{chatChannelName:chatId})
-     let startTime = findChatRoom.orderStartTime
+//       const findChatRoom = await findOne("proBookingService",{chatChannelName:chatId})
+//      let startTime = findChatRoom.orderStartTime
 
-console.log(chatId, senderId, receiverId, message,"chatId, senderId, receiverId, message");
+// console.log(chatId, senderId, receiverId, message,"chatId, senderId, receiverId, message");
 
       const newMessage = await insertNewDocument("chatMessage",{chatId, senderId, receiverId, message,role})
       console.log(newMessage,"messagenew");

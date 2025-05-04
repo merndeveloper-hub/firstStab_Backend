@@ -1,7 +1,7 @@
 import express from "express";
 //const { tokenVerification } = require("../../middleware");
-// const adminLogin = require("./admin-auth/login");
-// const adminSignup = require("./admin-auth/signup");
+import adminLogin from "./admin-auth/login.js";
+import adminSignup from "./admin-auth/signup.js";
  import loginUser from "./login/index.js";
 import forgotPaasswd from "./forgotPasswd/index.js";
 import resendOTPVerificationCode from "./otpVerification/resendOTPVerificationCode.js";
@@ -43,7 +43,7 @@ router.delete("/logout/:id",logout)
 // router.get("/register/metamask/:username", tokenVerification, addWalletAddress);
 
 // Admin
-//router.post("/admin/register", adminSignup);
-//router.post("/admin/login", adminLogin);
+router.post("/admin/register", adminSignup);
+router.post("/login", adminLogin);
 
 export default router;

@@ -28,6 +28,8 @@ const verifyOTP = async (req, res) => {
         userEmail,
         status:"Pending"
       });
+      console.log(UserOTPVerificationRecords,"UserOTPVerificationRecords----------");
+      
       if (!UserOTPVerificationRecords || UserOTPVerificationRecords.length == 0) {
         // no record found
         return res.status(401).send({ status: 401, message: "No OTP verification record found for this email. Please sign up again" });
@@ -35,6 +37,8 @@ const verifyOTP = async (req, res) => {
       } else {
         // user otp record exists
         const { expiresAt } = UserOTPVerificationRecords[0];
+        console.log(expiresAt,"expireat----------------");
+        
         const hashedOTP = UserOTPVerificationRecords[0].otp;
 
         if (expiresAt < Date.now()) {
@@ -48,6 +52,8 @@ const verifyOTP = async (req, res) => {
       
         } else {
           const validOTP = await bcrypt.compare(otp, hashedOTP);
+          console.log(validOTP,"validotp------------------");
+          
           if (!validOTP) {
             // supplied otp is wrong
             return res.status(400).send({ status: 400, message: "The OTP you entered is invalid. Please check your inbox and try again." });

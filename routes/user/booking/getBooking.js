@@ -17,188 +17,233 @@ const booking = async (req, res) => {
     const { id } = req.params;
     const { status } = req.query;
     console.log(status, "staus");
-if(status == "onGoing"){
-
-
-    const bookService = await getAggregate("userBookServ", [
-      // Step 1: Match documents based on userId and status
-      {
-        $match: {
-          userId: new mongoose.Types.ObjectId(id), // Match userId
-          status: { $in: ["Accepted", "Pending", "Requested", "OnGoing","Delivered"] }, // Match status
+    if (status == "onGoing") {
+      const bookService = await getAggregate("userBookServ", [
+        // Step 1: Match documents based on userId and status
+        {
+          $match: {
+            userId: new mongoose.Types.ObjectId(id), // Match userId
+            status: {
+              $in: ["Accepted", "Pending", "Requested", "OnGoing", "Delivered"],
+            }, // Match status
+          },
         },
-      },
 
-      {
-        $lookup: {
-          from: "subcategories", // Join with "users" collection
-          let: { subCategoryId: { $toObjectId: "$subCategories.id" } }, // Extract professsionalId
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$subCategoryId"] },
-              }, // Compare userId with _id in users collection
-            },
-            {
-              $project: {
-                categoryName: 1,
-                name: 1,
-                _id: 0,
-              }, // Return only required fields
-            },
-          ],
-          as: "procategories",
+        {
+          $lookup: {
+            from: "subcategories", // Join with "users" collection
+            let: { subCategoryId: { $toObjectId: "$subCategories.id" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$subCategoryId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  categoryName: 1,
+                  name: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "procategories",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "users", // Join with "users" collection
-          let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$professionalId"] },
-              }, // Compare userId with _id in users collection
-            },
-            {
-              $project: {
-                first_Name: 1,
-                last_Name: 1,
-                avgReviewsPro: 1,
-                totalReviewsPro: 1,
-                businessname: 1,
-                businessaddress: 1,
-                businessphoneNo: 1,
-                longitude: 1,
-                latitude: 1,
-                _id: 1,
-              }, // Return only required fields
-            },
-          ],
-          as: "proDetails",
+        {
+          $lookup: {
+            from: "users", // Join with "users" collection
+            let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$professionalId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  first_Name: 1,
+                  last_Name: 1,
+                  avgReviewsPro: 1,
+                  totalReviewsPro: 1,
+                  businessname: 1,
+                  businessaddress: 1,
+                  businessphoneNo: 1,
+                  longitude: 1,
+                  latitude: 1,
+                  _id: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "proDetails",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "addresses", // Join with "users" collection
-          let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$addressId"] },
-              }, // Compare userId with _id in users collection
-            },
-            {
-              $project: {
-                longitude: 1,
-                latitude: 1,
-                _id: 0,
-              }, // Return only required fields
-            },
-          ],
-          as: "userAddress",
+        {
+          $lookup: {
+            from: "probookingservices", // Join with "users" collection
+            let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$professsionalId", "$$professionalId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  _id:0,
+                  service_fee: 1,
+                  tax_fee: 1,
+                  total_amount: 1,
+                  total_amount_cus_pay: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "bookingAmount",
+          },
         },
-      },
-    ]);
+        {
+          $lookup: {
+            from: "addresses", // Join with "users" collection
+            let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$addressId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  longitude: 1,
+                  latitude: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "userAddress",
+          },
+        },
+      ]);
 
-    if (!bookService || bookService.length == 0) {
-      return res
-        .status(200)
-        .json({ status: 200, message: "No Booking Found!" });
+      if (!bookService || bookService.length == 0) {
+        return res
+          .status(200)
+          .json({ status: 200, message: "No Booking Found!" });
+      }
+
+      return res.status(200).json({ status: 200, bookService });
+    } else {
+      const bookService = await getAggregate("userBookServ", [
+        // Step 1: Match documents based on userId and status
+        {
+          $match: {
+            userId: new mongoose.Types.ObjectId(id), // Match userId
+            status: { $in: ["Cancelled", "Rejected", "Completed"] }, // Match status
+          },
+        },
+
+        {
+          $lookup: {
+            from: "subcategories", // Join with "users" collection
+            let: { subCategoryId: { $toObjectId: "$subCategories.id" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$subCategoryId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  categoryName: 1,
+                  name: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "procategories",
+          },
+        },
+        {
+          $lookup: {
+            from: "users", // Join with "users" collection
+            let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$professionalId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  first_Name: 1,
+                  last_Name: 1,
+                  avgReviewsPro: 1,
+                  totalReviewsPro: 1,
+                  businessname: 1,
+                  businessaddress: 1,
+                  businessphoneNo: 1,
+                  longitude: 1,
+                  latitude: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "proDetails",
+          },
+        },
+        {
+          $lookup: {
+            from: "probookingservices", // Join with "users" collection
+            let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$professsionalId", "$$professionalId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  _id:0,
+                  service_fee: 1,
+                  tax_fee: 1,
+                  total_amount: 1,
+                  total_amount_cus_pay: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "bookingAmount",
+          },
+        },
+        {
+          $lookup: {
+            from: "addresses", // Join with "users" collection
+            let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$addressId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  longitude: 1,
+                  latitude: 1,
+                  _id: 0,
+                }, // Return only required fields
+              },
+            ],
+            as: "userAddress",
+          },
+        },
+      ]);
+
+      if (!bookService || bookService.length == 0) {
+        return res
+          .status(200)
+          .json({ status: 200, message: "No Booking Found!" });
+      }
+
+      return res.status(200).json({ status: 200, bookService });
     }
-
-    return res.status(200).json({ status: 200, bookService });
-  }else{
-  
-    const bookService = await getAggregate("userBookServ", [
-      // Step 1: Match documents based on userId and status
-      {
-        $match: {
-          userId: new mongoose.Types.ObjectId(id), // Match userId
-          status: { $in: ["Cancelled", "Rejected", "Completed"] }, // Match status
-        },
-      },
-
-      {
-        $lookup: {
-          from: "subcategories", // Join with "users" collection
-          let: { subCategoryId: { $toObjectId: "$subCategories.id" } }, // Extract professsionalId
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$subCategoryId"] },
-              }, // Compare userId with _id in users collection
-            },
-            {
-              $project: {
-                categoryName: 1,
-                name: 1,
-                _id: 0,
-              }, // Return only required fields
-            },
-          ],
-          as: "procategories",
-        },
-      },
-      {
-        $lookup: {
-          from: "users", // Join with "users" collection
-          let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$professionalId"] },
-              }, // Compare userId with _id in users collection
-            },
-            {
-              $project: {
-                first_Name: 1,
-                last_Name: 1,
-                avgReviewsPro: 1,
-                totalReviewsPro: 1,
-                businessname: 1,
-                businessaddress: 1,
-                businessphoneNo: 1,
-                longitude: 1,
-                latitude: 1,
-                _id: 0,
-              }, // Return only required fields
-            },
-          ],
-          as: "proDetails",
-        },
-      },
-      {
-        $lookup: {
-          from: "addresses", // Join with "users" collection
-          let: { addressId: { $toObjectId: "$addressId" } }, // Extract professsionalId
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$addressId"] },
-              }, // Compare userId with _id in users collection
-            },
-            {
-              $project: {
-                longitude: 1,
-                latitude: 1,
-                _id: 0,
-              }, // Return only required fields
-            },
-          ],
-          as: "userAddress",
-        },
-      },
-    ]);
-
-    if (!bookService || bookService.length == 0) {
-      return res
-        .status(200)
-        .json({ status: 200, message: "No Booking Found!" });
-    }
-
-    return res.status(200).json({ status: 200, bookService });
-  }
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

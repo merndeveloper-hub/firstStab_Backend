@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument, findOne } from "../../../../helpers/index.js";
+import { insertNewDocument, findOne, updateDocument } from "../../../../helpers/index.js";
 
 const schema = Joi.object({
    userId: Joi.string().hex().length(24).required(), // Must be a valid MongoDB ObjectId
@@ -20,22 +20,40 @@ const schema = Joi.object({
 const addAddress = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
-    const { userId } = req.body;
+    const { userId,longitude,latitude } = req.body;
     const findUser = await findOne("user", { _id: userId });
 
+    
     if (!findUser || findUser.length == 0) {
       return res.status(400).send({ status: 400, message: "No User found" });
     }
-
+    
+    if(findUser.userType == 'pro'){
+      const proLocation = await updateDocument(
+        "user",
+        {
+          _id: userId,
+        },
+        {
+          ...req.body,
+        }
+      );
+      return res.status(200).send({
+        status: 200,
+        message: "Address created successfully",
+        data: { proLocation },
+      });
+    }
+    
     const addAddress = await insertNewDocument(
       "address",
-
+      
       {
         userId,
         ...req.body,
       }
     );
-
+    
     return res.status(200).send({
       status: 200,
       message: "Address created successfully",

@@ -61,7 +61,7 @@ const completedBookedService = async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "Completed Booking By User",
-      cancelbooking,
+    //  cancelbooking,
     });
   } catch (e) {
     console.log(e);

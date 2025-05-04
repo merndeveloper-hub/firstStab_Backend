@@ -1,37 +1,55 @@
 // const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+import bcrypt from "bcryptjs";
 // const { SECRET } = require("../../../config");
-const {
+import {
   findOneAndSelect,
   findOne,
   insertNewDocument,
-} = require("../../../helpers");
-const Joi = require("joi");
+} from "../../../helpers/index.js";
+import Joi from "joi";
 
 
 const schema = Joi.object({
-  first_Name: Joi.string().required(),
-  last_Name: Joi.string().required(),
-  email: Joi.string().email().lowercase().trim().required(),
-  password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
-  type: Joi.string().required(),
+   first_Name: Joi.string().min(3).required(),
+   last_Name: Joi.string().min(3).required(),
+   email: Joi.string()
+     .email({ tlds: { allow: true } }) // Ensures a valid domain with TLD (e.g., .com, .org)
+     .pattern(new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) // Enforces common email rules
+     .required()
+     .messages({
+       "string.email": "Invalid email format",
+       "any.required": "Email is required",
+       "string.pattern.base": "Invalid email structure",
+     }),
+    password: Joi.string()
+      .pattern(
+        new RegExp(
+          "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$"
+        )
+      )
+      .required()
+      .messages({
+        "string.pattern.base":
+          "Password must be 8-30 characters, including uppercase, lowercase, number & special character.",
+      }),
+  userType: Joi.string().required(),
 });
 
 const adminSignup = async (req, res) => {
-  const { email, password, type } = req.body;
+  const { email, password, userType } = req.body;
   try {
     await schema.validateAsync(req.body);
-    const checkType = await findOne("userType", { type });
-    if (!checkType) {
-      return res.status(400).send({
-        status: 400,
-        message: "No Type found",
-      });
-    }
+    // const checkType = await findOne("userType", { type });
+    // if (!checkType) {
+    //   return res.status(400).send({
+    //     status: 400,
+    //     message: "No Type found",
+    //   });
+    // }
     const checkEmail = await findOneAndSelect(
       "user",
-      { email },
-      "-followers -following"
+      { email }
+ 
     );
     if (checkEmail) {
       return res.status(400).send({
@@ -41,7 +59,7 @@ const adminSignup = async (req, res) => {
     }
     const user = await insertNewDocument("user", {
       ...req.body,
-      type: checkType._id,
+    
       password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
     });
     user.password = undefined;
@@ -54,4 +72,4 @@ const adminSignup = async (req, res) => {
   }
 };
 
-module.exports = adminSignup;
+export default adminSignup;
