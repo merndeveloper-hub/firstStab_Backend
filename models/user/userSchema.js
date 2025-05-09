@@ -78,11 +78,11 @@ const userSchema = new mongoose.Schema(
     },
     longitude: {
       type: schemaType.TypeString,
-      unique: true,
+     
     },
     latitude: {
       type: schemaType.TypeString,
-      unique: true,
+    
     },
     businessname: {
       type: schemaType.TypeString,

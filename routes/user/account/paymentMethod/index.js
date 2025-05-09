@@ -9,7 +9,8 @@ import paypalSuccess from "./paypalSuccess.js";
 import paymentCancel from "./paypalCancel.js";
 import sendPayout from "./adminToProAccount.js";
 //import capturePayment from "./capturePayment.js";
-
+import stripeSuccess from "./stripeSuccess.js";
+import stripeCancel from "./stripeCancel.js";
 
 
 const router = express.Router();
@@ -29,7 +30,11 @@ router.post("/admintopro", sendPayout);
 router.get("/paypalsuccess", paypalSuccess);
 //------------user payment cancel page-----//
 router.get("/paypalcancel", paymentCancel);
+//------------user  stripe payment Successfully page-----//
+router.get("/stripe/paypalsuccess", stripeSuccess);
 
+//------------user stripe payment cancel page-----//
+router.get("/stripe/paypalcancel", stripeCancel);
 
 
 export default router;

@@ -129,6 +129,9 @@ const proSignup = async (req, res) => {
       totalRating,
     } = req.body;
 
+
+    console.log(req.body,"body");
+    
     const deleteEmailExist = await findOneAndSelect("user", {
       email,
       status: "InActive",
@@ -244,6 +247,8 @@ console.log(user,"user-0------------------------");
     await session.abortTransaction();
     session.endSession();
     if (error.code === 11000) {
+      console.log(error,"error--------");
+      
       // Duplicate key error
       return res.status(400).send({
         status: 400,

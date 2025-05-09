@@ -36,6 +36,28 @@ const userPaymentSchema = new mongoose.Schema(
       //  required: true,
       // index: true
     },
+     // Stripe-specific
+        stripeSessionId: { type: SchemaType.TypeString },
+       // New fields
+    presentmentAmount: { type:  SchemaType.TypeNumber }, // e.g., 29336
+    presentmentCurrency: { type:  SchemaType.TypeString }, // e.g., PKR
+        stripeSessionUrl: { type: SchemaType.TypeString },
+        paymentIntentId: { type: SchemaType.TypeString },
+        transactionId: { type: SchemaType.TypeString }, // can be same as paymentIntentId
+        
+        customerEmail: { type: SchemaType.TypeString },
+        paypalOrderId: { type: SchemaType.TypeString },
+        authorizationId: { type: SchemaType.TypeString },
+        payerId: { type: SchemaType.TypeString },
+        payerEmail: { type: SchemaType.TypeString },
+        cardDetails : {
+          cardBrand:{ type: SchemaType.TypeString },
+          cardLast4: { type: SchemaType.TypeString },
+          cardExpMonth: { type: SchemaType.TypeString },
+          cardExpYear: { type: SchemaType.TypeString },
+          cardFunding: { type: SchemaType.TypeString },
+          cardCountry: { type: SchemaType.TypeString },
+        },
     paypalOrderId: { type: SchemaType.TypeString },
     authorizationId: { type: SchemaType.TypeString },
     payerId: { type: SchemaType.TypeString },

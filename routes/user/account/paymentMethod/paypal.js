@@ -2,6 +2,8 @@ import axios from "axios";
 import getAccessToken from "./accessToken.js";
 import Joi from "joi";
 import { insertNewDocument } from "../../../../helpers/index.js";
+import Stripe from "stripe";
+let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const schema = Joi.object({
   amount: Joi.number().required(),
@@ -31,6 +33,9 @@ const createPaypalOrder = async (req, res) => {
       reciever,
       type,
     } = req.body;
+    if(paymentMethod == 'paypal'){
+
+    
     const getToken = await getAccessToken();
     console.log(getToken, "getToken---------");
 
@@ -124,6 +129,60 @@ const createPaypalOrder = async (req, res) => {
     });
 
     return res.status(201).json({ status: 201, data: data });
+  }
+  else if (paymentMethod == "stripe") {
+       const { userId, amount } = req.body;
+ 
+   const session = await stripe.checkout.sessions.create({
+     payment_method_types: ['card'],
+     line_items: [{
+       price_data: {
+         currency: 'usd',
+         product_data: {
+           name: 'My App Payment',
+         },
+         unit_amount: amount  
+       },
+       quantity: 1,
+     }],
+     mode: 'payment',
+     success_url: `http://localhost:5000/api/v1/pro/payment/stripe/paypalsuccess?session_id={CHECKOUT_SESSION_ID}`,
+     cancel_url: "http://localhost:5000/api/v1/pro/payment/stripe/paypalcancel?session_id={CHECKOUT_SESSION_ID}",
+     metadata: { userId },
+   });
+ 
+   console.log(session,"session------");
+   
+   const data = {
+     id: session.id,
+     status: "CREATED",
+     links: [
+       {
+         href: session.url,
+         rel: "approve",
+         method: "GET",
+       },
+     ],
+   };
+ 
+   const userPayment = await insertNewDocument("userPayment", {
+     ...req.body,
+     paymentMethod: "Stripe",
+     sender: "User",
+     reciever: "Admin",
+     type: "UserBooking",
+     stripeSessionId: session.id,                   // session.id
+     stripeSessionUrl: session.url, // session.url
+     status: 'Pending',                                // will be 'Success' after webhook confirms
+    // paypalOrderId: response.data.id,
+    // status: "Success",
+   });
+ 
+ 
+   return res.status(201).json({ status: 201, data: data });
+  
+ 
+     }
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }
