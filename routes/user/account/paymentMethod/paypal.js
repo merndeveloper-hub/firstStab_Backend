@@ -146,8 +146,8 @@ const createPaypalOrder = async (req, res) => {
        quantity: 1,
      }],
      mode: 'payment',
-     success_url: `http://localhost:5000/api/v1/pro/payment/stripe/paypalsuccess?session_id={CHECKOUT_SESSION_ID}`,
-     cancel_url: "http://localhost:5000/api/v1/pro/payment/stripe/paypalcancel?session_id={CHECKOUT_SESSION_ID}",
+     success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripe/paypalsuccess?session_id={CHECKOUT_SESSION_ID}`,
+     cancel_url: "http://3.110.42.187:5000/api/v1/pro/payment/stripe/paypalcancel?session_id={CHECKOUT_SESSION_ID}",
      metadata: { userId },
    });
  
