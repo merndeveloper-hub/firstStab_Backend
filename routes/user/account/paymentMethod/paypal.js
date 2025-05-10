@@ -7,12 +7,12 @@ let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const schema = Joi.object({
   amount: Joi.number().required(),
-  userId: Joi.string(),
+  userId: Joi.string().required(),
   proServiceId: Joi.string(),
-  professsionalId: Joi.string(),
-  bookServiceId: Joi.string(),
+  professsionalId: Joi.string().required(),
+  bookServiceId: Joi.string().required(),
   userAccpetBookingId: Joi.string(),
-  paymentMethod: Joi.string(),
+  paymentMethod: Joi.string().required(),
   sender: Joi.string(),
   reciever: Joi.string(),
   type: Joi.string(),
@@ -146,8 +146,8 @@ const createPaypalOrder = async (req, res) => {
        quantity: 1,
      }],
      mode: 'payment',
-     success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripe/paypalsuccess?session_id={CHECKOUT_SESSION_ID}`,
-     cancel_url: "http://3.110.42.187:5000/api/v1/pro/payment/stripe/paypalcancel?session_id={CHECKOUT_SESSION_ID}",
+     success_url: `http://3.110.42.187:5000/api/v1/user/account/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}`,
+     cancel_url: "http://3.110.42.187:5000/api/v1/user/account/payment/stripecancel?session_id={CHECKOUT_SESSION_ID}",
      metadata: { userId },
    });
  

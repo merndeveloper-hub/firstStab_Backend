@@ -31,10 +31,10 @@ router.get("/paypalsuccess", paypalSuccess);
 //------------user payment cancel page-----//
 router.get("/paypalcancel", paymentCancel);
 //------------user  stripe payment Successfully page-----//
-router.get("/stripe/paypalsuccess", stripeSuccess);
+router.get("/stripesuccess", stripeSuccess);
 
 //------------user stripe payment cancel page-----//
-router.get("/stripe/paypalcancel", stripeCancel);
+router.get("/stripecancel", stripeCancel);
 
 
 export default router;
