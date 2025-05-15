@@ -16,6 +16,8 @@ const subCategorySchema = new mongoose.Schema({
   description: { type: schemaType.TypeString, required: true },
   addToHome: { type: schemaType.TypeString, enum: ['Yes', 'No'], default: 'No' },
   status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },
+   bgServiceName: { type: schemaType.TypeString, enum: ['checkr', 'certn'], default: 'checkr' },
+    bgValidation:{ type: schemaType.TypeArray },
    created_date: {
         type: schemaType.TypeDate,
         default: Date.now,

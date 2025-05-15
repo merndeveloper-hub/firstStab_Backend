@@ -14,9 +14,9 @@ const schema = Joi.object({
   taxCode: Joi.string().required(),
   description: Joi.string(),
   status: Joi.string(),
-  type: Joi.string(),
   isRemote: Joi.string(),
   addToHome: Joi.string(),
+  serviceCountry:Joi.string()
 });
 
 const createCategory = async (req, res) => {

@@ -20,7 +20,7 @@ const router = express.Router();
 //--------Get All Admin Categories With subcategories---//
 router.get("/subcategory",getAllCategoriesWithSubcate)
 
-//--------Get All Admin Categories-------//
+//--------Get All Admin Categories on pro screen-------//
 router.get("/",getCategories)
 
 

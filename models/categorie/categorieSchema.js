@@ -10,7 +10,7 @@ const categorySchema = new mongoose.Schema({
   taxCode: { type: schemaType.TypeString,required: true },
   description: { type: schemaType.TypeString, default: '' },
   status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },
-  type: { type: schemaType.TypeString, enum: ['Blue', 'White'], default: 'Blue' },
+  serviceCountry: { type: schemaType.TypeString, enum: ['US', 'NON-US','Both'], default: 'US' },
   isRemote: { type: schemaType.TypeString, enum: ['No', 'Yes'], default: 'No' },
   addToHome: { type: schemaType.TypeString, enum: ['default', 'Top left', 'Top Right', 'bottom'], default: 'default' }, 
    created_date: {

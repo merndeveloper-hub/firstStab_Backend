@@ -21,6 +21,9 @@ const schema = Joi.object({
   isVirtual: Joi.string(),
   isInPerson: Joi.string(),
   price: Joi.string().required(),
+ bgServiceName: Joi.string().required(),
+ bgValidation: Joi.array().required(),
+
 });
 
 const addCategory = async (req, res) => {
