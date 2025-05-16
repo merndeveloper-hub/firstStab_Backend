@@ -58,6 +58,7 @@ const adminSignup = async (req, res) => {
       });
     }
     const user = await insertNewDocument("user", {
+      mobile:'',
       ...req.body,
     
       password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
@@ -67,8 +68,24 @@ const adminSignup = async (req, res) => {
     req.userId = user._id;
    
     return res.status(200).send({ status: 200, user });
-  } catch (e) {
-    return res.status(400).send({ status: 400, message: e.message });
+  } catch (error) {
+    
+     if (error.code === 11000) {
+      console.log(error,"error--------");
+      
+      // Duplicate key error
+      return res.status(400).send({
+        status: 400,
+        message: "Email already exists. Please use a different email.",
+      });
+    }
+    // Handle other errors
+    console.error("Error saving user:", error);
+    return res
+      .status(400)
+      .send({ status: 400, message: "An unexpected error occurred." });
+    //  return res.status(400).send({ status: 400, message: e.message });
+  
   }
 };
 

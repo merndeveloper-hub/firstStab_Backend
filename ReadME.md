@@ -74,3 +74,7 @@ user confirm booking service ==>  proBookservices and userBookService ==> onGoin
 
 ----Add service pro API--
 ADD _ID PRO    
+
+
+------admin panel ip---
+http://13.126.40.123:5000/

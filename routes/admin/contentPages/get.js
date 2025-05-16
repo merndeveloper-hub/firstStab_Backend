@@ -1,8 +1,19 @@
-import { find } from "../../../helpers/index.js";
+import { getDataWithLimit } from "../../../helpers/index.js";
 
 const getContentPage = async (req, res) => {
   try {
-    const contentPage = await find("content");
+    
+const page = parseInt(req.query.page) || 1;
+
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const contentPage = await getDataWithLimit(
+      "content",
+      {},
+      skip,
+      limit
+    );
 
     console.log(contentPage, "contentPage...");
 

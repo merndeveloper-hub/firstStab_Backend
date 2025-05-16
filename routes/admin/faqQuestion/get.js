@@ -1,11 +1,16 @@
-import { find } from "../../../helpers/index.js";
+import { getDataWithLimit } from "../../../helpers/index.js";
 
 
 const getFaqQuestion = async (req, res) => {
   try {
 
+ const page = parseInt(req.query.page) || 1;
 
-    let faqQuestion = await find("faqQuestion");
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const faqQuestion = await getDataWithLimit("faqQuestion", {}, skip, limit);
+   
 
     if (!faqQuestion || faqQuestion.length === 0) {
       return res

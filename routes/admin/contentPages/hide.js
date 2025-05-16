@@ -22,7 +22,7 @@ const hidePage = async (req, res) => {
     const hideContentPage = await updateDocument(
       "content",
       { _id: id },
-      { status: "InActive" }
+      { status: contentPage?.status == "Active" ? "InActive" : "Active" }
     );
 
  

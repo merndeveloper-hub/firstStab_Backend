@@ -1,11 +1,16 @@
-import { find } from "../../../helpers/index.js";
+import { getDataWithLimit } from "../../../helpers/index.js";
 
 
 const getFaqCategory = async (req, res) => {
   try {
 
+  const page = parseInt(req.query.page) || 1;
 
-     const faqCategory = await find("faqCategory");
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const faqCategory = await getDataWithLimit("faqCategory", {}, skip, limit);
+
 
     console.log(faqCategory, "contentPage...");
 

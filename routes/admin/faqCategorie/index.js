@@ -14,7 +14,7 @@ router.post("/add", addfaqCategorie);
 router.get("/", getFaqCategory);
 
 //-----Get Single FAQ Category----///
-router.get("/get/:id", singleFaqCategory)
+router.get("/:id", singleFaqCategory)
 
 //-----Hide Single FAQ Category----///
 router.put("/hide/:id", hideFaqCaetgory);

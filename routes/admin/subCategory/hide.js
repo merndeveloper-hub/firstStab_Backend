@@ -24,7 +24,7 @@ const hideSubCategory = async (req, res) => {
       {
         _id: id,
       },
-      { status: "InActive" }
+      { status: findSubCategory?.status == "Active" ? "InActive" : "Active" }
     );
 
     return res

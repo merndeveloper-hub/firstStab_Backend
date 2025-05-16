@@ -1,15 +1,18 @@
-import { find } from "../../../helpers/index.js";
+import { find, getDataWithLimit } from "../../../helpers/index.js";
 
 const getCategories = async (req, res) => {
   try {
-    const categories = await find("category");
-    
+    const page = parseInt(req.query.page) || 1;
 
-    if (!categories || categories.length === 0) {
-     
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const categories = await getDataWithLimit("category", {}, skip, limit);
+
+    if (!categories || categories.length == 0) {
       return res.status(400).send({
         status: 400,
-        message: "No categories found"
+        message: "No categories found",
       });
     }
 

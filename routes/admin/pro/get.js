@@ -9,7 +9,7 @@ const getUser = async (req, res) => {
 
     const getUsers = await getDataWithLimit(
       "user",
-      { userType: "user" },
+      { userType: "pro" },
       skip,
       limit
     );
@@ -17,7 +17,7 @@ const getUser = async (req, res) => {
     if (!getUsers || getUsers.length === 0) {
       return res.status(400).send({
         status: 400,
-        message: "No Users found",
+        message: "No Professional found",
       });
     }
 

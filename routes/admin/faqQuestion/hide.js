@@ -22,7 +22,7 @@ const hideFaqQuestion = async (req, res) => {
     const updatefaqQuestion = await updateDocument(
       "faqQuestion",
       { _id: id },
-      { status: "InActive" }
+      { status: faqQuestion?.status == "Active" ? "InActive" : "Active" }
     );
 
     return res.status(200).send({

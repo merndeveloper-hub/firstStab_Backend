@@ -22,7 +22,7 @@ const addFaqQuestion = async (req, res) => {
     const findFaqCategorie = await findOne("faqCategory", {
       _id: faqCategorieId,
     });
-    if (!faqCategory || faqCategory.length === 0) {
+    if (!findFaqCategorie || findFaqCategorie.length === 0) {
       return res
         .status(400)
         .send({ status: 400, message: "No FAQ Category Found" });

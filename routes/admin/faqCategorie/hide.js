@@ -22,7 +22,7 @@ const hideFaqCaetgory = async (req, res) => {
     const updatefaqCategory = await updateDocument(
       "faqCategory",
       { _id: id },
-      { status: "InActive" }
+      { status: faqCategory?.status == "Active" ? "InActive" : "Active" }
     );
 
     return res.status(200).send({

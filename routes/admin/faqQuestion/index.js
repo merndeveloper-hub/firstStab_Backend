@@ -13,7 +13,7 @@ router.post("/add", addFaqQuestion);
 
 
 //----Get FAQ Question--------//
-router.get("/get", getFaqQuestion);
+router.get("/", getFaqQuestion);
 
 //----Get Single FAQ Question--------//
 router.get("/:id", getFaqSingleQuestion)
