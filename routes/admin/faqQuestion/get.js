@@ -18,7 +18,7 @@ const sort = { createdAt: -1 };
         .send({ status: 400, message: "Does not exist faq questions" });
     }
 
-    return res.status(200).send({ status: 200, faqQuestion });
+    return res.status(200).send({ status: 200, faqQuestion,length:faqQuestion?.length });
 
   } catch (e) {
 

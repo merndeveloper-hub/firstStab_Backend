@@ -61,6 +61,7 @@ const proCategorySchema = new mongoose.Schema(
 
     candidateId: { type: schemaType.TypeString }, // From Checkr response
     invitationUrl: { type: schemaType.TypeString }, // From Checkr response
+    invitationId: { type: schemaType.TypeString }, 
     package: { type: schemaType.TypeString }, // 'basic_plus', 'plv', etc.
     workLocation: {
       country: { type: schemaType.TypeString },

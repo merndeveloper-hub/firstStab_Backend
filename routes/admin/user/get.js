@@ -22,7 +22,7 @@ const sort = { createdAt: -1 };
       });
     }
 
-    return res.status(200).json({ status: 200, data: { getUsers } });
+    return res.status(200).json({ status: 200, data: { getUsers,length:getUsers?.length } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

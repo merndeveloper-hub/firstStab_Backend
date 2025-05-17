@@ -20,7 +20,7 @@ const updateFaqQuestion = async (req, res) => {
     await schemaId.validateAsync(req.params);
 
     const { id } = req.params;
-
+const {faqCategorieid,faqCategorieName,title,answer,status,displayPostion} = req.body
     let faqQuestion = await findOne("faqQuestion", { _id: id });
 
     if (!faqQuestion || faqQuestion.length === 0) {

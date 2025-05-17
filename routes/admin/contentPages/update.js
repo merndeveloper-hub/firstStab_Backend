@@ -22,7 +22,7 @@ const updateContentPage = async (req, res) => {
     await schema.validateAsync(req.body);
 
     const { id } = req.params;
-
+const {title,pageCode,isSystemPage,status,contents} = req.body
     let contentPage = await findOne("content", { _id: id });
 
     if (!contentPage) {

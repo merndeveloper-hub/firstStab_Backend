@@ -22,7 +22,7 @@ const getSubCategories = async (req, res) => {
       });
     }
 
-    return res.status(200).json({ status: 200, data: { subcategories } });
+    return res.status(200).json({ status: 200, data: { subcategories,length:subcategories?.length } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

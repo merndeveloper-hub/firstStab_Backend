@@ -16,6 +16,7 @@ const updatefaqCategory = async (req, res) => {
     await schemaId.validateAsync(req.params);
 
     const { id } = req.params;
+    const { name,status } = req.body;
 
     let faqCategory = await findOne("faqCategory", { _id: id });
     if (!faqCategory  || faqCategory.length === 0) {
