@@ -9,9 +9,14 @@ import hideSubCategory from "./hide.js";
 
 //-----Media upload icon and image -------/
 import multipart from "connect-multiparty";
+import getMainCategories from "./getMainCategory.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
+
+
+//-------------Get All Main Category--------------//
+router.get("/allcategory", getMainCategories);
 
 //-------------Add Sub Category--------------//
 router.post("/add",multipartMiddleware, addCategory);
@@ -29,4 +34,7 @@ router.get("/:id", getSingleSubCategory);
 
 //-------------Hide Single Sub Category--------------//
 router.put("/hide/:id", hideSubCategory);
+
+
+
 export default router;

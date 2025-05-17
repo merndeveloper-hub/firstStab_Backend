@@ -20,6 +20,7 @@ const schema = Joi.object({
   isChat: Joi.string(),
   isVirtual: Joi.string(),
   isInPerson: Joi.string(),
+  serviceCountry:Joi.string().required(),
   price: Joi.string().required(),
  bgServiceName: Joi.string().required(),
  bgValidation: Joi.array().required(),
