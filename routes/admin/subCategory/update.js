@@ -9,16 +9,20 @@ cloudinary.config({
 });
 
 const schema = Joi.object({
-   categoryName: Joi.string(),
-   name: Joi.string(),
-   description: Joi.string(),
-   status: Joi.string(),
-   addToHome: Joi.string(),
-   isRemote: Joi.string(),
-   isChat: Joi.string(),
-   isVirtual: Joi.string(),
-   isInPerson: Joi.string(),
-   price: Joi.string(),
+  categoryId: Joi.string(),
+  categoryName: Joi.string(),
+  name: Joi.string(),
+  description: Joi.string(),
+  status: Joi.string(),
+  addToHome: Joi.string(),
+  isRemote: Joi.string().allow(null, ""), // Allow empty strings, but check later
+  isChat: Joi.string().allow(null, ""),
+  isVirtual: Joi.string().allow(null, ""),
+  isInPerson: Joi.string().allow(null, ""),
+  serviceCountry: Joi.string(),
+  price: Joi.string(),
+  bgServiceName: Joi.string(),
+  bgValidation: Joi.array(),
 });
 const schemaForId = Joi.object({
   id: Joi.string().required(),
@@ -28,6 +32,19 @@ const updateSubCategory = async (req, res) => {
   try {
     await schemaForId.validateAsync(req.params);
     await schema.validateAsync(req.body);
+    const{categoryName,
+      name,
+      description,
+      status,
+      addToHome,
+      isRemote,
+      isChat,
+      isVirtual,
+      isInPerson,
+      price,
+      serviceCountry,
+      bgServiceName,
+      bgValidation} = req.body
     const { id } = req.params;
     const findCategory = await findOne("subCategory", { _id: id });
     if (!findCategory) {
@@ -36,25 +53,27 @@ const updateSubCategory = async (req, res) => {
         .send({ status: 400, message: "Sub Category not found" });
     }
 
-    
     if (req?.files?.image?.path) {
       const category_Image = await cloudinary.uploader.upload(
         req?.files?.image?.path,
         { quality: 20, allowed_formats: ["jpg", "jpeg", "png", "jfif", "avif"] }
       );
-  
+
       req.body.image = category_Image?.url;
-     
     }
 
     if (req?.files?.icon?.path) {
-    const category_Icon = await cloudinary.uploader.upload(
-      req?.files?.icon?.path,
-      { quality: 20, allowed_formats: ["jpg", "jpeg", "png", "jfif", "avif"] }
-    );
+      const category_Icon = await cloudinary.uploader.upload(
+        req?.files?.icon?.path,
+        { quality: 20, allowed_formats: ["jpg", "jpeg", "png", "jfif", "avif"] }
+      );
 
-    req.body.icon = category_Icon?.url;
-  }
+      req.body.icon = category_Icon?.url;
+    }
+
+    const updateData = {};
+
+ 
     const subCategory = await updateDocument(
       "subCategory",
       {
@@ -63,20 +82,17 @@ const updateSubCategory = async (req, res) => {
       {
         image: req?.body?.image,
         icon: req?.body?.icon,
-        ...req.body,
+       ...req.body
       }
     );
-console.log(subCategory,"dub");
+    console.log(subCategory, "dub");
 
-    return res
-      .status(200)
-      .send({
-        status: 200,
-        message: "Sub Category updated successfully",
-        data: { subCategory },
-      });
+    return res.status(200).send({
+      status: 200,
+      message: "Sub Category updated successfully",
+      data: { subCategory },
+    });
   } catch (e) {
-  
     return res.status(400).send({ status: 400, message: e.message });
   }
 };

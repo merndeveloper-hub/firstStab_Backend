@@ -48,6 +48,28 @@ const proCategorySchema = new mongoose.Schema(
       },
     ],
 
+    status: { type: schemaType.TypeString, enum: ["Active", "InActive"] },
+    serviceStatus: {
+      type: schemaType.TypeString,
+      enum: ["invited", "pending", "completed"],
+    }, // e.g., 'invited', 'pending', 'completed'
+    serviceCountry: {
+      type: schemaType.TypeString,
+      enum: ["US", "NON-US", "Both"],
+    },
+    bgServiceName: { type: schemaType.TypeString, enum: ["checkr", "certn"] },
+
+    candidateId: { type: schemaType.TypeString }, // From Checkr response
+    invitationUrl: { type: schemaType.TypeString }, // From Checkr response
+    package: { type: schemaType.TypeString }, // 'basic_plus', 'plv', etc.
+    workLocation: {
+      country: { type: schemaType.TypeString },
+      state: { type: schemaType.TypeString },
+      city: { type: schemaType.TypeString },
+    },
+
+    bgValidation: { type: schemaType.TypeArray },
+
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,

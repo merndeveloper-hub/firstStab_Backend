@@ -16,20 +16,25 @@ const schema = Joi.object({
   description: Joi.string().required(),
   status: Joi.string(),
   addToHome: Joi.string(),
-  isRemote: Joi.string(),
-  isChat: Joi.string(),
-  isVirtual: Joi.string(),
-  isInPerson: Joi.string(),
+   isRemote: Joi.string().allow(null, ''),  // Allow empty strings, but check later
+  isChat: Joi.string().allow(null, ''),
+  isVirtual: Joi.string().allow(null, ''),
+  isInPerson: Joi.string().allow(null, ''),
   serviceCountry:Joi.string().required(),
   price: Joi.string().required(),
  bgServiceName: Joi.string().required(),
  bgValidation: Joi.array().required(),
 
+}).or('isRemote', 'isChat', 'isVirtual', 'isInPerson')
+.messages({
+  'object.missing': 'Please select at least one of isRemote, isChat, isVirtual, or isInPerson.',
 });
+
 
 const addCategory = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
+
 
     const { categoryId } = req.body;
 console.log(categoryId,"categoryId");
@@ -85,6 +90,8 @@ console.log(categoryData,"daa");
       data: { subCategory },
     });
   } catch (e) {
+    console.log(e,"eeee");
+    
     return res.status(400).send({ status: 400, message: e.message });
   }
 };

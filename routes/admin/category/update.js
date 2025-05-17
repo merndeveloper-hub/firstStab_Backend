@@ -14,9 +14,9 @@ const schema = Joi.object({
   taxCode: Joi.string(),
   description: Joi.string(),
   status: Joi.string(),
-  type: Joi.string(),
   isRemote: Joi.string(),
   addToHome: Joi.string(),
+  serviceCountry:Joi.string()
 });
 const schemaForId = Joi.object({
   id: Joi.string().required(),
@@ -27,6 +27,14 @@ const updateCategory = async (req, res) => {
     await schemaForId.validateAsync(req.params);
     await schema.validateAsync(req.body);
     const { id } = req.params;
+    const {  name,
+  commission,
+  taxCode,
+  description,
+  status,
+  isRemote,
+  addToHome,
+  serviceCountry} =req.body
     const findCategory = await findOne("category", { _id: id });
     if (!findCategory || findCategory.length === 0 ) {
       return res
@@ -53,6 +61,7 @@ const updateCategory = async (req, res) => {
 
     req.body.icon = category_Icon?.url;
   }
+  
     const category = await updateDocument(
       "category",
       {
@@ -61,7 +70,7 @@ const updateCategory = async (req, res) => {
       {
         image: req?.body?.image,
         icon: req?.body?.icon,
-        ...req.body,
+        ...req.body
       }
     );
 

@@ -5,7 +5,6 @@ import schemaType from "../../types/index.js";
 const subCategorySchema = new mongoose.Schema({
   categoryId: { type: schemaType.TypeObjectId, ref: 'category', required: true },
   categoryName: { type: schemaType.TypeString },
-  serviceCountry:{ type: schemaType.TypeString },
   name: { type: schemaType.TypeString, required: true },
   image: { type: schemaType.TypeString, required: true },
   icon: { type: schemaType.TypeString, required: true },
@@ -17,6 +16,7 @@ const subCategorySchema = new mongoose.Schema({
   description: { type: schemaType.TypeString, required: true },
   addToHome: { type: schemaType.TypeString, enum: ['Yes', 'No'], default: 'No' },
   status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },
+  serviceCountry: { type: schemaType.TypeString, enum: ['US', 'NON-US','Both'], default: 'US' },
    bgServiceName: { type: schemaType.TypeString, enum: ['checkr', 'certn'], default: 'checkr' },
     bgValidation:{ type: schemaType.TypeArray },
    created_date: {

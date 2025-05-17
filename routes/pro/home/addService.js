@@ -1,8 +1,10 @@
 import Joi from "joi";
 import { findOne, insertNewDocument } from "../../../helpers/index.js";
+import userType from "../../../models/userType/index.js";
+import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
 
 const schema = Joi.object({
-  id: Joi.string().hex().length(24).required(),
+  id: Joi.string().hex().length(24),
   proId: Joi.string().hex().length(24).required(), // Must be a valid MongoDB ObjectId
   price: Joi.number().min(0).required(),
   categoryId: Joi.string().hex().length(24).required(),
@@ -20,64 +22,41 @@ const schema = Joi.object({
 const createService = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
-    const { categoryId, id } = req.body;
-    function isUSCountry(countryName) {
-      const US_COUNTRIES = [
-        "United States",
-        "American Samoa",
-        "Guam",
-        "Northern Mariana Islands",
-        "Puerto Rico",
-        "U.S. Virgin Islands",
-        "United States Minor Outlying Islands",
-      ];
 
-      return US_COUNTRIES.includes(countryName);
-    }
-    function NonUSCategory(findNonUSCategory) {
-      const nonUSCategory = [
-        "Film, Video & Motion Graphics",
-        "Visual Arts and Graphic Design",
-        "Online Marketing / Digital Advertising",
-        "Company and Business Solutions",
-        "Information Technology",
-      ];
+    const { proId } = req.body;
 
-      return nonUSCategory.includes(findNonUSCategory);
-    }
-    const findPro = await findOne("user", { _id: id });
+    const category = await insertNewDocument("proCategory", {
+      ...req.body,
+      status: "InActive",
+    });
 
-    country = findPro?.country;
+    const findPro = await findOne("user", { _id: proId, userType: "pro" });
 
-    const checkUS = isUSCountry(country);
+    const findSubCategorie = await findOne("subCategory", {
+      _id: req?.body?.subCategories[0]?.id,
+    });
 
-    console.log(checkUS, "checkUS");
-    const findCategory = await findOne("categorie", { _id: categoryId });
-    const findCountry = findCategory?.serviceCountry;
-    const findNonUSCategory = findCategory?.name;
-    const checkNonUSCategory = NonUSCategory(findNonUSCategory);
-    if (checkUS && findCountry == "US" || findCountry == 'Both') {
-      const category = await insertNewDocument("proCategory", {
-        ...req.body,
-      });
+    const serviceCountry = findSubCategorie?.serviceCountry;
+    const bgServiceName = findSubCategorie?.bgServiceName;
+    const bgValidation = findSubCategorie?.bgValidation;
+    const userCountry = findPro?.country;
+    const id = proId;
+    const proCategoryId = category?._id;
 
-      return res.status(200).json({
-        status: 200,
-        message: "Category created successfully",
-        category,
-      });
-    } else if (findCategory?.serviceCountry == "NON-US" && checkNonUSCategory || findCountry == 'Both') {
-      const findCategory = await findOne("categorie", { _id: categoryId });
-      const category = await insertNewDocument("proCategory", {
-        categoryId: findCategory._id,
-        ...req.body,
-      });
-      return res.status(200).json({
-        status: 200,
-        message: "Category created successfully",
-        category,
-      })
-    }
+    const invitationURL = await createCandidates(
+      id,
+      bgServiceName,
+      bgValidation,
+      serviceCountry,
+      userCountry,
+      proCategoryId
+    );
+
+    return res.status(200).json({
+      status: 200,
+      message: "Category created successfully",
+      data: invitationURL,
+    });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
   }
