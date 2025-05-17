@@ -21,7 +21,7 @@ const router = express.Router();
 router.get("/subcategory",getAllCategoriesWithSubcate)
 
 //--------Get All Admin Categories on pro screen-------//
-router.get("/",getCategories)
+router.get("/:id",getCategories)
 
 
 //--------Get Single Admin Category With subcategories Pagination---//

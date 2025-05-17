@@ -8,8 +8,8 @@ const getFaqCategory = async (req, res) => {
 
     const limit = 5;
     const skip = (page - 1) * limit;
-
-    const faqCategory = await getDataWithLimit("faqCategory", {}, skip, limit);
+const sort = { createdAt: -1 };
+    const faqCategory = await getDataWithLimit("faqCategory", {},sort, skip, limit);
 
 
     console.log(faqCategory, "contentPage...");

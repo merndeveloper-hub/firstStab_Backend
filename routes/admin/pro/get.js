@@ -6,10 +6,11 @@ const getUser = async (req, res) => {
 
     const limit = 5;
     const skip = (page - 1) * limit;
-
+const sort = { createdAt: -1 };
     const getUsers = await getDataWithLimit(
       "user",
       { userType: "pro" },
+      sort,
       skip,
       limit
     );

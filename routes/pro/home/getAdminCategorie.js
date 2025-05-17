@@ -1,19 +1,64 @@
-import { find } from "../../../helpers/index.js";
+import { find, findOne } from "../../../helpers/index.js";
 
 const getCategories = async (req, res) => {
-  try {
-    const categories = await find("category",{status:"Active"});
-    
+  const US_COUNTRIES = [
+    "United States",
+    "American Samoa",
+    "Guam",
+    "Northern Mariana Islands",
+    "Puerto Rico",
+    "U.S. Virgin Islands",
+    "United States Minor Outlying Islands",
+  ].map(country => country.toLowerCase()); // convert to lowercase for comparison
 
-    if (!categories || categories.length === 0) {
-     
+  const nonUSCategory = [
+    "Film, Video & Motion Graphics",
+    "Visual Arts and Graphic Design",
+    "Online Marketing / Digital Advertising",
+    "Company and Business Solutions",
+    "Information Technology",
+  ].map(category => category.toLowerCase()); // convert to lowercase
+
+  try {
+    const { id } = req.params;
+
+    // 1. Get user and normalize country name
+    const findPro = await findOne("user", { _id: id, userType: "pro" });
+
+    if (!findPro) {
       return res.status(400).send({
         status: 400,
-        message: "Category Not found"
+        message: "No pro found",
       });
     }
 
-    return res.status(200).json({ status: 200, data: { categories } });
+    const userCountry = (findPro.country || "").toLowerCase();
+    const isUSUser = US_COUNTRIES.includes(userCountry);
+
+    let categoriesToShow;
+
+    if (isUSUser) {
+      // US user → show all active categories
+      categoriesToShow = await find("category", { status: "Active" });
+    } else {
+      // Non-US user → show only specific categories (case-insensitive)
+      // Use regex to match case-insensitive names in $or
+      categoriesToShow = await find("category", {
+        status: "Active",
+        $or: nonUSCategory.map(name => ({
+          name: { $regex: `^${name}$`, $options: "i" },
+        })),
+      });
+    }
+
+    if (!categoriesToShow || categoriesToShow.length === 0) {
+      return res.status(400).send({
+        status: 400,
+        message: "Category Not found",
+      });
+    }
+
+    return res.status(200).json({ status: 200, data: { categoriesToShow } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

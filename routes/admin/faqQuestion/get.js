@@ -8,8 +8,8 @@ const getFaqQuestion = async (req, res) => {
 
     const limit = 5;
     const skip = (page - 1) * limit;
-
-    const faqQuestion = await getDataWithLimit("faqQuestion", {}, skip, limit);
+const sort = { createdAt: -1 };
+    const faqQuestion = await getDataWithLimit("faqQuestion", {},sort, skip, limit);
    
 
     if (!faqQuestion || faqQuestion.length === 0) {

@@ -6,10 +6,11 @@ const getSubCategories = async (req, res) => {
 
     const limit = 5;
     const skip = (page - 1) * limit;
-
+    const sort = { createdAt: -1 };
     const subcategories = await getDataWithLimit(
       "subCategory",
       {},
+      sort,
       skip,
       limit
     );

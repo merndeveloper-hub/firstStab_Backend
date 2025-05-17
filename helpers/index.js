@@ -205,10 +205,10 @@ const findOneSliceAndCustomPopulate = async (
     .populate(customQuery)
     .lean();
 
-const getDataWithLimit = async (modelDb, searchQuery, skip, limit) =>
+const getDataWithLimit = async (modelDb, searchQuery,sortedBy, skip, limit) =>
   await Models[modelDb]
     .find(searchQuery)
-    // .sort(sortedBy)
+     .sort(sortedBy)
     .skip(skip)
     .limit(limit)
     .exec();

@@ -7,10 +7,11 @@ const page = parseInt(req.query.page) || 1;
 
     const limit = 5;
     const skip = (page - 1) * limit;
-
+const sort = { createdAt: -1 };
     const contentPage = await getDataWithLimit(
       "content",
       {},
+      sort,
       skip,
       limit
     );

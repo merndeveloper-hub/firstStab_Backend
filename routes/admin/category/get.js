@@ -6,8 +6,14 @@ const getCategories = async (req, res) => {
 
     const limit = 5;
     const skip = (page - 1) * limit;
-
-    const categories = await getDataWithLimit("category", {}, skip, limit);
+    const sort = { createdAt: -1 };
+    const categories = await getDataWithLimit(
+      "category",
+      {},
+      sort,
+      skip,
+      limit
+    );
 
     if (!categories || categories.length == 0) {
       return res.status(400).send({
