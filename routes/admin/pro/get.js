@@ -1,4 +1,4 @@
-import { getDataWithLimit } from "../../../helpers/index.js";
+import { getDataWithLimit,find } from "../../../helpers/index.js";
 
 const getUser = async (req, res) => {
   try {
@@ -21,8 +21,8 @@ const sort = { createdAt: -1 };
         message: "No Professional found",
       });
     }
-
-    return res.status(200).json({ status: 200, data: { getUsers,length:getUsers?.length } });
+ const findPro = await find('user', { userType: 'pro' })
+    return res.status(200).json({ status: 200, data: { getUsers,length:findPro?.length } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

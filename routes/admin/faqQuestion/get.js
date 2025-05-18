@@ -17,8 +17,8 @@ const sort = { createdAt: -1 };
         .status(400)
         .send({ status: 400, message: "Does not exist faq questions" });
     }
-
-    return res.status(200).send({ status: 200, faqQuestion,length:faqQuestion?.length });
+const totalPage = await find('faqQuestion')
+    return res.status(200).send({ status: 200, faqQuestion,length:totalPage?.length });
 
   } catch (e) {
 
