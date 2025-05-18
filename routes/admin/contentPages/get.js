@@ -1,4 +1,4 @@
-import { getDataWithLimit } from "../../../helpers/index.js";
+import { getDataWithLimit,find } from "../../../helpers/index.js";
 
 const getContentPage = async (req, res) => {
   try {
