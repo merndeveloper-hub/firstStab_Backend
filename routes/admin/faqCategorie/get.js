@@ -18,7 +18,7 @@ const sort = { createdAt: -1 };
       return res.status(400).send({ status: 400, message: "No FAQ Category Found" });
     }
 const totalPage = await find('faqCategory')
-    return res.status(200).send({ status: 200, faqCategory,length:totalPage?.length });
+    return res.status(200).send({ status: 200, faqCategory,totalLength:totalPage?.length });
 
   } catch (e) {
 

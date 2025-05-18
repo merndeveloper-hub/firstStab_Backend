@@ -22,7 +22,7 @@ const sort = { createdAt: -1 };
       });
     }
  const findPro = await find('user', { userType: 'pro' })
-    return res.status(200).json({ status: 200, data: { getUsers,length:findPro?.length } });
+    return res.status(200).json({ status: 200, data: { getUsers,totalLength:findPro?.length } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

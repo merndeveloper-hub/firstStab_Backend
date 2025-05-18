@@ -22,7 +22,7 @@ const getCategories = async (req, res) => {
       });
     }
 const findCategorie = await find('category')
-    return res.status(200).json({ status: 200, data: { categories,length:findCategorie?.length } });
+    return res.status(200).json({ status: 200, data: { categories,totalLength:findCategorie?.length } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });
