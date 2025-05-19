@@ -5,8 +5,14 @@ import getFaqQuestion from "./get.js";
 import updateFaqQuestion from "./update.js";
 import hideFaqQuestion from "./hide.js";
 import getFaqSingleQuestion from "./getSingle.js";
+import getMainCategories from "./getMainFaqCategory.js";
 
 const router = express.Router();
+
+
+
+//-------------Get All Main Category--------------//
+router.get("/allcategory", getMainCategories);
 
 //----Add FAQ Question--------//
 router.post("/add", addFaqQuestion);

@@ -26,6 +26,7 @@ import chatRole from "./chatRole/index.js";
 import chatMessage from "./chatMessage/index.js";
 import chat from "./chat/index.js";
 import review from "./reviews/index.js";
+import apiLog from "./apiLog/index.js";
 
 
  const db = {};
@@ -38,7 +39,7 @@ import review from "./reviews/index.js";
 // };
 
 
-
+db.apiLog=apiLog
 db.user = user
 db.serviceDetail=serviceDetail
  db.userType = userType;
