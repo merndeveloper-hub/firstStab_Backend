@@ -11,13 +11,13 @@ const schema = Joi.object({
   title: Joi.string().required(),
   answer: Joi.string().required(),
   status: Joi.string(),
-  displayPostion: Joi.number().required(),
+  displayPosition: Joi.number().required(),
 });
 
 const addFaqQuestion = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
-    const { faqCategorieId, faqCategorieName, displayPostion } = req.body;
+    const { faqCategorieId, faqCategorieName, displayPosition } = req.body;
 
     const findFaqCategorie = await findOne("faqCategory", {
       _id: faqCategorieId,
@@ -29,12 +29,12 @@ const addFaqQuestion = async (req, res) => {
     }
 
     const findFaqQuestionPosition = await findOne("faqQuestion", {
-      displayPostion: displayPostion,
+      displayPosition: displayPosition,
     });
     if (findFaqQuestionPosition) {
       return res.status(400).send({
         status: 400,
-        message: "Already found question in displayPostion",
+        message: "Already found question in displayPosition",
       });
     }
 

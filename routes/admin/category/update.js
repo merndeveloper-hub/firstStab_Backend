@@ -12,6 +12,7 @@ const schema = Joi.object({
   name: Joi.string(),
   commission: Joi.number(),
   taxCode: Joi.string(),
+  platFormFees: Joi.number(),
   description: Joi.string(),
   status: Joi.string(),
   isRemote: Joi.string(),
@@ -28,6 +29,7 @@ const updateCategory = async (req, res) => {
     await schema.validateAsync(req.body);
     const { id } = req.params;
     const {  name,
+      platFormFees,
   commission,
   taxCode,
   description,

@@ -12,7 +12,7 @@ const subCategorySchema = new mongoose.Schema({
   isChat: { type: schemaType.TypeBoolean,default: false},
   isVirtual: { type: schemaType.TypeBoolean,default: false},
   isInPerson: { type: schemaType.TypeBoolean,default: false},
-  price: { type: schemaType.TypeNumber, required: true },
+  bgPrice: { type: schemaType.TypeNumber, required: true },
   description: { type: schemaType.TypeString, required: true },
   addToHome: { type: schemaType.TypeString, enum: ['Yes', 'No'], default: 'No' },
   status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },
