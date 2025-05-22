@@ -37,7 +37,9 @@ presentmentCurrency: { type:  SchemaType.TypeString }, // e.g., PKR
     stripeSessionUrl: { type: SchemaType.TypeString },
     paymentIntentId: { type: SchemaType.TypeString },
     transactionId: { type: SchemaType.TypeString }, // can be same as paymentIntentId
-    
+     netAmount: { type: SchemaType.TypeNumber },
+          stripeFee: { type: SchemaType.TypeNumber },
+          totalAmount: { type: SchemaType.TypeNumber },
     customerEmail: { type: SchemaType.TypeString },
     paypalOrderId: { type: SchemaType.TypeString },
     authorizationId: { type: SchemaType.TypeString },
@@ -71,7 +73,9 @@ presentmentCurrency: { type:  SchemaType.TypeString }, // e.g., PKR
       paypalEmail: { type: SchemaType.TypeString },
       paypalAccountStatus: { type: SchemaType.TypeString },
     },
-
+baseAmount: { type: SchemaType.TypeNumber },
+    paypalFee: { type: SchemaType.TypeNumber },
+    finalAmount: { type: SchemaType.TypeNumber },
     purchaseUnitReference: { type: SchemaType.TypeString }, // purchase_units[0].reference_id
 
     paypalLink: { type: SchemaType.TypeString }, // links[0].href

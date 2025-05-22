@@ -1,7 +1,6 @@
 import Joi from "joi";
-import { findOne, insertNewDocument } from "../../../helpers/index.js";
-import userType from "../../../models/userType/index.js";
-import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
+import { insertNewDocument } from "../../../helpers/index.js";
+
 
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
@@ -23,39 +22,39 @@ const createService = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
 
-    const { proId } = req.body;
+  
 
     const category = await insertNewDocument("proCategory", {
       ...req.body,
       status: "InActive",
     });
 
-    const findPro = await findOne("user", { _id: proId, userType: "pro" });
+    // const findPro = await findOne("user", { _id: proId, userType: "pro" });
 
-    const findSubCategorie = await findOne("subCategory", {
-      _id: req?.body?.subCategories[0]?.id,
-    });
+    // const findSubCategorie = await findOne("subCategory", {
+    //   _id: req?.body?.subCategories[0]?.id,
+    // });
 
-    const serviceCountry = findSubCategorie?.serviceCountry;
-    const bgServiceName = findSubCategorie?.bgServiceName;
-    const bgValidation = findSubCategorie?.bgValidation;
-    const userCountry = findPro?.country;
-    const id = proId;
-    const proCategoryId = category?._id;
+    // const serviceCountry = findSubCategorie?.serviceCountry;
+    // const bgServiceName = findSubCategorie?.bgServiceName;
+    // const bgValidation = findSubCategorie?.bgValidation;
+    // const userCountry = findPro?.country;
+    // const id = proId;
+    // const proCategoryId = category?._id;
 
-    const invitationURL = await createCandidates(
-      id,
-      bgServiceName,
-      bgValidation,
-      serviceCountry,
-      userCountry,
-      proCategoryId
-    );
+    // const invitationURL = await createCandidates(
+    //   id,
+    //   bgServiceName,
+    //   bgValidation,
+    //   serviceCountry,
+    //   userCountry,
+    //   proCategoryId
+    // );
 
     return res.status(200).json({
       status: 200,
       message: "Category created successfully",
-      data: invitationURL,
+      data: category,
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });

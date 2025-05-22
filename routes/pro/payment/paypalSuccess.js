@@ -60,6 +60,9 @@ const paypalSuccess = async (req, res) => {
     );
 
     console.log("Payment Success:", executeResponse.data);
+
+
+    
     return res.send("<html><body style='background:#fff;'></body></html>");
 
    

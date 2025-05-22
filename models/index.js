@@ -27,6 +27,7 @@ import chatMessage from "./chatMessage/index.js";
 import chat from "./chat/index.js";
 import review from "./reviews/index.js";
 import apiLog from "./apiLog/index.js";
+import adminFees from "./adminFees/index.js";
 
 
  const db = {};
@@ -66,6 +67,7 @@ db.serviceDetail=serviceDetail
  db.chatRole=chatRole
  db.chatMessage=chatMessage
  db.chat=chat
+ db.adminFees=adminFees
 // db.follow = require("./follow");
 // db.nft = require("./nft");
 // db.blog = require("./blog");

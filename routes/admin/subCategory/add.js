@@ -21,7 +21,7 @@ const schema = Joi.object({
   isVirtual: Joi.string().allow(null, ''),
   isInPerson: Joi.string().allow(null, ''),
   serviceCountry:Joi.string().required(),
-  bgPrice: Joi.string().required(),
+  price: Joi.string().required(),
  bgServiceName: Joi.string().required(),
  bgValidation: Joi.array().required(),
 

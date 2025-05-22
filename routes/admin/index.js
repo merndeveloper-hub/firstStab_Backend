@@ -6,7 +6,8 @@ import pro from './pro/index.js'
 import contentPage from "./contentPages/index.js";
 import faqCategory from "./faqCategorie/index.js";
 import faqQuestion from "./faqQuestion/index.js";
-
+import adminLogs from "./adminLogs/index.js";
+import adminCharges from "./adminFees/index.js";
 
 const router = express.Router();
 
@@ -32,5 +33,12 @@ router.use("/user",user)
 
 //-----------Admin Pro---------------//
 router.use("/pro",pro)
+
+
+//-----------apps Logs---------------//
+router.use("/logs",adminLogs)
+
+//-----------apps Logs---------------//
+router.use("/charges",adminCharges)
 
 export default router;
