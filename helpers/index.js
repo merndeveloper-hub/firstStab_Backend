@@ -224,10 +224,10 @@ const getDataWithLimitLogs = async (modelDb, searchQuery, sortedBy, skip, limit)
 };
 
 // Sort data with limit--------------------------------------------
-const getDataWithSort = async (modelDb, searchQuery, sortedBy, skip, limit) =>
+const getDataWithSort = async (modelDb, searchQuery,skip, limit) =>
   await Models[modelDb]
     .find(searchQuery)
-    .sort(sortedBy)
+    //.sort(sortedBy)
     .skip(skip)
     .limit(limit)
     .exec();

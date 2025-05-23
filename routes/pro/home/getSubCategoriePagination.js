@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { find, findOne, getDataWithLimit } from "../../../helpers/index.js";
+import { find, findOne, getDataWithSort } from "../../../helpers/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -16,7 +16,7 @@ const getSubCateWithPagination = async (req, res) => {
     const limit = 5; // Show 5 subcategories per page
     const skip = (page - 1) * limit;
 
-    const singleSubCategories = await getDataWithLimit(
+    const singleSubCategories = await getDataWithSort(
       "subCategory",
       { categoryId: id, status: "Active" },
       skip,
