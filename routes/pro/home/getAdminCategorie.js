@@ -35,15 +35,15 @@ const getCategories = async (req, res) => {
     const userCountry = (findPro.country || "").toLowerCase();
     const isUSUser = US_COUNTRIES.includes(userCountry);
 
-    let categoriesToShow;
+    let categories;
 
     if (isUSUser) {
       // US user → show all active categories
-      categoriesToShow = await find("category", { status: "Active" });
+      categories = await find("category", { status: "Active" });
     } else {
       // Non-US user → show only specific categories (case-insensitive)
       // Use regex to match case-insensitive names in $or
-      categoriesToShow = await find("category", {
+      categories = await find("category", {
         status: "Active",
         $or: nonUSCategory.map(name => ({
           name: { $regex: `^${name}$`, $options: "i" },
@@ -51,14 +51,14 @@ const getCategories = async (req, res) => {
       });
     }
 
-    if (!categoriesToShow || categoriesToShow.length === 0) {
+    if (!categories || categories.length === 0) {
       return res.status(400).send({
         status: 400,
         message: "Category Not found",
       });
     }
 
-    return res.status(200).json({ status: 200, data: { categoriesToShow } });
+    return res.status(200).json({ status: 200, data: { categories } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });
