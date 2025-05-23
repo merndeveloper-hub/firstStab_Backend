@@ -61,16 +61,21 @@ const proCategorySchema = new mongoose.Schema(
 
     candidateId: { type: schemaType.TypeString }, // From Checkr response
     invitationUrl: { type: schemaType.TypeString }, // From Checkr response
-    invitationId: { type: schemaType.TypeString }, 
+    invitationId: { type: schemaType.TypeString },
     package: { type: schemaType.TypeString }, // 'basic_plus', 'plv', etc.
     workLocation: {
       country: { type: schemaType.TypeString },
       state: { type: schemaType.TypeString },
       city: { type: schemaType.TypeString },
     },
-
     bgValidation: { type: schemaType.TypeArray },
-
+    paymentStatus: { type: schemaType.TypeString }, // 'free', 'paid'
+    documents: {
+      certificate: { type: schemaType.TypeString },
+      portfolioLink: String,
+      platformLinks: [{ type: schemaType.TypeString }],
+      governmentId: { type: schemaType.TypeString },
+    },
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,
@@ -81,3 +86,4 @@ const proCategorySchema = new mongoose.Schema(
 );
 
 export default proCategorySchema;
+

@@ -9,6 +9,7 @@ const getApiLogs = async (req, res) => {
     
 
     const getApiLog = await find("apiLog");
+console.log(getApiLog,"getApiLog----");
 
     if (!getApiLog || getApiLog.length === 0) {
       return res.status(400).send({

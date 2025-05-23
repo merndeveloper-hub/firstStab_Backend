@@ -1,9 +1,6 @@
-
-
-
-
 import Stripe from "stripe";
-import { updateDocument } from "../../../helpers/index.js";
+import { updateDocument,findOne } from "../../../helpers/index.js";
+import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -13,7 +10,35 @@ let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const stripeSuccess = async(req, res) => {
   try {
  
-      
+ 
+       const { professionalId, subCategorieId,proCategory } = req.query;
+
+
+// add bg code 
+  const findPro = await findOne("user", { _id: professionalId, userType: "pro" });
+
+    const findSubCategorie = await findOne("subCategory", {
+      _id: subCategorieId,
+    });
+
+    const serviceCountry = findSubCategorie?.serviceCountry;
+    const bgServiceName = findSubCategorie?.bgServiceName;
+    const bgValidation = findSubCategorie?.bgValidation;
+    const userCountry = findPro?.country;
+    const id = professionalId;
+    const proCategoryId = proCategory
+
+
+
+
+    const invitationURL = await createCandidates(
+      id,
+      bgServiceName,
+      bgValidation,
+      serviceCountry,
+      userCountry,
+      proCategoryId
+    );
     
     const [session, lineItems] = await Promise.all([
       stripe.checkout.sessions.retrieve(req.query.session_id, {
@@ -23,14 +48,12 @@ const stripeSuccess = async(req, res) => {
     ]);
     
    
-        // Debug log
-        console.log("Stripe session: ", JSON.stringify(session, null, 2));
-        console.log("Line items: ", JSON.stringify(lineItems, null, 2));
+     
     
         const { card } = session.payment_intent.payment_method;
 // Metadata se fees info le lo, agar available hai
     const metadata = session.metadata || {};
-    console.log(metadata,"metadata----");
+   
     
     const netAmount = metadata.netAmount ? parseInt(metadata.netAmount) : null;
     const stripeFee = metadata.stripeFee ? parseInt(metadata.stripeFee) : null;
@@ -69,8 +92,10 @@ const stripeSuccess = async(req, res) => {
           );
         }
 
+return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
+    
 
-    return res.send("<html><body style='background:#fff;'></body></html>");
+  //  return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }

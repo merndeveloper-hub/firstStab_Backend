@@ -213,6 +213,16 @@ const getDataWithLimit = async (modelDb, searchQuery,sortedBy, skip, limit) =>
     .limit(limit)
     .exec();
 
+    // REQ and RES logs Get
+const getDataWithLimitLogs = async (modelDb, searchQuery, sortedBy, skip, limit) => {
+  return await Models[modelDb].aggregate([
+    { $match: searchQuery },
+    { $sort: sortedBy },
+    { $skip: skip },
+    { $limit: limit }
+  ],{ allowDiskUse: true }); // ✅ this is the correct syntax
+};
+
 // Sort data with limit--------------------------------------------
 const getDataWithSort = async (modelDb, searchQuery, sortedBy, skip, limit) =>
   await Models[modelDb]
@@ -288,5 +298,6 @@ export {
   axiosGetCall,
   findAndSort,
   updateDocuments,
-  getDataWithSort
+  getDataWithSort,
+  getDataWithLimitLogs
 };

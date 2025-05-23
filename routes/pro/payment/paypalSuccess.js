@@ -1,10 +1,38 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
-import { updateDocument } from "../../../helpers/index.js";
+import { updateDocument,findOne } from "../../../helpers/index.js";
+import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
 
 const paypalSuccess = async (req, res) => {
   try {
-    const { token } = req.query;
+    const { token, professionalId, subCategorieId,proCategory } = req.query;
+
+
+// add bg code 
+  const findPro = await findOne("user", { _id: professionalId, userType: "pro" });
+
+    const findSubCategorie = await findOne("subCategory", {
+      _id: subCategorieId,
+    });
+
+    const serviceCountry = findSubCategorie?.serviceCountry;
+    const bgServiceName = findSubCategorie?.bgServiceName;
+    const bgValidation = findSubCategorie?.bgValidation;
+    const userCountry = findPro?.country;
+    const id = professionalId;
+    const proCategoryId = proCategory
+
+console.log(proCategoryId,"proCategoryId-------");
+
+
+    const invitationURL = await createCandidates(
+      id,
+      bgServiceName,
+      bgValidation,
+      serviceCountry,
+      userCountry,
+      proCategoryId
+    );
 
     const getToken = await getAccessToken();
 
@@ -61,9 +89,9 @@ const paypalSuccess = async (req, res) => {
 
     console.log("Payment Success:", executeResponse.data);
 
-
+return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
     
-    return res.send("<html><body style='background:#fff;'></body></html>");
+   // return res.send("<html><body style='background:#fff;'></body></html>");
 
    
   } catch (error) {

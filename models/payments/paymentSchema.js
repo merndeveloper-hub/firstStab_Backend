@@ -6,7 +6,7 @@ const PaymentSchema = new mongoose.Schema(
     professionalId: { type: SchemaType.ObjectID, ref: "User" },
     amount: {
       type: SchemaType.TypeNumber,
-      required: true,
+     
     },
 
     paymentIntentId: { type: SchemaType.TypeString },
