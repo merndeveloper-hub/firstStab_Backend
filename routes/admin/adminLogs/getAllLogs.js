@@ -1,4 +1,4 @@
-import { find, getDataWithSort } from "../../../helpers/index.js";
+import { find, getDataWithLimit } from "../../../helpers/index.js";
 
 const getLogs = async (req, res) => {
   try {
@@ -7,10 +7,10 @@ const getLogs = async (req, res) => {
     const limit = 5;
     const skip = (page - 1) * limit;
     const sort = { createdAt: -1 };
-    const logs = await getDataWithSort(
+    const logs = await getDataWithLimit(
       "apiLog",
       {},
-    sort,
+    {},
       skip,
       limit
     )

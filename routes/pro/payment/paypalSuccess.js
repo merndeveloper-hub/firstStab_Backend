@@ -34,6 +34,8 @@ console.log(proCategoryId,"proCategoryId-------");
       proCategoryId
     );
 
+    console.log(invitationURL,"invitation_url------");
+    
     const getToken = await getAccessToken();
 
     const executeResponse = await axios.post(
@@ -89,9 +91,17 @@ console.log(proCategoryId,"proCategoryId-------");
 
     console.log("Payment Success:", executeResponse.data);
 
-return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
+//return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
+//return res.redirect(`myapp://payment-success?invitationUrl=${encodeURIComponent(invitationURL.invitation_url)}`);
+
     
-   // return res.send("<html><body style='background:#fff;'></body></html>");
+  return res.send(`
+  <html>
+    <body style="background:#fff; text-align:center; padding-top:50px;">
+      <h2>Redirecting...</h2>
+    </body>
+  </html>
+`);
 
    
   } catch (error) {

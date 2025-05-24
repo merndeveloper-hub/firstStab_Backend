@@ -70,12 +70,24 @@ const proCategorySchema = new mongoose.Schema(
     },
     bgValidation: { type: schemaType.TypeArray },
     paymentStatus: { type: schemaType.TypeString }, // 'free', 'paid'
+    
     documents: {
       certificate: { type: schemaType.TypeString },
       portfolioLink: String,
       platformLinks: [{ type: schemaType.TypeString }],
       governmentId: { type: schemaType.TypeString },
     },
+  
+    isCompany: { type: schemaType.TypeBoolean},
+  isUSBased: { type: schemaType.TypeBoolean },
+  governmentIdUrl: { type: schemaType.TypeString },
+  ratingsUrls: [{type: schemaType.TypeString}],
+ // certificates: [CertificateSchema],
+  insuranceUrl: { type: schemaType.TypeString },
+  companyRegistrationUrl: { type: schemaType.TypeString },
+  tinUrl:  { type: schemaType.TypeString },     // For US
+  w8BenUrl:  { type: schemaType.TypeString },     // For Non-US individual
+  w8BenEUrl:  { type: schemaType.TypeString },      // For Non-US entity
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,

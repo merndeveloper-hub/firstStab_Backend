@@ -10,6 +10,7 @@ import paypalSuccess from "./paypalSuccess.js";
 import paymentCancel from "./paypalCancel.js";
 import stripeSuccess from "./stripeSuccess.js";
 import stripeCancel from "./stripeCancel.js";
+import getbgLink from "./bgLink.js";
 //import sendPayout from "./adminToProAccount.js";
 //import capturePayment from "./capturePayment.js";
 
@@ -45,6 +46,8 @@ router.get("/stripesuccess", stripeSuccess);
 router.get("/stripecancel", stripeCancel);
 
 
+//------------bg link get from proCategories-----//
+router.get("/bglink/:id", getbgLink);
 export default router;
 
 
