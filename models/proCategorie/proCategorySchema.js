@@ -78,8 +78,8 @@ const proCategorySchema = new mongoose.Schema(
       governmentId: { type: schemaType.TypeString },
     },
   
-    isCompany: { type: schemaType.TypeBoolean},
-  isUSBased: { type: schemaType.TypeBoolean },
+    isCompany: { type: schemaType.TypeString},
+  isUSBased: { type: schemaType.TypeString },
   governmentIdUrl: { type: schemaType.TypeString },
   ratingsUrls: [{type: schemaType.TypeString}],
  // certificates: [CertificateSchema],

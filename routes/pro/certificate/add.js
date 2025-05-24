@@ -236,6 +236,7 @@ const addCertificate = async (req, res) => {
       w8BenUrl,
       w8BenEUrl,
     } = req.body;
+console.log(typeof(isCompany,"isUSBased------------z"));
 
 
     const pro = await findOne("user", {
@@ -287,19 +288,19 @@ console.log("8");
       return res.status(400).json({ status: 400, message: "Government ID is required" });
     }
 console.log("9");
-    if (isCompany && !req.body.companyRegistrationUrl) {
+    if (isCompany == "true" && isUSBased == "false" && !req.body.companyRegistrationUrl) {
       return res.status(400).json({ status: 400, message: "Company Registration is required for companies" });
     }
 console.log("10");
-    if (isUSBased && !req.body.tinUrl) {
+    if (isUSBased == "true" && !req.body.tinUrl) {
       return res.status(400).json({ status: 400, message: "TIN is required for US-based Pros" });
     }
 console.log("11");
-    if (isUSBased && isCompany && !req.body.w8BenUrl) {
+    if (isUSBased == "false" && isCompany == "false" && !req.body.w8BenUrl) {
       return res.status(400).json({ status: 400, message: "W-8BEN is required for Non-US Pros" });
     }
 console.log("12");
-    if (isUSBased === false && isCompany  && !req.body.w8BenEUrl) {
+    if (isUSBased == "false" && isCompany == "true"  && !req.body.w8BenEUrl) {
       return res.status(400).json({ status: 400, message: "W-8BEN-E is required for Non-US Companies" });
     }
 console.log("3");

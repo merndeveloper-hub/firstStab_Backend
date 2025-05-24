@@ -73,7 +73,7 @@ const registerationFees = await findOne("adminFees")
       },
     ],
     application_context: {
-       return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+       return_url: `http://3.110.42.187:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
       cancel_url: "http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel",
       shipping_preference: "NO_SHIPPING",
       user_action: "PAY_NOW",
