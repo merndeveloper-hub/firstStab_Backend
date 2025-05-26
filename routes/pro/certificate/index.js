@@ -9,6 +9,7 @@ import getSingleProCertificate from "./getSingle.js";
 
 //-----Media upload icon and image -------/
 import multipart from "connect-multiparty";
+import temporaryCertificate from "./temporaryCertificate.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -18,14 +19,13 @@ const router = express.Router();
 // router.get("/allcategory", getMainCategories);
 
 //-------------Add Certificate Pro--------------//
-router.put("/",multipartMiddleware, addCertificate);
+router.put("/:id",multipartMiddleware, addCertificate);
 
 // //-------------Update Sub Category--------------//
-// router.put("/:id",multipartMiddleware, updateSubCategory);
+ router.put("/temp/:id",multipartMiddleware, temporaryCertificate);
 
 
-// //-------------Get All Sub Category--------------//
-// router.get("/", getSubCategories);
+
 
 
 // //-------------Get Pro Service Certificate--------------//

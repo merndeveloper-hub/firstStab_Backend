@@ -8,6 +8,7 @@ import faqCategory from "./faqCategorie/index.js";
 import faqQuestion from "./faqQuestion/index.js";
 import adminLogs from "./adminLogs/index.js";
 import adminCharges from "./adminFees/index.js";
+import certificate  from "./certificate/index.js";
 
 const router = express.Router();
 
@@ -33,6 +34,9 @@ router.use("/user",user)
 
 //-----------Admin Pro---------------//
 router.use("/pro",pro)
+
+//-----------Admin Pro Certificate---------------//
+router.use("/certificate",certificate)
 
 
 //-----------apps Logs---------------//

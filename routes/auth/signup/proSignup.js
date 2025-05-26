@@ -13,6 +13,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import sendOTPSignup from "../otpVerification/sendOTPSignup.js";
+import { User } from "@twilio/conversations";
 
 const schema = Joi.object({
   first_Name: Joi.string().min(3).required(),
@@ -226,7 +227,21 @@ const proSignup = async (req, res) => {
       totalRating:0,
       totalPro: userCount[0] ? userCount[0]?.activeProUsers + 1 : 1,
     });
-console.log(user,"user-0------------------------");
+
+const US_COUNTRIES = [
+  "United States",
+  "American Samoa",
+  "Guam",
+  "Northern Mariana Islands",
+  "Puerto Rico",
+  "U.S. Virgin Islands",
+  "United States Minor Outlying Islands",
+];
+
+const isUS = US_COUNTRIES.includes(user?.country);
+const region = isUS ? "US" : "Non-US";
+
+
 
     const token = jwt.sign({ id: user._id }, SECRET, {
       expiresIn: JWT_EXPIRES_IN,
@@ -240,6 +255,8 @@ console.log(user,"user-0------------------------");
       message: "OTP sent to your email. Check inbox to proceed.",
       data: {
         userId: user._id,
+        region:region
+        
       },
     });
     // return res.status(200).send({ status: 200, data:{user, token} });

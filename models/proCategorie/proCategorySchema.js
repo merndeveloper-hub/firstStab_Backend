@@ -71,12 +71,11 @@ const proCategorySchema = new mongoose.Schema(
     bgValidation: { type: schemaType.TypeArray },
     paymentStatus: { type: schemaType.TypeString }, // 'free', 'paid'
     
-    documents: {
-      certificate: { type: schemaType.TypeString },
-      portfolioLink: String,
+  
+      certificate: [{ type: schemaType.TypeString }],
       platformLinks: [{ type: schemaType.TypeString }],
-      governmentId: { type: schemaType.TypeString },
-    },
+   
+
   
     isCompany: { type: schemaType.TypeString},
   isUSBased: { type: schemaType.TypeString },
