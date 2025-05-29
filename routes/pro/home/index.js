@@ -11,6 +11,7 @@ import removeServiceCategory from "./removeServiceCategory.js";
 import getServiceCategoryCount from "./getServiceCount.js";
 import createService from "./addService.js";
 import updateService from "./updateService.js";
+import updateServiceType from "./updateServiceType.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -41,6 +42,7 @@ router.post("/", createService);
 //-----Delete pro created service----//
 router.delete("/service/:id", removeServiceCategory);
 
-
+//--------update Service Type With Categories and subcategories and businessname---//
+ router.put("/:id",updateServiceType);
 
 export default router;

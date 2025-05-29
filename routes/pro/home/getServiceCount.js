@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { find } from "../../../helpers/index.js";
+import { find,getAggregate } from "../../../helpers/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -42,9 +42,28 @@ const getServiceCategoryCount = async (req, res) => {
       });
     }
 
-
+  const categories = await getAggregate("category", [
+      {
+          $match:{status:"Active"}
+      },
+      {
+        $lookup: {
+          from: "subcategories",
+          let: { categoryId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$categoryId", "$$categoryId"] } } },
+           
+          ],
+          as: "subCategory",
+        },
+      },
+      {
+        $sort: { _id: -1 },
+      },
     
-    return res.status(200).json({ status: 200, data: { result,getBusinnessName:getBusinness[0].businessname } });
+    ]);
+    
+    return res.status(200).json({ status: 200, data: {categories, result,getBusinnessName:getBusinness[0].businessname } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

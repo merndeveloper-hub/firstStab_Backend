@@ -13,6 +13,7 @@ const adminFeesSchema = new mongoose.Schema(
      currency: {
       type: schemaType.TypeString,
     },
+     status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },
     created_date: {
       type: schemaType.TypeDate,
       default: Date.now,

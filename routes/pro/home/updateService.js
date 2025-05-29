@@ -24,30 +24,27 @@ const updateService = async (req, res) => {
   try {
    // await schema.validateAsync(req.body);
 
-
-const {proId} = req.body[0]
-console.log(proId,"body");
-
-const deleteCategory = await deleteManyDocument("proCategory",{proId:proId})
-console.log(deleteCategory,"delete");
-
-const category = await proCategory.insertMany(req.body);
-console.log(category, "insert");
-
-
-//     const category = await insertManyDocuments("proCategory", 
-//       [...req.body],
-//     );
-// console.log(category,"category");
-
-    const proInfo = await updateDocument("user",{_id:proId}, {
-      ...req.body,
+const existingCategory = await findOne("proCategory", {
+      proId: proId,
+      categoryId:categoryId
+      //"subCategories.id": subCategories[0].id, // assuming only 1 subCategory for check
     });
+   if (!existingCategory) {
+      return res.status(400).json({
+        status: 400,
+        message: "This category and subcategory doesn't exists.",
+      });
+    }
+
+    const updateCategory = await updateDocument("proCategory",{_id:id},
+       {
+        ...req.body,
+      });
 
     return res.status(200).json({
       status: 200,
-      message: "Category updated successfully",
-     category,
+      message: "Subcategory updated successfully",
+     updateCategory,
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });

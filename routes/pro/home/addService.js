@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument } from "../../../helpers/index.js";
+import { insertNewDocument,findOne } from "../../../helpers/index.js";
 
 
 const schema = Joi.object({
@@ -22,7 +22,17 @@ const createService = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
 
-  
+  const { proId, categoryId, subCategories } = req.body;
+
+    // Check if a document already exists with the same proId, categoryId, and subCategory id
+    v
+
+    if (existingCategory) {
+      return res.status(400).json({
+        status: 400,
+        message: "This category and subcategory already exists for this pro.",
+      });
+    }
 
     const category = await insertNewDocument("proCategory", {
       ...req.body,
