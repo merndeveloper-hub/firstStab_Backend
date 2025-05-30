@@ -12,6 +12,7 @@ import getServiceCategoryCount from "./getServiceCount.js";
 import createService from "./addService.js";
 import updateService from "./updateService.js";
 import updateServiceType from "./updateServiceType.js";
+import getSelectedServiceCategory from "./selectedSubcategorie.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -44,5 +45,10 @@ router.delete("/service/:id", removeServiceCategory);
 
 //--------update Service Type With Categories and subcategories and businessname---//
  router.put("/:id",updateServiceType);
+
+
+//--------get seleted Service With Categories and subcategories and businessname---//
+ router.get("/selected/:id",getSelectedServiceCategory);
+
 
 export default router;
