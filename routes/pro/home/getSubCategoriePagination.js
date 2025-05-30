@@ -34,8 +34,9 @@ const getSubCateWithPagination = async (req, res) => {
       { categoryId: id, status: "Active" }
     );
 
+   
 
-    return res.status(200).json({ status: 200, data: { singleSubCategories,count:countSingleSubCategories?.length } });
+    return res.status(200).json({ status: 200, data: {  singleSubCategories,count:countSingleSubCategories?.length } });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

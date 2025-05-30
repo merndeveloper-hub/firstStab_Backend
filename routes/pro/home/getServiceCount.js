@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { find,getAggregate } from "../../../helpers/index.js";
+import { find } from "../../../helpers/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -19,51 +19,52 @@ const getServiceCategoryCount = async (req, res) => {
     }
 
     const getcategory = await find("category");
+    const getSubCategories = await find("subCategory"); // 👈 fetch all subcategories
 
     const result = getUserCategory.map((item) => {
       const category = getcategory.find(
         (cat) => String(cat._id) === String(item.categoryId)
       );
 
+      const selectedSubCatIds = item.subCategories.map((sc) => String(sc.id));
+
+      // Subcategories for this category
+      const subCategoriesForCategory = getSubCategories.filter(
+        (subCat) => String(subCat.categoryId) === String(item.categoryId)
+      );
+
+      const formattedSubCategories = subCategoriesForCategory.map((subCat) => ({
+        id: subCat._id,
+        name: subCat.name,
+        selected: selectedSubCatIds.includes(String(subCat._id)),
+      }));
+
       return {
         name: category ? category.name : "Unknown",
+        image:category ? category.image : "Unknown",
+        icon:category ? category.icon : "Unknown",
         subCategoryCount: item.subCategories.length,
-        item: item,
+        subCategories: formattedSubCategories,
+        item,
       };
     });
 
-    const getBusinness = await find("user",{_id:id,userType:"pro"});
-  
+    const getBusinness = await find("user", { _id: id, userType: "pro" });
+
     if (!getBusinness || getBusinness.length === 0) {
-     
       return res.status(400).send({
         status: 400,
-        message: "No Buniness Info found"
+        message: "No Business Info found",
       });
     }
 
-  const categories = await getAggregate("category", [
-      {
-          $match:{status:"Active"}
+    return res.status(200).json({
+      status: 200,
+      data: {
+        result,
+        getBusinnessName: getBusinness[0]?.businessname,
       },
-      {
-        $lookup: {
-          from: "subcategories",
-          let: { categoryId: "$_id" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$categoryId", "$$categoryId"] } } },
-           
-          ],
-          as: "subCategory",
-        },
-      },
-      {
-        $sort: { _id: -1 },
-      },
-    
-    ]);
-    
-    return res.status(200).json({ status: 200, data: {categories, result,getBusinnessName:getBusinness[0].businessname } });
+    });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });
