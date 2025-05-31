@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { find, getAggregate } from "../../../helpers/index.js";
-import { ObjectId } from "mongodb"; // Import ObjectId
+import { ObjectId } from "mongodb";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -10,11 +10,6 @@ const getSelectedServiceCategory = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
     const { id } = req.params;
-
-    // Pagination query params
-    const limit = parseInt(req.query.limit) || 5;
-    const page = parseInt(req.query.page) || 1;
-    const skip = (page - 1) * limit;
 
     // Step 1: Get selected proCategory data
     const proCategoryList = await find("proCategory", { proId: new ObjectId(id) });
@@ -32,15 +27,24 @@ const getSelectedServiceCategory = async (req, res) => {
     proCategoryList.forEach(item => {
       const catId = item.categoryId;
       categoryIds.push(catId);
-      categorySubMap[catId.toString()] = item.subCategories.map(sub => sub.id);
+
+      categorySubMap[catId.toString()] = item.subCategories.map(sub => {
+        const services = {};
+        ["isRemote", "isChat", "isVirtual", "isInPerson"].forEach(key => {
+          if (sub[key]) services[key] = true;
+        });
+        return {
+          id: new ObjectId(sub.id),
+          services,
+        };
+      });
     });
 
-    const categorySubMapArr = Object.entries(categorySubMap).map(([catId, subIds]) => ({
+    const categorySubMapArr = Object.entries(categorySubMap).map(([catId, subItems]) => ({
       categoryId: new ObjectId(catId),
-      subCategoryIds: subIds,
+      subItems, // array of { id, services }
     }));
 
-    // Step 2: Get full category and subcategory details with selected flags
     const categories = await getAggregate("category", [
       {
         $match: {
@@ -60,26 +64,62 @@ const getSelectedServiceCategory = async (req, res) => {
             {
               $addFields: {
                 selected: {
-                  $in: [
-                    "$_id",
-                    {
+                  $let: {
+                    vars: {
+                      matchedCat: {
+                        $first: {
+                          $filter: {
+                            input: categorySubMapArr,
+                            as: "catMap",
+                            cond: { $eq: ["$$catMap.categoryId", "$$categoryId"] }
+                          }
+                        }
+                      }
+                    },
+                    in: {
+                      $in: [
+                        "$_id",
+                        {
+                          $map: {
+                            input: { $ifNull: ["$$matchedCat.subItems", []] },
+                            as: "sub",
+                            in: "$$sub.id"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                services: {
+                  $let: {
+                    vars: {
+                      matchedCat: {
+                        $first: {
+                          $filter: {
+                            input: categorySubMapArr,
+                            as: "catMap",
+                            cond: { $eq: ["$$catMap.categoryId", "$$categoryId"] }
+                          }
+                        }
+                      }
+                    },
+                    in: {
                       $let: {
                         vars: {
-                          matchedCat: {
+                          matchedSub: {
                             $first: {
                               $filter: {
-                                input: categorySubMapArr,
-                                cond: { $eq: ["$$this.categoryId", "$$categoryId"] }
+                                input: { $ifNull: ["$$matchedCat.subItems", []] },
+                                as: "sub",
+                                cond: { $eq: ["$$sub.id", "$_id"] }
                               }
                             }
                           }
                         },
-                        in: {
-                          $ifNull: ["$$matchedCat.subCategoryIds", []]
-                        }
+                        in: { $ifNull: ["$$matchedSub.services", {}] }
                       }
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -89,9 +129,7 @@ const getSelectedServiceCategory = async (req, res) => {
       },
       {
         $sort: { _id: -1 }
-      },
-      { $skip: skip },
-      { $limit: limit }
+      }
     ]);
 
     // Step 3: Get Pro business name
@@ -104,20 +142,11 @@ const getSelectedServiceCategory = async (req, res) => {
       });
     }
 
-    // Get total count (without pagination)
-    const total = categoryIds.length;
-
     return res.status(200).json({
       status: 200,
       data: {
         categories,
-        getBusinessName: getBusiness[0].businessname,
-        pagination: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit)
-        }
+        getBusinessName: getBusiness[0].businessname
       }
     });
 
