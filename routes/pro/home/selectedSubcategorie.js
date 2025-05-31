@@ -11,6 +11,11 @@ const getSelectedServiceCategory = async (req, res) => {
     await schema.validateAsync(req.params);
     const { id } = req.params;
 
+    // Pagination query params
+    const limit = parseInt(req.query.limit) || 5;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
     // Step 1: Get selected proCategory data
     const proCategoryList = await find("proCategory", { proId: new ObjectId(id) });
 
@@ -25,16 +30,14 @@ const getSelectedServiceCategory = async (req, res) => {
     const categoryIds = [];
 
     proCategoryList.forEach(item => {
-      const catId = item.categoryId; // Already ObjectId
+      const catId = item.categoryId;
       categoryIds.push(catId);
-      // Map categoryId to array of subCategory ObjectIds
       categorySubMap[catId.toString()] = item.subCategories.map(sub => sub.id);
     });
 
-    // Convert categorySubMap object into array to pass to aggregation pipeline
     const categorySubMapArr = Object.entries(categorySubMap).map(([catId, subIds]) => ({
       categoryId: new ObjectId(catId),
-      subCategoryIds: subIds, // Array of ObjectId
+      subCategoryIds: subIds,
     }));
 
     // Step 2: Get full category and subcategory details with selected flags
@@ -86,7 +89,9 @@ const getSelectedServiceCategory = async (req, res) => {
       },
       {
         $sort: { _id: -1 }
-      }
+      },
+      { $skip: skip },
+      { $limit: limit }
     ]);
 
     // Step 3: Get Pro business name
@@ -99,11 +104,20 @@ const getSelectedServiceCategory = async (req, res) => {
       });
     }
 
+    // Get total count (without pagination)
+    const total = categoryIds.length;
+
     return res.status(200).json({
       status: 200,
       data: {
         categories,
-        getBusinessName: getBusiness[0].businessname
+        getBusinessName: getBusiness[0].businessname,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit)
+        }
       }
     });
 
