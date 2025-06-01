@@ -1,71 +1,85 @@
-import { find, updateDocument } from "../../../helpers/index.js";
 
-const parseBoolean = value => {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "string") return value.toLowerCase() === "true";
-  return undefined;
-};
+import { find, insertNewDocument, updateDocument } from "../../../helpers/index.js";
 
 const updateServiceType = async (req, res) => {
+  const { id: proId } = req.params; // proId
+  const { subCategories } = req.body;
+
   try {
-    const { id: proId } = req.params;
-    const { subCategories = [] } = req.body;
+ const proCategories = await find("proCategory", { proId });
+console.log("proCategories",proCategories);
 
-    if (!Array.isArray(subCategories) || subCategories.length === 0) {
-      return res.status(400).json({ status: 400, message: "subCategories array is required." });
-    }
+if (!proCategories || proCategories.length === 0) {
+  return res.status(404).json({ message: "ProCategory not found for this proId" });
+}
 
-    const proCategories = await find("proCategory", { proId });
+let isUpdated = false;
 
-    let updatedCount = 0;
-
-    for (const doc of proCategories) {
-      const updateMap = {};
-      subCategories.forEach(sc => {
-        if (sc.id) {
-          updateMap[sc.id.toString()] = sc;
-        }
-      });
-
-      let updated = false;
-
-      const updatedSubCategories = doc.subCategories.map(subCat => {
-        const subCatId = (subCat.id || subCat._id)?.toString();
-        const changes = updateMap[subCatId];
-
-        if (!changes) return subCat;
-
-        // Only update provided fields, leave others as-is
-        const updatedSubCat = { ...subCat };
-
-        ["isRemote", "isChat", "isVirtual", "isInPerson"].forEach(field => {
-          if (field in changes) {
-            updatedSubCat[field] = parseBoolean(changes[field]);
-          }
-        });
-
-        updated = true;
-        return updatedSubCat;
-      });
-console.log(updatedSubCategories[0]._doc._id,"updatedSubCategories");
-console.log(updatedSubCategories[0]._id,"------------");
+for (const proCategory of proCategories) {
+  for (const subCat of subCategories) {
+    const index = proCategory.subCategories.findIndex(
+      (sc) => sc.id == subCat.id
+    );
 
 
-      if (updated) {
-        await updateDocument("proCategory", { _id: updatedSubCategories[0]._id }, {...req.body });
-        updatedCount++;
-      }
-    }
+ 
 
-    return res.status(200).json({
-      status: 200,
-      message: `${updatedCount} proCategory document(s) updated successfully.`,
-    });
+  if (index !== -1) {
+    const existing = proCategory.subCategories[index];
 
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ status: 500, message: err.message });
+    proCategory.subCategories[index] = {
+      ...existing,
+      id:proCategory.subCategories[index].id,
+      isChat: subCat.isChat !== undefined ? subCat.isChat == true : existing.isChat,
+      isVirtual: subCat.isVirtual !== undefined ? subCat.isVirtual == true : existing.isVirtual,
+      isRemote: subCat.isRemote !== undefined ? subCat.isRemote == true : existing.isRemote,
+      isInPerson: subCat.isInPerson !== undefined ? subCat.isInPerson == true : existing.isInPerson,
+    };
+
+    isUpdated = true;
   }
-};
+//   else{
+// console.log(proCategories,"existing");
+//     await insertNewDocument('proCategory',{...proCategories ,
+//          subCategories: {
+//            id: subCat.id,
+//            ...(subCat.isChat !== undefined && { isChat: flags.isChat }),
+//            ...(subCat.isVirtual !== undefined && { isVirtual: flags.isVirtual }),
+//            ...(subCat.isRemote !== undefined && { isRemote: flags.isRemote }),
+//            ...(subCat.isInPerson !== undefined && { isInPerson: flags.isInPerson })}
+
+//          })
+         
+        
+  
+    
+    
+    
+ 
+  
+
+    }
+
+      await updateDocument("proCategory", { _id: proCategory._id }, {
+        subCategories: proCategory.subCategories,
+      });
+    }
+  
+
+
+if (!isUpdated) {
+  
+  return res.status(404).json({ message: "No matching subcategory found to update" });
+}
+
+return res.status(200).json({
+  message: "Subcategories updated successfully",
+});
+
+  } catch (error) {
+    console.error("Error in updateServiceType:", error);
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+}
 
 export default updateServiceType;
