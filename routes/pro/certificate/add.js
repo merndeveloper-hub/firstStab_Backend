@@ -27,7 +27,10 @@ const addCertificate = async (req, res) => {
   try {
     await schema.validateAsync(req.params)
     const {id} = req.params
-    const {  isCompany, isUSBased } = req.body;
+    const {  isCompany, isUSBased,categoryId,subCategoryId,certificate,governmentId,companyRegistrationUrl
+      ,tinUrl,w8BenUrl,w8BenEUrl
+    } = req.body;
+console.log(req.body,"body");
 
     const pro = await findOne("user", {
       _id: id,
@@ -40,35 +43,39 @@ const addCertificate = async (req, res) => {
         message: "No Professional found",
       });
     }
-
+let uploaded;
     // Explicit file uploads
     if (req?.files?.certificate?.path) {
-      const uploaded = await uploadFile(req.files.certificate);
+       uploaded = await uploadFile(req.files.certificate);
       req.body.certificate = uploaded.url;
     }
 
     if (req?.files?.governmentId?.path) {
-      const uploaded = await uploadFile(req.files.governmentId);
+       uploaded = await uploadFile(req.files.governmentId);
       req.body.governmentId = uploaded.url;
     }
 
     if (req?.files?.companyRegistrationUrl?.path) {
-      const uploaded = await uploadFile(req.files.companyRegistrationUrl);
+       uploaded = await uploadFile(req.files.companyRegistrationUrl);
       req.body.companyRegistrationUrl = uploaded.url;
     }
 
     if (req?.files?.tinUrl?.path) {
-      const uploaded = await uploadFile(req.files.tinUrl);
+       uploaded = await uploadFile(req.files.tinUrl);
       req.body.tinUrl = uploaded.url;
     }
 
     if (req?.files?.w8BenUrl?.path) {
-      const uploaded = await uploadFile(req.files.w8BenUrl);
-      req.body.w8BenUrl = uploaded.url;
+       uploaded = await uploadFile(req.files.w8BenUrl);
+      console.log(uploaded,"uploaded----");
+      
+      console.log(req.body.w8BenUrl,"req.body.w8BenUrl");
+      
     }
+    req.body.w8BenUrl = uploaded.url;
 
     if (req?.files?.w8BenEUrl?.path) {
-      const uploaded = await uploadFile(req.files.w8BenEUrl);
+       uploaded = await uploadFile(req.files.w8BenEUrl);
       req.body.w8BenEUrl = uploaded.url;
     }
 
@@ -114,10 +121,15 @@ const addCertificate = async (req, res) => {
     }
 
     // Save to DB
+
+  
+
+
     const updated = await updateDocument(
       "proCategory",
-      { proId: id },
+      { proId: id,categoryId, "subCategories.id": subCategoryId},
       {
+      
         ...req.body,
       
       }

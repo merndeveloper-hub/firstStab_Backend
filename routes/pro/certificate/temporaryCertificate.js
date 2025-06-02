@@ -11,7 +11,8 @@ cloudinary.config({
 
 // Validation schema
 const schemaBody = Joi.object({
-
+categoryId:Joi.string().required(),
+subCategoryId:Joi.string().required(),
   platformLinks: Joi.array()
     .items(
       Joi.string()
@@ -43,7 +44,7 @@ const temporaryCertificate = async (req, res) => {
     await schema.validateAsync(req.params);
     await schemaBody.validateAsync(req.body)
     const { id } = req.params;
-    const { platformLinks } = req.body;
+    const { platformLinks,categoryId,subCategoryId } = req.body;
 
     const pro = await findOne("user", {
       _id: id,

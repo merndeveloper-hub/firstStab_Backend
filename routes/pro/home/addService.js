@@ -23,16 +23,22 @@ const createService = async (req, res) => {
     await schema.validateAsync(req.body);
 
   const { proId, categoryId, subCategories } = req.body;
+const subCategoryId = subCategories[0]?.id;
 
+    const findService = await findOne("proCategory", {
+     proId,categoryId,"subCategories.id": subCategoryId
+    });
+    console.log(findService,"findService");
+    
     // Check if a document already exists with the same proId, categoryId, and subCategory id
     
 
-    // if (existingCategory) {
-    //   return res.status(400).json({
-    //     status: 400,
-    //     message: "This category and subcategory already exists for this pro.",
-    //   });
-    // }
+    if (findService) {
+      return res.status(400).json({
+        status: 400,
+        message: "This category and subcategory already exists",
+      });
+    }
 
     const category = await insertNewDocument("proCategory", {
       ...req.body,
