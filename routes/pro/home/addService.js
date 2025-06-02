@@ -27,12 +27,12 @@ const createService = async (req, res) => {
     // Check if a document already exists with the same proId, categoryId, and subCategory id
     
 
-    if (existingCategory) {
-      return res.status(400).json({
-        status: 400,
-        message: "This category and subcategory already exists for this pro.",
-      });
-    }
+    // if (existingCategory) {
+    //   return res.status(400).json({
+    //     status: 400,
+    //     message: "This category and subcategory already exists for this pro.",
+    //   });
+    // }
 
     const category = await insertNewDocument("proCategory", {
       ...req.body,
