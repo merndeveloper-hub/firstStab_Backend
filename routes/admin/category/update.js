@@ -12,7 +12,6 @@ const schema = Joi.object({
   name: Joi.string(),
   commission: Joi.number(),
   taxCode: Joi.string(),
-  platFormFees: Joi.number(),
   description: Joi.string(),
   status: Joi.string(),
   isRemote: Joi.string(),

@@ -25,7 +25,7 @@ const createService = async (req, res) => {
   const { proId, categoryId, subCategories } = req.body;
 
     // Check if a document already exists with the same proId, categoryId, and subCategory id
-    v
+    
 
     if (existingCategory) {
       return res.status(400).json({
