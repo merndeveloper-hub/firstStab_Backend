@@ -51,6 +51,14 @@ console.log(categoryData,"daa");
       });
     }
 
+    if(categoryData?.serviceCountry == 'US' && bgServiceName != 'checkr'  ){
+        return res.status(400).send({
+        status: 400,
+        message: "Select correct background service",
+      });
+    }
+     
+
     if (!req?.files?.icon?.path) {
       return res.status(400).json({
         status: 400,
@@ -79,7 +87,7 @@ console.log(categoryData,"daa");
     req.body.image = category_Image.url;
 
     let bgPackageName = "";
-if (bgServiceName === "checkr") {
+if (bgServiceName == "checkr") {
 
   const validations = req.body.bgValidation;
 
