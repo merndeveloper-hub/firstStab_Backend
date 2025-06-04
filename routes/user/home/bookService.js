@@ -265,6 +265,7 @@ console.log("checking");
         {
           $match: {
             categoryId: new mongoose.Types.ObjectId(categoryId), // Match category ID
+            status:"Active", // Add this line (2025/06/04)
             "subCategories.id": new mongoose.Types.ObjectId(req.body.subCategories.id), // Match subCategory ID
           },
         },
@@ -369,6 +370,7 @@ for (const doc of getProCategory) {
             $match: {
               proId: new mongoose.Types.ObjectId(professionalId), // Match professional ID
               categoryId: new mongoose.Types.ObjectId(categoryId), // Match category ID
+               status:"Active", // Add this line (2025/06/04)
               subCategories: {
                 $elemMatch: {
                   id: new mongoose.Types.ObjectId(req.body.subCategories.id), // Match subCategory ID

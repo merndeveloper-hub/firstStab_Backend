@@ -84,6 +84,8 @@ const createService = async (req, res) => {
       });
     }
 
+    console.log("GREATER THAN 5000");
+    
     const subCategoryId = subCategories[0]?.id;
 
     const findService = await findOne("proCategory", {
@@ -107,6 +109,9 @@ const createService = async (req, res) => {
       _id: subCategoryId,
       categoryId,
     });
+
+console.log(findSubCategory,"findSubCategory------");
+
 
     if (
       findSubCategory?.bgServiceName == "checkr" &&
