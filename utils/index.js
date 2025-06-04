@@ -20,7 +20,7 @@ function generateUniqueNumber() {
 }
 
 // Call the function when needed
-console.log(generateUniqueNumber()); // Call this whenever you need a new unique number
+ // Call this whenever you need a new unique number
 
 
 

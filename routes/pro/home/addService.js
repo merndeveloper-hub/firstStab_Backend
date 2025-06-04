@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument, findOne } from "../../../helpers/index.js";
+import { insertNewDocument, findOne,find } from "../../../helpers/index.js";
 
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
