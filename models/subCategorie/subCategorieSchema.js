@@ -18,7 +18,7 @@ const subCategorySchema = new mongoose.Schema({
   status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },
   serviceCountry: { type: schemaType.TypeString, enum: ['US', 'NON-US','Both'], default: 'US' },
    bgServiceName: { type: schemaType.TypeString, enum: ['checkr', 'certn'], default: 'checkr' },
-   bgPackageName: { type: schemaType.TypeString, enum: ['basic_criminal_and_plv', 'basic_plus','plv']},
+   bgPackageName: { type: schemaType.TypeString},
     bgValidation:{ type: schemaType.TypeArray },
    created_date: {
         type: schemaType.TypeDate,

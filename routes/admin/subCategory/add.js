@@ -38,6 +38,7 @@ const addCategory = async (req, res) => {
 
     const { categoryId,bgServiceName } = req.body;
 console.log(categoryId,"categoryId");
+console.log(bgServiceName,"bgServiceName");
 
     const categoryData = await findOne("category", {
       _id: categoryId,
@@ -52,6 +53,13 @@ console.log(categoryData,"daa");
     }
 
     if(categoryData?.serviceCountry == 'US' && bgServiceName != 'checkr'  ){
+        return res.status(400).send({
+        status: 400,
+        message: "Select correct background service",
+      });
+    }
+     
+     if(categoryData?.serviceCountry == 'NON-US' && bgServiceName != 'certn'  ){
         return res.status(400).send({
         status: 400,
         message: "Select correct background service",
@@ -103,7 +111,7 @@ if (bgServiceName == "checkr") {
   }
 
 }
-
+ 
 
 
 const subCategory = await insertNewDocument("subCategory", {
