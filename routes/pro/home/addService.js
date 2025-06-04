@@ -118,11 +118,17 @@ console.log(findSubCategory,"findSubCategory------");
       findSubCategory?.bgPackageName == "basic_plus"
     ) {
       const findService = await find("proCategory", {
+        proId,
         bgServiceName: findSubCategory?.bgServiceName,
         package: findSubCategory?.bgPackageName,
       });
 
-      if (findService) {
+console.log(findService,"finservice");
+
+
+      if (findService.length > 0) {
+        console.log('innner');
+        
         const category = await insertNewDocument("proCategory", {
           ...req.body,
           //  status: "InActive",
@@ -144,6 +150,9 @@ console.log(findSubCategory,"findSubCategory------");
         status: "Pending",
       });
 
+console.log(category,"baisc plus-----");
+
+
       return res.status(200).json({
         status: 200,
         message: "Category created successfully",
@@ -156,11 +165,12 @@ console.log(findSubCategory,"findSubCategory------");
       findSubCategory?.bgPackageName == "plv"
     ) {
       const findService = await find("proCategory", {
+        proId,
         bgServiceName: findSubCategory?.bgServiceName,
         package: findSubCategory?.bgPackageName,
       });
 
-      if (findService) {
+      if (findService.length > 0) {
         const category = await insertNewDocument("proCategory", {
           ...req.body,
           //  status: "InActive",
@@ -194,11 +204,12 @@ console.log(findSubCategory,"findSubCategory------");
       findSubCategory?.bgPackageName == "basic_criminal_and_plv"
     ) {
       const findService = await find("proCategory", {
+        proId,
         bgServiceName: findSubCategory?.bgServiceName,
         package: findSubCategory?.bgPackageName,
       });
 
-      if (findService) {
+      if (findService.length > 0) {
         const category = await insertNewDocument("proCategory", {
           ...req.body,
           //  status: "InActive",
@@ -229,10 +240,11 @@ console.log(findSubCategory,"findSubCategory------");
       });
     } else if (findSubCategory?.bgServiceName == "certn") {
       const findService = await find("proCategory", {
+        proId,
         bgServiceName: findSubCategory?.bgServiceName,
       });
 
-      if (findService) {
+      if (findService.length > 0) {
         const category = await insertNewDocument("proCategory", {
           ...req.body,
           //  status: "InActive",
