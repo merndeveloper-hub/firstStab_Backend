@@ -174,6 +174,21 @@ const loginUser = async (req, res) => {
         expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
       });
 
+
+const US_COUNTRIES = [
+  "United States",
+  "American Samoa",
+  "Guam",
+  "Northern Mariana Islands",
+  "Puerto Rico",
+  "U.S. Virgin Islands",
+  "United States Minor Outlying Islands",
+];
+
+const isUS = US_COUNTRIES.includes(user?.country);
+const region = isUS ? "US" : "Non-US";
+
+
       const inserttoken = await insertNewDocument("token", {
         user_id: user._id,
         token:refresh_token,
@@ -184,7 +199,7 @@ const loginUser = async (req, res) => {
   //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });
 
       
-  return res.status(200).send({ status: 200, data:{user,token,refresh_token} });
+  return res.status(200).send({ status: 200, data:{user,  region:region, token,refresh_token} });
 
 
     } else {

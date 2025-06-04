@@ -129,7 +129,7 @@ let uploaded;
       "proCategory",
       { proId: id,categoryId, "subCategories.id": subCategoryId},
       {
-      
+         status:"InActive",
         ...req.body,
       
       }

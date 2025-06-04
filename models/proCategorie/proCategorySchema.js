@@ -48,7 +48,7 @@ const proCategorySchema = new mongoose.Schema(
       },
     ],
 
-    status: { type: schemaType.TypeString, enum: ["Active", "InActive"] },
+    status: { type: schemaType.TypeString, enum: ["Active", "InActive","Pending"] },
     serviceStatus: {
       type: schemaType.TypeString,
       enum: ["invited", "pending", "completed"],

@@ -1,6 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument,findOne } from "../../../helpers/index.js";
-
+import { insertNewDocument, findOne } from "../../../helpers/index.js";
 
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
@@ -21,17 +20,80 @@ const schema = Joi.object({
 const createService = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
+    const { proId, categoryId, subCategories } = req.body;
 
-  const { proId, categoryId, subCategories } = req.body;
-const subCategoryId = subCategories[0]?.id;
+    // less than 5000 pro certificate condition
+    const findPro = await findOne("user", {
+      _id: proId,
+      totalPro: { $lt: 5000 }, // $lt means "less than"
+    });
+    if (findPro) {
+      const subCategoryId = subCategories[0]?.id;
+      // check subcategory already exist
+      const findService = await findOne("proCategory", {
+        proId,
+        categoryId,
+        "subCategories.id": subCategoryId,
+      });
+      console.log(findService, "findService");
+
+      // Check if a document already exists with the same proId, categoryId, and subCategory id
+      if (findService) {
+        return res.status(400).json({
+          status: 400,
+          message: "This category and subcategory already exists",
+        });
+      }
+
+      // check documents already exist
+      const findbg = await find("proCategory", {
+        proId,
+        status: "Active" || "InActive" || "Pending",
+      });
+      console.log(findbg, "findbg");
+
+      if (findbg) {
+        const category = await insertNewDocument("proCategory", {
+          ...req.body,
+          //  status: "InActive",
+          status: "Pending",
+        });
+
+        return res.status(200).json({
+          status: 200,
+          message: "Category created successfully",
+          data: category,
+          user: "free",
+          bg: "apply",
+        });
+      }
+
+      // apply bg
+      const category = await insertNewDocument("proCategory", {
+        ...req.body,
+        //  status: "InActive",
+        status: "pending",
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "Category created successfully",
+        data: category,
+        user: "free",
+        bg: "not apply",
+      });
+    }
+
+    const subCategoryId = subCategories[0]?.id;
 
     const findService = await findOne("proCategory", {
-     proId,categoryId,"subCategories.id": subCategoryId
+      proId,
+      categoryId,
+      "subCategories.id": subCategoryId,
     });
-    console.log(findService,"findService");
-    
+    console.log(findService, "findService");
+
     // Check if a document already exists with the same proId, categoryId, and subCategory id
-    
 
     if (findService) {
       return res.status(400).json({
@@ -40,32 +102,167 @@ const subCategoryId = subCategories[0]?.id;
       });
     }
 
-    const category = await insertNewDocument("proCategory", {
-      ...req.body,
-      status: "InActive",
+    //
+    const findSubCategory = await findOne("subCategory", {
+      _id: subCategoryId,
+      categoryId,
     });
 
-    // const findPro = await findOne("user", { _id: proId, userType: "pro" });
+    if (
+      findSubCategory?.bgServiceName == "checkr" &&
+      findSubCategory?.bgPackageName == "basic_plus"
+    ) {
+      const findService = await find("proCategory", {
+        bgServiceName: findSubCategory?.bgServiceName,
+        package: findSubCategory?.bgPackageName,
+      });
 
-    // const findSubCategorie = await findOne("subCategory", {
-    //   _id: req?.body?.subCategories[0]?.id,
-    // });
+      if (findService) {
+        const category = await insertNewDocument("proCategory", {
+          ...req.body,
+          //  status: "InActive",
+          status: "Pending",
+        });
 
-    // const serviceCountry = findSubCategorie?.serviceCountry;
-    // const bgServiceName = findSubCategorie?.bgServiceName;
-    // const bgValidation = findSubCategorie?.bgValidation;
-    // const userCountry = findPro?.country;
-    // const id = proId;
-    // const proCategoryId = category?._id;
+        return res.status(200).json({
+          status: 200,
+          message: "Category created successfully",
+          data: category,
+          user: "not free",
+          bg: "apply",
+        });
+      }
 
-    // const invitationURL = await createCandidates(
-    //   id,
-    //   bgServiceName,
-    //   bgValidation,
-    //   serviceCountry,
-    //   userCountry,
-    //   proCategoryId
-    // );
+      const category = await insertNewDocument("proCategory", {
+        ...req.body,
+        //  status: "InActive",
+        status: "Pending",
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "Category created successfully",
+        data: category,
+        user: "not free",
+        bg: "not apply",
+      });
+    } else if (
+      findSubCategory?.bgServiceName == "checkr" &&
+      findSubCategory?.bgPackageName == "plv"
+    ) {
+      const findService = await find("proCategory", {
+        bgServiceName: findSubCategory?.bgServiceName,
+        package: findSubCategory?.bgPackageName,
+      });
+
+      if (findService) {
+        const category = await insertNewDocument("proCategory", {
+          ...req.body,
+          //  status: "InActive",
+          status: "Pending",
+        });
+
+        return res.status(200).json({
+          status: 200,
+          message: "Category created successfully",
+          data: category,
+          user: "not free",
+          bg: "apply",
+        });
+      }
+
+      const category = await insertNewDocument("proCategory", {
+        ...req.body,
+        //  status: "InActive",
+        status: "Pending",
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "Category created successfully",
+        data: category,
+        user: "not free",
+        bg: "not apply",
+      });
+    } else if (
+      findSubCategory?.bgServiceName == "checkr" &&
+      findSubCategory?.bgPackageName == "basic_criminal_and_plv"
+    ) {
+      const findService = await find("proCategory", {
+        bgServiceName: findSubCategory?.bgServiceName,
+        package: findSubCategory?.bgPackageName,
+      });
+
+      if (findService) {
+        const category = await insertNewDocument("proCategory", {
+          ...req.body,
+          //  status: "InActive",
+          status: "Pending",
+        });
+
+        return res.status(200).json({
+          status: 200,
+          message: "Category created successfully",
+          data: category,
+          user: "not free",
+          bg: "apply",
+        });
+      }
+
+      const category = await insertNewDocument("proCategory", {
+        ...req.body,
+        //  status: "InActive",
+        status: "Pending",
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "Category created successfully",
+        data: category,
+        user: "not free",
+        bg: "not apply",
+      });
+    } else if (findSubCategory?.bgServiceName == "certn") {
+      const findService = await find("proCategory", {
+        bgServiceName: findSubCategory?.bgServiceName,
+      });
+
+      if (findService) {
+        const category = await insertNewDocument("proCategory", {
+          ...req.body,
+          //  status: "InActive",
+          status: "Pending",
+        });
+
+        return res.status(200).json({
+          status: 200,
+          message: "Category created successfully",
+          data: category,
+          user: "not free",
+          bg: "apply",
+        });
+      }
+
+      const category = await insertNewDocument("proCategory", {
+        ...req.body,
+        //  status: "InActive",
+        status: "Pending",
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "Category created successfully",
+        data: category,
+        user: "not free",
+        bg: "not apply",
+      });
+    }
+
+    const category = await insertNewDocument("proCategory", {
+      ...req.body,
+      //  status: "InActive",
+      status: "Pending",
+    });
 
     return res.status(200).json({
       status: 200,

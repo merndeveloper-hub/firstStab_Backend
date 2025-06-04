@@ -7,6 +7,7 @@ import getUser from "./get.js";
 import getSingleUser from "./getSingle.js";
 import hideUser from "./hide.js";
 import findUser from "./totalPro.js";
+import hideService from "./hideService.js";
 
 const router = express.Router();
 
@@ -25,5 +26,11 @@ router.get("/:id", getSingleUser);
 
 //-------------Hide Single User--------------//
 router.put("/hide/:id", hideUser);
+
+
+//-------------Hide Single service--------------//
+router.put("/hideservice/:id", hideService);
+
+
 
 export default router;

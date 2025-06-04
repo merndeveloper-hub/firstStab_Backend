@@ -36,7 +36,7 @@ const addCategory = async (req, res) => {
     await schema.validateAsync(req.body);
 
 
-    const { categoryId } = req.body;
+    const { categoryId,bgServiceName } = req.body;
 console.log(categoryId,"categoryId");
 
     const categoryData = await findOne("category", {
@@ -78,19 +78,41 @@ console.log(categoryData,"daa");
 
     req.body.image = category_Image.url;
 
-    const subCategory = await insertNewDocument("subCategory", {
-      ...req.body,
-      categoryId: categoryData._id,
-      categoryName: categoryData.name,
-    });
-    console.log(subCategory, "subCategory");
+    let bgPackageName = "";
+if (bgServiceName === "checkr") {
+
+  const validations = req.body.bgValidation;
+
+  const hasCriminal = validations.includes("criminal");
+  const hasLicense = validations.includes("licnce"); // assuming the typo is intentional
+
+  if (hasCriminal && hasLicense) {
+    bgPackageName = "basic_criminal_and_plv";
+  } else if (hasLicense) {
+    bgPackageName = "plv";
+  } else if (hasCriminal) {
+    bgPackageName = "basic_plus";
+  }
+
+}
+
+
+
+const subCategory = await insertNewDocument("subCategory", {
+  ...req.body,
+  bgPackageName,
+  categoryId: categoryData._id,
+  categoryName: categoryData.name,
+});
+
+
 
     return res.status(200).send({
       status: 200,
       data: { subCategory },
     });
   } catch (e) {
-    console.log(e,"eeee");
+    
     
     return res.status(400).send({ status: 400, message: e.message });
   }
