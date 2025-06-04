@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument, findOne,find } from "../../../helpers/index.js";
+import { insertNewDocument, findOne, find } from "../../../helpers/index.js";
 
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
@@ -85,7 +85,7 @@ const createService = async (req, res) => {
     }
 
     console.log("GREATER THAN 5000");
-    
+
     const subCategoryId = subCategories[0]?.id;
 
     const findService = await findOne("proCategory", {
@@ -110,8 +110,7 @@ const createService = async (req, res) => {
       categoryId,
     });
 
-console.log(findSubCategory,"findSubCategory------");
-
+    console.log(findSubCategory, "findSubCategory------");
 
     if (
       findSubCategory?.bgServiceName == "checkr" &&
@@ -120,15 +119,14 @@ console.log(findSubCategory,"findSubCategory------");
       const findService = await find("proCategory", {
         proId,
         bgServiceName: findSubCategory?.bgServiceName,
-        package: findSubCategory?.bgPackageName,
+        package: findSubCategory?.bgPackageName || "basic_criminal_and_plv",
       });
 
-console.log(findService,"finservice");
-
+      console.log(findService, "finservice");
 
       if (findService.length > 0) {
-        console.log('innner');
-        
+        console.log("innner");
+
         const category = await insertNewDocument("proCategory", {
           ...req.body,
           //  status: "InActive",
@@ -150,8 +148,7 @@ console.log(findService,"finservice");
         status: "Pending",
       });
 
-console.log(category,"baisc plus-----");
-
+      console.log(category, "baisc plus-----");
 
       return res.status(200).json({
         status: 200,
@@ -167,7 +164,7 @@ console.log(category,"baisc plus-----");
       const findService = await find("proCategory", {
         proId,
         bgServiceName: findSubCategory?.bgServiceName,
-        package: findSubCategory?.bgPackageName,
+        package: findSubCategory?.bgPackageName || "basic_criminal_and_plv",
       });
 
       if (findService.length > 0) {
@@ -206,7 +203,7 @@ console.log(category,"baisc plus-----");
       const findService = await find("proCategory", {
         proId,
         bgServiceName: findSubCategory?.bgServiceName,
-        package: findSubCategory?.bgPackageName,
+        package: findSubCategory?.bgPackageName || 'basic_plus' || 'plv',
       });
 
       if (findService.length > 0) {
