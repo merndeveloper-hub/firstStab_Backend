@@ -71,8 +71,8 @@ let uploaded;
       
       console.log(req.body.w8BenUrl,"req.body.w8BenUrl");
       
+      req.body.w8BenUrl = uploaded.url;
     }
-    req.body.w8BenUrl = uploaded.url;
 
     if (req?.files?.w8BenEUrl?.path) {
        uploaded = await uploadFile(req.files.w8BenEUrl);
@@ -134,6 +134,10 @@ let uploaded;
       
       }
     );
+
+
+
+
 
     return res.status(200).send({
       status: 200,

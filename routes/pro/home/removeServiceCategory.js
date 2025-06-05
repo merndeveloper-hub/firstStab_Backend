@@ -21,6 +21,10 @@ const removeServiceCategory = async (req, res) => {
       categoryId: id,proId
     });
 
+ if (!serviceCategory || serviceCategory.length == 0) {
+      return res.status(400).send({ status: 400, message: "Service Category Not found" });
+    }
+
     return res
       .status(200)
       .send({ status: 200, message: "Service Category deleted successfully" });

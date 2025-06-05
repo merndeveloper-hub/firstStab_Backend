@@ -79,10 +79,10 @@ const proCategorySchema = new mongoose.Schema(
   
     isCompany: { type: schemaType.TypeString},
   isUSBased: { type: schemaType.TypeString },
-  governmentIdUrl: { type: schemaType.TypeString },
-  ratingsUrls: [{type: schemaType.TypeString}],
+  governmentId: { type: schemaType.TypeString },
+ // ratingsUrls: [{type: schemaType.TypeString}],
  // certificates: [CertificateSchema],
-  insuranceUrl: { type: schemaType.TypeString },
+  //insuranceUrl: { type: schemaType.TypeString },
   companyRegistrationUrl: { type: schemaType.TypeString },
   tinUrl:  { type: schemaType.TypeString },     // For US
   w8BenUrl:  { type: schemaType.TypeString },     // For Non-US individual
