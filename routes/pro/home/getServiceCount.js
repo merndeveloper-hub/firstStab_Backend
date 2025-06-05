@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { find,getAggregate } from "../../../helpers/index.js";
+import { find, getAggregate, findOne } from "../../../helpers/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -19,32 +19,40 @@ const getServiceCategoryCount = async (req, res) => {
     }
 
     const getcategory = await find("category");
+    const subCategory = await find("subCategory");
 
     const result = getUserCategory.map((item) => {
       const category = getcategory.find(
         (cat) => String(cat._id) === String(item.categoryId)
       );
 
+      const subCategoryName = subCategory.find(
+        (cat) => String(cat._id) === String(item?.subCategories[0]?.id)
+      );
+
       return {
         name: category ? category.name : "Unknown",
+        subCategoryName: subCategoryName ? subCategoryName.name : "Unknown",
         subCategoryCount: item.subCategories.length,
         item: item,
       };
     });
 
-    const getBusinness = await find("user",{_id:id,userType:"pro"});
-  
+    const getBusinness = await find("user", { _id: id, userType: "pro" });
+
     if (!getBusinness || getBusinness.length === 0) {
-     
       return res.status(400).send({
         status: 400,
-        message: "No Buniness Info found"
+        message: "No Buniness Info found",
       });
     }
 
-
-    
-    return res.status(200).json({ status: 200, data: {result,getBusinnessName:getBusinness[0].businessname } });
+    return res
+      .status(200)
+      .json({
+        status: 200,
+        data: { result, getBusinnessName: getBusinness[0].businessname },
+      });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

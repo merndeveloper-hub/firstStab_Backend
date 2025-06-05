@@ -7,25 +7,111 @@ const getUser = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Aggregation pipeline
+    // const pipeline = [
+    //   { $match: { userType: "pro" } },
+    //   {
+    //     $lookup: {
+    //       from: "procategories",
+    //       localField: "_id",
+    //       foreignField: "proId",
+    //       as: "categories",
+    //     },
+    //   },
+    //   { $sort: { createdAt: -1 } },
+    //   { $skip: skip },
+    //   { $limit: limit },
+    // ];
+
     const pipeline = [
-      { $match: { userType: "pro" } },
-      {
-        $lookup: {
-          from: "procategories",
-          localField: "_id",
-          foreignField: "proId",
-          as: "categories",
-        },
+  { $match: { userType: "pro" } },
+
+  // Lookup categories
+  {
+    $lookup: {
+      from: "procategories",
+      localField: "_id",
+      foreignField: "proId",
+      as: "categories"
+    }
+  },
+
+  // Unwind categories to process each one individually
+  { $unwind: { path: "$categories", preserveNullAndEmptyArrays: true } },
+
+  // Unwind subCategories array in each category
+  { $unwind: { path: "$categories.subCategories", preserveNullAndEmptyArrays: true } },
+
+  // Lookup subCategory document for each subCategories.id
+  {
+    $lookup: {
+      from: "subcategories", // check your exact collection name here
+      localField: "categories.subCategories.id",
+      foreignField: "_id",
+      as: "subCategoryDetails"
+    }
+  },
+
+  // Unwind subCategoryDetails array to get the single document (if any)
+  { $unwind: { path: "$subCategoryDetails", preserveNullAndEmptyArrays: true } },
+
+  // Add subCategory name into the subCategories object
+  {
+    $addFields: {
+      "categories.subCategories.name": "$subCategoryDetails.name",
+      "categories.subCategories.categoryName": "$subCategoryDetails.categoryName",
+    }
+  },
+
+  // Group back the subCategories array for each category
+  {
+    $group: {
+      _id: {
+        userId: "$_id",
+        categoryId: "$categories._id"
       },
-      // {
-      //   $match: {
-      //     $expr: { $gt: [{ $size: "$categories" }, 0] }, // only include if categories exist
-      //   },
-      // },
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-    ];
+      userRoot: { $first: "$$ROOT" }, // save entire user doc
+      category: { $first: "$categories" },
+      subCategories: { $push: "$categories.subCategories" }
+    }
+  },
+
+  // Reconstruct categories with subCategories array
+  {
+    $addFields: {
+      "category.subCategories": "$subCategories"
+    }
+  },
+
+  // Group back categories array for each user
+  {
+    $group: {
+      _id: "$_id.userId",
+      userRoot: { $first: "$userRoot" },
+      categories: { $push: "$category" }
+    }
+  },
+
+  // Replace categories in userRoot with the reconstructed categories array
+  {
+    $addFields: {
+      "userRoot.categories": "$categories"
+    }
+  },
+
+  // Replace root with the updated user document
+  {
+    $replaceRoot: {
+      newRoot: "$userRoot"
+    }
+  },
+
+  // Sort, skip, limit as you had
+  { $sort: { createdAt: -1 } },
+  { $skip: skip },
+  { $limit: limit }
+];
+
+
 
     const getUsers = await getAggregate("user", pipeline);
 

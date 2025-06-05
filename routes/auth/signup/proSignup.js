@@ -254,7 +254,8 @@ const region = isUS ? "US" : "Non-US";
       status: 200,
       message: "OTP sent to your email. Check inbox to proceed.",
       data: {
-        userId: user._id,
+        userId: user?._id,
+        totalPro:user?.totalPro,
         region:region
         
       },
