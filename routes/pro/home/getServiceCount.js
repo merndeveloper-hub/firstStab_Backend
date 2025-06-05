@@ -20,7 +20,8 @@ const getServiceCategoryCount = async (req, res) => {
 
     const getcategory = await find("category");
     const subCategory = await find("subCategory");
-
+  const getBusinness = await find("user", { _id: id, userType: "pro" });
+//, getBusinnessName: getBusinness[0].businessname
     const result = getUserCategory.map((item) => {
       const category = getcategory.find(
         (cat) => String(cat._id) === String(item.categoryId)
@@ -30,28 +31,32 @@ const getServiceCategoryCount = async (req, res) => {
         (cat) => String(cat._id) === String(item?.subCategories[0]?.id)
       );
 
+       const businessName = getBusinness.find(
+        (cat) => String(cat._id) === String(id)
+      );
       return {
         name: category ? category.name : "Unknown",
         subCategoryName: subCategoryName ? subCategoryName.name : "Unknown",
+        businessName:businessName? businessName?.businessname : "Unknown",
         subCategoryCount: item.subCategories.length,
         item: item,
       };
     });
 
-    const getBusinness = await find("user", { _id: id, userType: "pro" });
+    // const getBusinness = await find("user", { _id: id, userType: "pro" });
 
-    if (!getBusinness || getBusinness.length === 0) {
-      return res.status(400).send({
-        status: 400,
-        message: "No Buniness Info found",
-      });
-    }
+    // if (!getBusinness || getBusinness.length === 0) {
+    //   return res.status(400).send({
+    //     status: 400,
+    //     message: "No Buniness Info found",
+    //   });
+    // }
 
     return res
       .status(200)
       .json({
         status: 200,
-        data: { result, getBusinnessName: getBusinness[0].businessname },
+        data: { result },
       });
   } catch (e) {
     console.log(e);

@@ -6,13 +6,16 @@ import getCategories from "./getAdminCategorie.js";
 import getSubCateWithPagination from "./getSubCategoriePagination.js";
 
 //------Add Media Image and Icon in categorie---//
-import multipart from "connect-multiparty";
-import removeServiceCategory from "./removeServiceCategory.js";
+
 import getServiceCategoryCount from "./getServiceCount.js";
 import createService from "./addService.js";
 import updateService from "./updateService.js";
 import updateServiceType from "./updateServiceType.js";
 import getSelectedServiceCategory from "./selectedSubcategorie.js";
+import removeServiceSubCategory from "./removeServiceSubCategory.js";
+
+import multipart from "connect-multiparty";
+import removeServiceCategory from "./removeServiceCategory.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -40,8 +43,11 @@ router.post("/", createService);
 //--------update Service With Categories and subcategories and businessname---//
  router.put("/",updateService);
 
-//-----Delete pro created service----//
-router.delete("/service/:id", removeServiceCategory);
+//-----Delete pro created sub category service----//
+router.delete("/subcategory/:id", removeServiceSubCategory);
+
+//-----Delete pro created sub category service----//
+router.delete("/category/:id", removeServiceCategory);
 
 //--------update Service Type With Categories and subcategories and businessname---//
  router.put("/:id",updateServiceType);
