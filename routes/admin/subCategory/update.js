@@ -20,7 +20,7 @@ const schema = Joi.object({
   isVirtual: Joi.string().allow(null, ""),
   isInPerson: Joi.string().allow(null, ""),
   serviceCountry: Joi.string(),
-  price: Joi.number(),
+  commission: Joi.number(),
   bgServiceName: Joi.string(),
   bgValidation: Joi.array(),
 });
@@ -41,7 +41,7 @@ const updateSubCategory = async (req, res) => {
       isChat,
       isVirtual,
       isInPerson,
-      price,
+      commission,
       serviceCountry,
       bgServiceName,
       bgValidation} = req.body

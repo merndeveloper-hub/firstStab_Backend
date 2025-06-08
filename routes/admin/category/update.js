@@ -10,7 +10,7 @@ cloudinary.config({
 
 const schema = Joi.object({
   name: Joi.string(),
-  commission: Joi.number(),
+ // commission: Joi.number(),
   taxCode: Joi.string(),
   description: Joi.string(),
   status: Joi.string(),
@@ -29,7 +29,7 @@ const updateCategory = async (req, res) => {
     const { id } = req.params;
     const {  name,
       platFormFees,
-  commission,
+  
   taxCode,
   description,
   status,

@@ -10,7 +10,7 @@ cloudinary.config({
 
 const schema = Joi.object({
   name: Joi.string().required(),
-  commission: Joi.number().required(),
+ // commission: Joi.number().required(),
   taxCode: Joi.string().required(),
  
   description: Joi.string(),

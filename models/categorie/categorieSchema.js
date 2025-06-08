@@ -6,7 +6,7 @@ const categorySchema = new mongoose.Schema({
   name: { type: schemaType.TypeString, required: true },
   image: { type: schemaType.TypeString, required: true },
   icon: { type: schemaType.TypeString, required: true },
-  commission: { type: schemaType.TypeNumber, required: true },
+ // commission: { type: schemaType.TypeNumber, required: true },
   taxCode: { type: schemaType.TypeString,required: true },
   description: { type: schemaType.TypeString, default: '' },
   status: { type: schemaType.TypeString, enum: ['Active', 'InActive'], default: 'Active' },

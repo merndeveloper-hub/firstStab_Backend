@@ -1,15 +1,30 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
-import { updateDocument,findOne } from "../../../helpers/index.js";
+import { updateDocument, findOne } from "../../../helpers/index.js";
 import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
+import createCandidatesCertn from "../../../lib/bgCheckr/certn/create.js";
 
 const paypalSuccess = async (req, res) => {
   try {
-    const { token, professionalId, subCategorieId,proCategory } = req.query;
+    const { token, professionalId, subCategorieId, proCategory } = req.query;
 
+    const US_COUNTRIES = [
+      "United States",
+      "American Samoa",
+      "Guam",
+      "Northern Mariana Islands",
+      "Puerto Rico",
+      "U.S. Virgin Islands",
+      "United States Minor Outlying Islands",
+    ];
 
-// add bg code 
-  const findPro = await findOne("user", { _id: professionalId, userType: "pro" });
+    // add bg code
+    const findPro = await findOne("user", {
+      _id: professionalId,
+      userType: "pro",
+    });
+    let getCountry = US_COUNTRIES.includes(findPro?.country);
+    console.log(getCountry, "getcouintry");
 
     const findSubCategorie = await findOne("subCategory", {
       _id: subCategorieId,
@@ -20,22 +35,38 @@ const paypalSuccess = async (req, res) => {
     const bgValidation = findSubCategorie?.bgValidation;
     const userCountry = findPro?.country;
     const id = professionalId;
-    const proCategoryId = proCategory
+    const proCategoryId = proCategory;
 
-console.log(proCategoryId,"proCategoryId-------");
+    console.log(proCategoryId, "proCategoryId-------");
 
+    if (
+      serviceCountry == "NON-US" ||
+      ("Both" && bgServiceName == "certn") ||
+      ("Both" && getCountry == false)
+    ) {
+      console.log("vertn");
 
-    const invitationURL = await createCandidates(
-      id,
-      bgServiceName,
-      bgValidation,
-      serviceCountry,
-      userCountry,
-      proCategoryId
-    );
+      const invitationUrl = await createCandidatesCertn(
+        id,
+        bgServiceName,
+        bgValidation,
+        serviceCountry,
+        userCountry,
+        proCategoryId
+      );
+    } else {
+      const invitationUrl = await createCandidates(
+        id,
+        bgServiceName,
+        bgValidation,
+        serviceCountry,
+        userCountry,
+        proCategoryId
+      );
+    }
 
-    console.log(invitationURL,"invitation_url------");
-    
+  //  console.log(invitationUrl, "invitationUrl-------------");
+
     const getToken = await getAccessToken();
 
     const executeResponse = await axios.post(
@@ -51,9 +82,7 @@ console.log(proCategoryId,"proCategoryId-------");
     console.log("Payment Captured:", executeResponse.data);
 
     if (!executeResponse || executeResponse.length == 0) {
-      res.redirect(
-        "http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel"
-      );
+      res.redirect("http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel");
     }
 
     const payer = {
@@ -91,27 +120,22 @@ console.log(proCategoryId,"proCategoryId-------");
 
     console.log("Payment Success:", executeResponse.data);
 
-//return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
-//return res.redirect(`myapp://payment-success?invitationUrl=${encodeURIComponent(invitationURL.invitation_url)}`);
+    //return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
+    //return res.redirect(`myapp://payment-success?invitationUrl=${encodeURIComponent(invitationURL.invitation_url)}`);
 
-    
-  return res.send(`
+    return res.send(`
   <html>
     <body style="background:#fff; text-align:center; padding-top:50px;">
       <h2>Redirecting...</h2>
     </body>
   </html>
 `);
-
-   
   } catch (error) {
     console.error(
       "Error executing PayPal payment:",
       error.response ? error.response.data : error.message
     );
-    res.redirect(
-      "http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel"
-    );
+    res.redirect("http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel");
   }
 };
 
