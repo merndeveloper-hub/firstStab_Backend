@@ -15,7 +15,7 @@ const getCategories = async (req, res) => {
     "Film, Video & Motion Graphics",
     "Visual Arts and Graphic Design",
     "Online Marketing / Digital Advertising",
-    "Company and Business Solutions",
+    "Tutorials",
     "Information Technology",
   ].map(category => category.toLowerCase()); // convert to lowercase
 

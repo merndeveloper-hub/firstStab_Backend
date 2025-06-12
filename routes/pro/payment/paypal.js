@@ -3,6 +3,7 @@ import getAccessToken from "./accessToken.js";
 import Joi from "joi";
 import { findOne, insertNewDocument } from "../../../helpers/index.js";
 import Stripe from "stripe";
+import taxJarCal from "../../../lib/taxCollector/index.js";
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -33,14 +34,32 @@ subCategorieId,
 
 const findProCategory = await findOne("proCategory",{proId:professionalId})
 
-const registerationFees = await findOne("adminFees")
-    if (paymentMethod == "paypal") {
-     const baseAmount = parseFloat(registerationFees?.registerationFees); // from frontend or DB
-  const feePercentage = 3.49 / 100;
-  const fixedFee = 0.49;
 
-  const paypalFee = parseFloat((baseAmount * feePercentage + fixedFee).toFixed(2));
-  const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // User will pay this
+
+const registerationFees = await findOne("adminFees")
+
+    if (paymentMethod == "paypal") {
+      const baseAmount = parseFloat(registerationFees?.registerationFees); // from frontend or DB
+  
+  if (isNaN(baseAmount)) {
+  throw new Error("Invalid base amount");
+}
+
+// PayPal fee calculation
+const feePercentage = 3.49 / 100;
+const fixedFee = 0.49;
+
+// Get tax from TaxJar (assumed to be a number)
+const getTaxVal = await taxJarCal();
+// if (typeof getTaxVal !== 'number') {
+//   throw new Error("Invalid tax value from TaxJar");
+// }
+console.log(getTaxVal, "getTaxVal---");
+
+// Calculate PayPal fee and total charge
+const paypalFee = parseFloat((baseAmount * feePercentage + fixedFee + Number(getTaxVal)).toFixed(2));
+const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is what user pays
+
 
   const getToken = await getAccessToken();
   console.log(getToken, "getToken---------");

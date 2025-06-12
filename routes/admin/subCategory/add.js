@@ -24,6 +24,11 @@ const schema = Joi.object({
   commission: Joi.string().required(),
  bgServiceName: Joi.string().required(),
  bgValidation: Joi.array().required(),
+  complexity_tier: Joi.string().required(),
+   price_model: Joi.string().required(),
+    fixed_price: Joi.string(),
+     min_price: Joi.string(),
+      max_price: Joi.string(),
 
 }).or('isRemote', 'isChat', 'isVirtual', 'isInPerson')
 .messages({
@@ -36,7 +41,7 @@ const addCategory = async (req, res) => {
     await schema.validateAsync(req.body);
 
 
-    const { categoryId,bgServiceName } = req.body;
+    const { categoryId,bgServiceName,complexity_tier,price_model,fixed_price,min_price,max_price } = req.body;
 console.log(categoryId,"categoryId");
 console.log(bgServiceName,"bgServiceName");
 

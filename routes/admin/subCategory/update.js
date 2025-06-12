@@ -23,6 +23,11 @@ const schema = Joi.object({
   commission: Joi.number(),
   bgServiceName: Joi.string(),
   bgValidation: Joi.array(),
+    complexity_tier: Joi.string(),
+     price_model: Joi.string(),
+      fixed_price: Joi.string(),
+       min_price: Joi.string(),
+        max_price: Joi.string(),
 });
 const schemaForId = Joi.object({
   id: Joi.string().required(),
@@ -44,7 +49,7 @@ const updateSubCategory = async (req, res) => {
       commission,
       serviceCountry,
       bgServiceName,
-      bgValidation} = req.body
+      bgValidation,complexity_tier,price_model,fixed_price,min_price,max_price } = req.body
     const { id } = req.params;
     const findCategory = await findOne("subCategory", { _id: id });
     if (!findCategory) {
