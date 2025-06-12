@@ -21,14 +21,14 @@ const schema = Joi.object({
   isVirtual: Joi.string().allow(null, ''),
   isInPerson: Joi.string().allow(null, ''),
   serviceCountry:Joi.string().required(),
-  commission: Joi.string().required(),
+  commission: Joi.string().allow(null, ''),
  bgServiceName: Joi.string().required(),
  bgValidation: Joi.array().required(),
   complexity_tier: Joi.string().required(),
    price_model: Joi.string().required(),
-    fixed_price: Joi.string(),
-     min_price: Joi.string(),
-      max_price: Joi.string(),
+    fixed_price: Joi.string().allow(null, ''),
+     min_price: Joi.string().allow(null, ''),
+      max_price: Joi.string().allow(null, ''),
 
 }).or('isRemote', 'isChat', 'isVirtual', 'isInPerson')
 .messages({
@@ -134,6 +134,7 @@ const subCategory = await insertNewDocument("subCategory", {
     });
   } catch (e) {
     
+    console.log(e);
     
     return res.status(400).send({ status: 400, message: e.message });
   }

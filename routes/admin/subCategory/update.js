@@ -24,10 +24,10 @@ const schema = Joi.object({
   bgServiceName: Joi.string(),
   bgValidation: Joi.array(),
     complexity_tier: Joi.string(),
-     price_model: Joi.string(),
-      fixed_price: Joi.string(),
-       min_price: Joi.string(),
-        max_price: Joi.string(),
+     price_model: Joi.string().allow(null, ''),
+      fixed_price: Joi.string().allow(null, ''),
+       min_price: Joi.string().allow(null, ''),
+        max_price: Joi.string().allow(null, ''),
 });
 const schemaForId = Joi.object({
   id: Joi.string().required(),
