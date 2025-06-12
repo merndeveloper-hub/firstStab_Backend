@@ -9,7 +9,6 @@ const subCategorySchema = new mongoose.Schema({
   image: { type: schemaType.TypeString, required: true },
   icon: { type: schemaType.TypeString, required: true },
   complexity_tier: { type: schemaType.TypeString, enum: ["moderate","complex","simple"], required: true },
- // fixed_price: { type: schemaType.TypeString, required: true },
   price_model: { type: schemaType.TypeString,enum:["fixed","range","quote_only"], required: true },
   fixed_price: { type: schemaType.TypeString },
   min_price: { type: schemaType.TypeString },

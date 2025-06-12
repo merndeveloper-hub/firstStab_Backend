@@ -4,8 +4,13 @@ import { insertNewDocument, findOne, find } from "../../../helpers/index.js";
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
   proId: Joi.string().hex().length(24).required(), // Must be a valid MongoDB ObjectId
-  price: Joi.number().min(0).required(),
+  price: Joi.number().min(0).allow(null, ''),
   categoryId: Joi.string().hex().length(24).required(),
+  complexity_tier: Joi.string().required(),
+     price_model: Joi.string().required(),
+      fixed_price: Joi.number().allow(null, ''),
+       min_price: Joi.number().allow(null, ''),
+        max_price: Joi.number().allow(null, ''),
   subCategories: Joi.array().items(
     Joi.object({
       id: Joi.string().hex().length(24).required(),
@@ -20,7 +25,7 @@ const schema = Joi.object({
 const createService = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
-    const { proId, categoryId, subCategories } = req.body;
+    const { proId, categoryId, subCategories,complexity_tier,price_model,fixed_price,min_price,max_price  } = req.body;
 
     // less than 5000 pro certificate condition
     const findPro = await findOne("user", {
@@ -203,7 +208,7 @@ const createService = async (req, res) => {
       const findService = await find("proCategory", {
         proId,
         bgServiceName: findSubCategory?.bgServiceName,
-        package: findSubCategory?.bgPackageName || 'basic_plus' || 'plv',
+        package: findSubCategory?.bgPackageName || "basic_plus" || "plv",
       });
 
       if (findService.length > 0) {

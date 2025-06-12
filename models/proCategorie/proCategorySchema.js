@@ -22,7 +22,11 @@ const proCategorySchema = new mongoose.Schema(
       type: schemaType.ObjectID, // Reference to Category
       ref: "category",
     },
-
+ complexity_tier: { type: schemaType.TypeString, enum: ["moderate","complex","simple"], required: true },
+  price_model: { type: schemaType.TypeString,enum:["fixed","range","quote_only"], required: true },
+  fixed_price: { type: schemaType.TypeNumber },
+  min_price: { type: schemaType.TypeNumber },
+  max_price: { type: schemaType.TypeNumber },
     subCategories: [
       {
         id: {
@@ -48,7 +52,10 @@ const proCategorySchema = new mongoose.Schema(
       },
     ],
 
-    status: { type: schemaType.TypeString, enum: ["Active", "InActive","Pending"] },
+    status: {
+      type: schemaType.TypeString,
+      enum: ["Active", "InActive", "Pending"],
+    },
     serviceStatus: {
       type: schemaType.TypeString,
       enum: ["invited", "pending", "completed"],
@@ -70,23 +77,20 @@ const proCategorySchema = new mongoose.Schema(
     },
     bgValidation: { type: schemaType.TypeArray },
     paymentStatus: { type: schemaType.TypeString }, // 'free', 'paid'
-    
-  
-      certificate: [{ type: schemaType.TypeString }],
-      platformLinks: [{ type: schemaType.TypeString }],
-   
 
-  
-    isCompany: { type: schemaType.TypeString},
-  isUSBased: { type: schemaType.TypeString },
-  governmentId: { type: schemaType.TypeString },
- // ratingsUrls: [{type: schemaType.TypeString}],
- // certificates: [CertificateSchema],
-  //insuranceUrl: { type: schemaType.TypeString },
-  companyRegistrationUrl: { type: schemaType.TypeString },
-  tinUrl:  { type: schemaType.TypeString },     // For US
-  w8BenUrl:  { type: schemaType.TypeString },     // For Non-US individual
-  w8BenEUrl:  { type: schemaType.TypeString },      // For Non-US entity
+    certificate: [{ type: schemaType.TypeString }],
+    platformLinks: [{ type: schemaType.TypeString }],
+
+    isCompany: { type: schemaType.TypeString },
+    isUSBased: { type: schemaType.TypeString },
+    governmentId: { type: schemaType.TypeString },
+    // ratingsUrls: [{type: schemaType.TypeString}],
+    // certificates: [CertificateSchema],
+    //insuranceUrl: { type: schemaType.TypeString },
+    companyRegistrationUrl: { type: schemaType.TypeString },
+    tinUrl: { type: schemaType.TypeString }, // For US
+    w8BenUrl: { type: schemaType.TypeString }, // For Non-US individual
+    w8BenEUrl: { type: schemaType.TypeString }, // For Non-US entity
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,
@@ -97,4 +101,3 @@ const proCategorySchema = new mongoose.Schema(
 );
 
 export default proCategorySchema;
-
