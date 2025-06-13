@@ -28,7 +28,7 @@ const addCertificate = async (req, res) => {
     await schema.validateAsync(req.params)
     const {id} = req.params
     const {  isCompany, isUSBased,categoryId,subCategoryId,certificate,governmentId,companyRegistrationUrl
-      ,tinUrl,w8BenUrl,w8BenEUrl
+     ,certificationOrLicense,proofOfInsurance,formW9 ,otherDocuments,selfAssessment,w8BenUrl,w8BenEUrl
     } = req.body;
 console.log(req.body,"body");
 
@@ -45,9 +45,22 @@ console.log(req.body,"body");
     }
 let uploaded;
     // Explicit file uploads
-    if (req?.files?.certificate?.path) {
-       uploaded = await uploadFile(req.files.certificate);
-      req.body.certificate = uploaded.url;
+    if (req?.files?.selfAssessment?.path) {
+       uploaded = await uploadFile(req.files.selfAssessment);
+      req.body.selfAssessment = uploaded.url;
+    }
+
+  if (req?.files?.certificationOrLicense?.path) {
+       uploaded = await uploadFile(req.files.certificationOrLicense);
+      req.body.certificationOrLicense = uploaded.url;
+    }
+ if (req?.files?.otherDocuments?.path) {
+       uploaded = await uploadFile(req.files.otherDocuments);
+      req.body.otherDocuments = uploaded.url;
+    }
+     if (req?.files?.proofOfInsurance?.path) {
+       uploaded = await uploadFile(req.files.proofOfInsurance);
+      req.body.proofOfInsurance = uploaded.url;
     }
 
     if (req?.files?.governmentId?.path) {
@@ -60,9 +73,9 @@ let uploaded;
       req.body.companyRegistrationUrl = uploaded.url;
     }
 
-    if (req?.files?.tinUrl?.path) {
-       uploaded = await uploadFile(req.files.tinUrl);
-      req.body.tinUrl = uploaded.url;
+    if (req?.files?.formW9?.path) {
+       uploaded = await uploadFile(req.files.formW9);
+      req.body.formW9 = uploaded.url;
     }
 
     if (req?.files?.w8BenUrl?.path) {
@@ -86,7 +99,7 @@ let uploaded;
         .json({ status: 400, message: "Government ID is required" });
     }
 
-    if (isUSBased == "true" && !req.body.tinUrl) {
+    if (isUSBased == "true" && !req.body.formW9) {
       return res
         .status(400)
         .json({ status: 400, message: "TIN is required for US-based Pros" });

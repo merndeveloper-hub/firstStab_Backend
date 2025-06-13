@@ -5,15 +5,14 @@ const validationSchema = Joi.object({
   businessname: Joi.string(),
   businessaddress: Joi.string(),
   businessphoneNo: Joi.string()
-    .pattern(new RegExp("^\\+?[0-9]{8,15}$"))
-    
+    .required()
     .messages({
-      "string.pattern.base": "Mobile number must be 8-15 digits",
+      "string.pattern.base": "Mobile number must be digits",
       "any.required": "Mobile number is required.",
     }),
   userId: Joi.string().required(),
 });
-
+ 
 const createbusiness = async (req, res) => {
   try {
     await validationSchema.validateAsync(req.body);

@@ -23,7 +23,19 @@ subCategoryId:Joi.string().required(),
     )
     .optional()
     .messages({
-      'array.base': 'Platform links must be an array of URLs',
+      'array.base': 'socialMediaVerification links must be an array of URLs',
+    }),
+    socialMediaVerification: Joi.array()
+    .items(
+      Joi.string()
+        .uri()
+        .messages({
+          'string.uri': 'Each platform link must be a valid URL',
+        })
+    )
+    .optional()
+    .messages({
+      'array.base': 'socialMediaVerification links must be an array of URLs',
     }),
 });
 
@@ -44,7 +56,7 @@ const temporaryCertificate = async (req, res) => {
     await schema.validateAsync(req.params);
     await schemaBody.validateAsync(req.body)
     const { id } = req.params;
-    const { platformLinks,categoryId,subCategoryId } = req.body;
+    const { platformLinks,categoryId,subCategoryId,socialMediaVerification } = req.body;
 
     const pro = await findOne("user", {
       _id: id,

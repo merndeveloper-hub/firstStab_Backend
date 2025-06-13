@@ -22,11 +22,19 @@ const proCategorySchema = new mongoose.Schema(
       type: schemaType.ObjectID, // Reference to Category
       ref: "category",
     },
- complexity_tier: { type: schemaType.TypeString, enum: ["moderate","complex","simple"], required: true },
-  price_model: { type: schemaType.TypeString,enum:["fixed","range","quote_only"], required: true },
-  fixed_price: { type: schemaType.TypeNumber },
-  min_price: { type: schemaType.TypeNumber },
-  max_price: { type: schemaType.TypeNumber },
+    complexity_tier: {
+      type: schemaType.TypeString,
+      enum: ["moderate", "complex", "simple"],
+      required: true,
+    },
+    price_model: {
+      type: schemaType.TypeString,
+      enum: ["fixed", "range", "quote_only"],
+      required: true,
+    },
+    fixed_price: { type: schemaType.TypeNumber },
+    min_price: { type: schemaType.TypeNumber },
+    max_price: { type: schemaType.TypeNumber },
     subCategories: [
       {
         id: {
@@ -80,17 +88,19 @@ const proCategorySchema = new mongoose.Schema(
 
     certificate: [{ type: schemaType.TypeString }],
     platformLinks: [{ type: schemaType.TypeString }],
+    socialMediaVerification:  [{ type: schemaType.TypeString }], // For Non-US entity
 
     isCompany: { type: schemaType.TypeString },
     isUSBased: { type: schemaType.TypeString },
     governmentId: { type: schemaType.TypeString },
-    // ratingsUrls: [{type: schemaType.TypeString}],
-    // certificates: [CertificateSchema],
-    //insuranceUrl: { type: schemaType.TypeString },
+    selfAssessment: { type: schemaType.TypeString },
+    certificationOrLicense: { type: schemaType.TypeString },
+    proofOfInsurance: { type: schemaType.TypeString },
     companyRegistrationUrl: { type: schemaType.TypeString },
-    tinUrl: { type: schemaType.TypeString }, // For US
+    formW9: { type: schemaType.TypeString }, // For US
     w8BenUrl: { type: schemaType.TypeString }, // For Non-US individual
     w8BenEUrl: { type: schemaType.TypeString }, // For Non-US entity
+    otherDocuments: { type: schemaType.TypeString },
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,

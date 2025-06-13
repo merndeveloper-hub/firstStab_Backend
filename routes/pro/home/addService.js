@@ -4,13 +4,13 @@ import { insertNewDocument, findOne, find } from "../../../helpers/index.js";
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
   proId: Joi.string().hex().length(24).required(), // Must be a valid MongoDB ObjectId
-  price: Joi.number().min(0).allow(null, ''),
+  price: Joi.number().min(0).allow(null, ""),
   categoryId: Joi.string().hex().length(24).required(),
   complexity_tier: Joi.string().required(),
-     price_model: Joi.string().required(),
-      fixed_price: Joi.number().allow(null, ''),
-       min_price: Joi.number().allow(null, ''),
-        max_price: Joi.number().allow(null, ''),
+  price_model: Joi.string().required(),
+  fixed_price: Joi.number().allow(null, ""),
+  min_price: Joi.number().allow(null, ""),
+  max_price: Joi.number().allow(null, ""),
   subCategories: Joi.array().items(
     Joi.object({
       id: Joi.string().hex().length(24).required(),
@@ -25,7 +25,62 @@ const schema = Joi.object({
 const createService = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
-    const { proId, categoryId, subCategories,complexity_tier,price_model,fixed_price,min_price,max_price  } = req.body;
+    const {
+      proId,
+      categoryId,
+      subCategories,
+      complexity_tier,
+      price_model,
+      fixed_price,
+      min_price,
+      max_price,
+    } = req.body;
+
+    //GET Subcategory pricing price_model
+    let getSubcategory = await findOne("subCategory", {
+      _id: subCategories[0].id,
+      price_model,
+    });
+    console.log("getSubcategory", getSubcategory);
+
+    if (price_model == "fixed" && getSubcategory?.price_model == "fixed") {
+      let getFixedPrice = Number(getSubcategory?.fixed_price) == price_model;
+      if (!getFixedPrice) {
+        return res.status(400).json({
+          status: 400,
+          message: `fixed price is equal to ${Number(
+            getSubcategory?.fixed_price
+          )}`,
+        });
+      }
+    } else if (
+      price_model == "range" &&
+      getSubcategory?.price_model == "range"
+    ) {                         
+      let getMinPrice = Number(getSubcategory?.min_price) <= min_price;  
+      console.log(getMinPrice,"getminprice");
+      
+      let getMaxPrice = Number(getSubcategory?.max_price) <= max_price;
+      if (!getMinPrice) {
+        return res.status(400).json({
+          status: 400,
+          message: `Min price should be equal to ${Number(
+            getSubcategory?.min_price
+          )} or greater than ${Number(getSubcategory?.min_price)}`,
+        });
+      }
+      if (!getMaxPrice) {
+        return res.status(400).json({
+          status: 400,
+          message: `Max price should be equal to ${Number(
+            getSubcategory?.max_price
+          )} or less than ${Number(getSubcategory?.max_price)}`,
+        });
+      }
+    }
+    // else if(price_model == "quote_only" && getSubcategory?.price_model == "quote_only"){
+
+    // }
 
     // less than 5000 pro certificate condition
     const findPro = await findOne("user", {
