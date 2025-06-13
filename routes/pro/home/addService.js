@@ -1,6 +1,24 @@
 import Joi from "joi";
 import { insertNewDocument, findOne, find } from "../../../helpers/index.js";
 
+const subCategorySchema = Joi.object({
+  id: Joi.string().hex().length(24).required(),
+  isRemote: Joi.boolean(),
+  isChat: Joi.boolean(),
+  isVirtual: Joi.boolean(),
+  isInPerson: Joi.boolean(),
+}).custom((value, helpers) => {
+  const { isRemote, isChat, isVirtual, isInPerson } = value;
+
+  if (!isRemote && !isChat && !isVirtual && !isInPerson) {
+    return helpers.error('any.invalid');
+  }
+
+  return value;
+}).messages({
+   'any.invalid': 'Please select at least one service mode: isRemote, isChat, isVirtual, or isInPerson.',
+});
+
 const schema = Joi.object({
   id: Joi.string().hex().length(24),
   proId: Joi.string().hex().length(24).required(), // Must be a valid MongoDB ObjectId
@@ -11,15 +29,7 @@ const schema = Joi.object({
   fixed_price: Joi.number().allow(null, ""),
   min_price: Joi.number().allow(null, ""),
   max_price: Joi.number().allow(null, ""),
-  subCategories: Joi.array().items(
-    Joi.object({
-      id: Joi.string().hex().length(24).required(),
-      isRemote: Joi.boolean(),
-      isChat: Joi.boolean(),
-      isVirtual: Joi.boolean(),
-      isInPerson: Joi.boolean(),
-    })
-  ),
+  subCategories: Joi.array().items(subCategorySchema),
 });
 
 const createService = async (req, res) => {
@@ -44,7 +54,7 @@ const createService = async (req, res) => {
     console.log("getSubcategory", getSubcategory);
 
     if (price_model == "fixed" && getSubcategory?.price_model == "fixed") {
-      let getFixedPrice = Number(getSubcategory?.fixed_price) == price_model;
+      let getFixedPrice = Number(getSubcategory?.fixed_price) == fixed_price;
       if (!getFixedPrice) {
         return res.status(400).json({
           status: 400,
