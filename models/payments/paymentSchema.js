@@ -6,7 +6,6 @@ const PaymentSchema = new mongoose.Schema(
     professionalId: { type: SchemaType.ObjectID, ref: "User" },
     amount: {
       type: SchemaType.TypeNumber,
-     
     },
 
     paymentIntentId: { type: SchemaType.TypeString },
@@ -31,29 +30,31 @@ const PaymentSchema = new mongoose.Schema(
 
     // Stripe-specific
     stripeSessionId: { type: SchemaType.TypeString },
-   // New fields
-presentmentAmount: { type:  SchemaType.TypeNumber }, // e.g., 29336
-presentmentCurrency: { type:  SchemaType.TypeString }, // e.g., PKR
+   stripeAccountId: { type: SchemaType.TypeString },
+
+
+    // New fields
+    presentmentAmount: { type: SchemaType.TypeNumber }, // e.g., 29336
+    presentmentCurrency: { type: SchemaType.TypeString }, // e.g., PKR
     stripeSessionUrl: { type: SchemaType.TypeString },
     paymentIntentId: { type: SchemaType.TypeString },
     transactionId: { type: SchemaType.TypeString }, // can be same as paymentIntentId
-     netAmount: { type: SchemaType.TypeNumber },
-          stripeFee: { type: SchemaType.TypeNumber },
-          totalAmount: { type: SchemaType.TypeNumber },
+    netAmount: { type: SchemaType.TypeNumber },
+    stripeFee: { type: SchemaType.TypeNumber },
+    totalAmount: { type: SchemaType.TypeNumber },
     customerEmail: { type: SchemaType.TypeString },
     paypalOrderId: { type: SchemaType.TypeString },
     authorizationId: { type: SchemaType.TypeString },
     payerId: { type: SchemaType.TypeString },
     payerEmail: { type: SchemaType.TypeString },
-    cardDetails : {
-      cardBrand:{ type: SchemaType.TypeString },
+    cardDetails: {
+      cardBrand: { type: SchemaType.TypeString },
       cardLast4: { type: SchemaType.TypeString },
       cardExpMonth: { type: SchemaType.TypeString },
       cardExpYear: { type: SchemaType.TypeString },
       cardFunding: { type: SchemaType.TypeString },
       cardCountry: { type: SchemaType.TypeString },
     },
-
 
     status: {
       type: SchemaType.TypeString,
@@ -73,7 +74,7 @@ presentmentCurrency: { type:  SchemaType.TypeString }, // e.g., PKR
       paypalEmail: { type: SchemaType.TypeString },
       paypalAccountStatus: { type: SchemaType.TypeString },
     },
-baseAmount: { type: SchemaType.TypeNumber },
+    baseAmount: { type: SchemaType.TypeNumber },
     paypalFee: { type: SchemaType.TypeNumber },
     finalAmount: { type: SchemaType.TypeNumber },
     purchaseUnitReference: { type: SchemaType.TypeString }, // purchase_units[0].reference_id

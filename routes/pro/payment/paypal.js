@@ -1,7 +1,7 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
 import Joi from "joi";
-import { findOne, insertNewDocument } from "../../../helpers/index.js";
+import { findOne, insertNewDocument, updateDocument } from "../../../helpers/index.js";
 import Stripe from "stripe";
 import taxJarCal from "../../../lib/taxCollector/index.js";
 
@@ -119,6 +119,7 @@ const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is 
       const data = {
         id: response.data.id,
         status: "CREATED",
+        proCategory: findProCategory?._id,
         links: [
           {
             href: response.data.links.find((link) => link.rel === "approve")
@@ -145,14 +146,39 @@ const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is 
       return res.status(201).json({ status: 201, data: data });
     } 
     else if (paymentMethod == "stripe") {
-      
+ const pro = await findOne("payment", { professionalId });
+
+  if (!pro?.stripeAccountId) {
+    throw new Error("Stripe onboarding incomplete. Please onboard first.");
+  }
+
+  const account = await stripe.accounts.retrieve(pro.stripeAccountId);
+  if (!account.details_submitted || !account.charges_enabled || !account.payouts_enabled) {
+    throw new Error("Stripe account not verified. Please complete onboarding.");
+  }
+
+// Get tax from TaxJar (assumed to be a number)
+const getTaxVal = await taxJarCal();
+// if (typeof getTaxVal !== 'number') {
+//   throw new Error("Invalid tax value from TaxJar");
+// }
+console.log(getTaxVal, "getTaxVal---");
+
+
+
+
+
+
+
+
+
 // Example calculation - aapne jaisa fees logic diya tha
 const amountInDollars = parseFloat(registerationFees?.registerationFees);
 const amountInCents = Math.round(amountInDollars * 100);
 const stripeFeePercent = 0.029;
 const fixedFee = 30; // in cents
-
-const totalAmountInCents = Math.ceil((amountInCents + fixedFee) / (1 - stripeFeePercent));
+  let taxAmount =  Number(getTaxVal).toFixed(2)
+const totalAmountInCents = Math.ceil((amountInCents + fixedFee + taxAmount) / (1 - stripeFeePercent));
 const feeAmountInCents = totalAmountInCents - amountInCents;
 
 const session = await stripe.checkout.sessions.create({
@@ -184,6 +210,7 @@ const session = await stripe.checkout.sessions.create({
 const data = {
      id: session.id,
      status: "CREATED",
+       proCategory: findProCategory?._id,
      links: [
        {
          href: session.url,
