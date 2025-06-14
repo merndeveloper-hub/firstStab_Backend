@@ -85,7 +85,8 @@ const temporaryCertificate = async (req, res) => {
       { proId: id },
       {
         certificate: req?.body?.certificate || [],
-        platformLinks: platformLinks ?? [],
+        platformLinks: platformLinks || [],
+        socialMediaVerification:socialMediaVerification || []
       }
     );
 
