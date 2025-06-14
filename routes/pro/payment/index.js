@@ -11,7 +11,7 @@ import paymentCancel from "./paypalCancel.js";
 import stripeSuccess from "./stripeSuccess.js";
 import stripeCancel from "./stripeCancel.js";
 import getbgLink from "./bgLink.js";
-//import startStripeOnboarding from "./stripeOnbording.js";
+import startStripeOnboarding from "./stripeOnbording.js";
 //import sendPayout from "./adminToProAccount.js";
 //import capturePayment from "./capturePayment.js";
 
@@ -51,7 +51,7 @@ router.get("/stripecancel", stripeCancel);
 router.get("/bglink/:id", getbgLink);
 
 //------------stripe pro onboarding-----//
-//router.get("/stripeonboarding", startStripeOnboarding);
+router.get("/stripeonboarding", startStripeOnboarding);
 
 
 

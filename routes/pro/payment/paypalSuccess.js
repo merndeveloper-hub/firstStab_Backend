@@ -40,9 +40,9 @@ const paypalSuccess = async (req, res) => {
     console.log(proCategoryId, "proCategoryId-------");
 
     if (
-      serviceCountry == "NON-US" ||
-      ("Both" && bgServiceName == "certn") ||
-      ("Both" && getCountry == false)
+      serviceCountry == "Both" &&
+      bgServiceName == "Both" &&
+    getCountry == false
     ) {
       console.log("vertn");
 
