@@ -17,7 +17,7 @@ const getbgLink = async (req, res) => {
     //   });
     // }
 
-    const getURL = await findOne("proCategory", { proId: id });
+    const getURL = await findOne("proCategory", { _id: id });
     console.log(getURL, "url-----");
 
     let url = getURL?.invitationUrl;
