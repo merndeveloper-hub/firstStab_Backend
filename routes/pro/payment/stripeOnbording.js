@@ -1,9 +1,7 @@
 // File: routes/pro/stripeOnboarding.js
 
 import { findOne, updateDocument } from "../../../helpers/index.js";
-
 import Stripe from "stripe";
-
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -13,53 +11,64 @@ const startStripeOnboarding = async (req, res) => {
 
     const pro = await findOne("payment", { professionalId });
 
-  console.log(pro,"pro----");
-  
-
-    let stripeAccountId = pro.stripeAccountId;
-console.log(stripeAccountId,"stripeAccountId");
-
-    // If Pro doesn't have a Stripe account, create one
-    if (!stripeAccountId) {
-      console.log("if");
-      
-
-      
-      const account = await stripe.customers.create({
-        type: "express",
-        country:  "US",
-        email: "jifafa1212@nab4.com",
-        capabilities: {
-          transfers: { requested: true },
-        },
-      });
-
-console.log(account,"account---");
-
-
-      stripeAccountId = account.id;
-
-      // Save the account ID in your DB
-      await updateDocument("payment", {  professionalId }, { stripeAccountId });
+    if (!pro) {
+      return res.status(404).json({ message: "Professional not found" });
     }
 
-    // Create onboarding link
-    const accountLink = await stripe.accountLinks.create({
-      account: stripeAccountId,
-      refresh_url: `https://yourdomain.com/stripe/onboarding/refresh`,
-      return_url: `https://yourdomain.com/stripe/onboarding/return?accountId=${stripeAccountId}&proId=${pro._id}`,
-      type: "account_onboarding",
-    });
-console.log(accountLink,"accountLink");
+    // You must have 'country' in your pro object. Fallback to 'US' if not set.
+    const country = pro.country || "US";
 
-    return res.status(200).json({
-      message: "Stripe onboarding started",
-      onboardingUrl: accountLink.url,
-    });
+    // Optional: use pro.email if available
+    const email = pro.email || "default@email.com";
+
+    // Create Express Stripe Account
+   const account = await stripe.accounts.create({
+  type: "express",
+  country,
+  email,
+  capabilities: {
+    transfers: { requested: true },
+  },
+  business_type: "individual",
+  
+});
+
+// Update after creation (for US only)
+if (country === "US") {
+  await stripe.accounts.update(account.id, {
+    metadata: { tax_form_required: "true" },
+    settings: {
+      payouts: {
+        schedule: { interval: "manual" },
+      },
+    },
+  });
+}
+
+
+    // Save Stripe Account ID
+    await updateDocument("payment", { professionalId }, { stripeAccountId: account.id });
+const accounts = await stripe.accounts.retrieve(pro.stripeAccountId);
+
+if (!accounts.individual?.ssn_last_4 && country === 'US') {
+  // Missing tax info, re-initiate onboarding
+  const accountLink = await stripe.accountLinks.create({
+    account: accounts.id,
+    refresh_url: 'https://yourdomain.com/stripe/onboarding/refresh',
+    return_url: `https://yourdomain.com/stripe/onboarding/return?accountId=${account.id}&proId=${pro._id}`,
+    type: 'account_onboarding',
+  });
+
+  return res.status(200).json({
+    message: 'Re-initiated onboarding for missing tax info',
+    onboardingUrl: accountLink.url,
+  });
+}
+
   } catch (error) {
+    console.error("Stripe onboarding error:", error);
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export default startStripeOnboarding;

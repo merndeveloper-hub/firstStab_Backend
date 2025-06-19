@@ -78,6 +78,11 @@ const proCategorySchema = new mongoose.Schema(
     invitationUrl: { type: schemaType.TypeString }, // From Checkr response
     invitationId: { type: schemaType.TypeString },
     package: { type: schemaType.TypeString }, // 'basic_plus', 'plv', etc.
+      candidateIdCertn: { type: schemaType.TypeString }, // From Checkr response
+    invitationUrlCertn: { type: schemaType.TypeString }, // From Checkr response
+    invitationIdCertn: { type: schemaType.TypeString },
+    package: { type: schemaType.TypeString }, // 'basic_plus', 'plv', etc.
+    packageCertn: { type: schemaType.TypeString }, // 'basic_plus', 'plv', etc.
     workLocation: {
       country: { type: schemaType.TypeString },
       state: { type: schemaType.TypeString },
@@ -101,6 +106,10 @@ const proCategorySchema = new mongoose.Schema(
     w8BenUrl: { type: schemaType.TypeString }, // For Non-US individual
     w8BenEUrl: { type: schemaType.TypeString }, // For Non-US entity
     otherDocuments: { type: schemaType.TypeString },
+     passport: { type: schemaType.TypeString },
+      drivingLicence: { type: schemaType.TypeString },
+       selfieVideo: { type: schemaType.TypeString },
+        
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,
