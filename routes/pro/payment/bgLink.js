@@ -21,11 +21,11 @@ const getbgLink = async (req, res) => {
     console.log(getURL, "url-----");
 
     let url = getURL?.invitationUrl;
-
+  let certnURL=getURL?.invitationUrlCertn
     if(!url || url.length == 0){
        return res.status(400).json({ status: 400, message: "Kindly check you email" });
     }
-    return res.status(200).json({ status: 200, data: { url } });
+    return res.status(200).json({ status: 200, data: { url,certnURL } });
 
   } catch (e) {
     console.log(e);

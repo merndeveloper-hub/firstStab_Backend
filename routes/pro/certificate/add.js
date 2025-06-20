@@ -1,6 +1,11 @@
 import Joi from "joi";
+import fs from "fs";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 import { v2 as cloudinary } from "cloudinary";
+import util from "util";
+
+// Promisify fs.unlink for cleanup
+const unlinkFile = util.promisify(fs.unlink);
 
 // Cloudinary config
 cloudinary.config({
@@ -9,77 +14,60 @@ cloudinary.config({
   api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
 });
 
-// Schema validation
+// Joi validation
 const schema = Joi.object({
   id: Joi.string().required(),
 });
 
-// Uploader
-const uploadFile = async (file) =>
-  cloudinary.uploader.upload(file.path, {
-    quality: 20,
+// Optimized Uploader
+const uploadFile = async (file) => {
+  const res = await cloudinary.uploader.upload(file.path, {
     resource_type: "auto",
+    quality: "auto:eco", // More efficient
     allowed_formats: [
       "jpg", "jpeg", "png", "jfif", "avif", "pdf",
       "mp4", "mov", "avi", "webm", "mkv"
     ],
   });
-
+  await unlinkFile(file.path); // Cleanup local file
+  return res;
+};
 
 const addCertificate = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
     const { id } = req.params;
-    const {
-      isCompany,
-      isUSBased,
-      categoryId,
-      subCategoryId,
-    } = req.body;
+    const { isCompany, isUSBased, categoryId, subCategoryId } = req.body;
 
     const pro = await findOne("user", { _id: id, userType: "pro" });
-    if (!pro) {
-      return res.status(400).json({ status: 400, message: "No Professional found" });
-    }
+    if (!pro) return res.status(400).json({ status: 400, message: "No Professional found" });
 
     const fileFields = [
-      "passport",
-      "drivingLicence",
-      "selfieVideo",
-      "certificationOrLicense",
-      "proofOfInsurance",
-      "governmentId",
-      "companyRegistrationUrl",
-      "formW9",
-      "w8BenUrl",
-      "w8BenEUrl",
+      "passport", "drivingLicence", "selfieVideo",
+      "certificationOrLicense", "proofOfInsurance",
+      "governmentId", "companyRegistrationUrl",
+      "formW9", "w8BenUrl", "w8BenEUrl",
     ];
 
-    const uploadPromises = fileFields.map(async (field) => {
-      if (req?.files?.[field]?.path) {
-        const uploaded = await uploadFile(req.files[field]);
-        req.body[field] = uploaded.url;
+    // Parallel uploads
+    const uploadTasks = fileFields.map(async (field) => {
+      const file = req?.files?.[field];
+      if (file?.path) {
+        const uploaded = await uploadFile(file);
+        req.body[field] = uploaded.secure_url;
       }
     });
+    await Promise.all(uploadTasks);
 
-    await Promise.all(uploadPromises); // Parallel uploads
-
-    // Required file validations
-    // if (!req.body.governmentId) {
-    //   return res.status(400).json({ status: 400, message: "Government ID is required" });
-    // }
-
-    if (!req.body.selfieVideo) {
+    // Validations (post-upload)
+    if (!req.body.selfieVideo)
       return res.status(400).json({ status: 400, message: "Selfie video is required" });
-    }
 
-    if (isUSBased === "true" && !req.body.formW9) {
+    if (isUSBased === "true" && !req.body.formW9)
       return res.status(400).json({ status: 400, message: "TIN is required for US-based Pros" });
-    }
 
-    if (isUSBased === "false" && isCompany === "false" && !req.body.w8BenUrl) {
+    if (isUSBased === "false" && isCompany === "false" && !req.body.w8BenUrl)
       return res.status(400).json({ status: 400, message: "W-8BEN is required for Non-US Pros" });
-    }
 
     if (
       isUSBased === "false" &&
@@ -92,6 +80,7 @@ const addCertificate = async (req, res) => {
       });
     }
 
+    // Update DB
     const updated = await updateDocument(
       "proCategory",
       { proId: id, categoryId, "subCategories.id": subCategoryId },
