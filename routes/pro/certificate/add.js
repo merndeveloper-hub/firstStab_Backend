@@ -37,7 +37,7 @@ const addCertificate = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
     const { id } = req.params;
-    const { isCompany, isUSBased, categoryId, subCategoryId } = req.body;
+    const { isCompany, isUSBased, categoryId, subCategoryId,preCondition } = req.body;
 
     const pro = await findOne("user", { _id: id, userType: "pro" });
     if (!pro) return res.status(400).json({ status: 400, message: "No Professional found" });
@@ -59,10 +59,13 @@ const addCertificate = async (req, res) => {
     });
     await Promise.all(uploadTasks);
 
-    // Validations (post-upload)
-    if (!req.body.selfieVideo)
-      return res.status(400).json({ status: 400, message: "Selfie video is required" });
+    if(preCondition == "true"){
 
+      // Validations (post-upload)
+      if (!req.body.selfieVideo)
+        return res.status(400).json({ status: 400, message: "Selfie video is required" });
+    }
+      
     if (isUSBased === "true" && !req.body.formW9)
       return res.status(400).json({ status: 400, message: "TIN is required for US-based Pros" });
 
