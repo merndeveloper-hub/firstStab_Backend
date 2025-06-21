@@ -25,11 +25,32 @@ const getbgLink = async (req, res) => {
        return res.status(400).json({ status: 400, message: "Kindly check you email" });
     }
     
+ const US_COUNTRIES = [
+      "United States",
+      "American Samoa",
+      "Guam",
+      "Northern Mariana Islands",
+      "Puerto Rico",
+      "U.S. Virgin Islands",
+      "United States Minor Outlying Islands",
+    ];
+
+    // add bg code
+    const findPro = await findOne("user", {
+      _id: getURL?.proId,
+      userType: "pro",
+    });
+    let getCountry = US_COUNTRIES.includes(findPro?.country);
+    console.log(getCountry, "getcouintry");
+
+
     let url = getURL?.invitationUrl;
 
   let certnURL=getURL?.invitationUrlCertn
 
-    return res.status(200).json({ status: 200, data: { url,certnURL } });
+
+  let decideCountry = getCountry == true? "US":"Non-US" 
+    return res.status(200).json({ status: 200, data: { url,certnURL,decideCountry } });
 
   } catch (e) {
     console.log(e);
