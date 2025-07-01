@@ -237,9 +237,24 @@ const getProfessionalService = async (req, res) => {
           preserveNullAndEmptyArrays: true,
         },
       },
+       {
+        $lookup: {
+          from: "userbookservs",
+          localField: "proServiceId",
+          foreignField: "_id",
+          as: "userBookingStatus",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userBookingStatus",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $group: {
           _id: "$_id",
+           userbookingstatus: { $first: "$userBookingStatus.status" },
           subCategories: { $first: "$subCategories" },
           proId: { $first: "$proId" },
           rating: { $first: "$rating" },
@@ -271,6 +286,7 @@ const getProfessionalService = async (req, res) => {
       {
         $project: {
           _id: 1,
+          userbookingstatus:1,
           categoryId:1,
           subCategories:1,
           proId: 1,
