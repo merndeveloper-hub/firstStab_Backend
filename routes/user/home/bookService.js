@@ -414,11 +414,12 @@ for (const doc of getProCategory) {
         .json({ status: 400, message: `The Professional ${findprofessionalId.first_Name} ${findprofessionalId.last_Name} not available for the selected service.Kindly select other professional.` });
       }
 
+console.log(getProCategory[0]._id,"in---------");
 
       const probookService = await insertNewDocument("proBookingService", {
         ...req.body,
         media: uploadedFiles ?  uploadedFiles : undefined,
-        proServiceId: getProCategory._id,
+        proServiceId: getProCategory[0]._id,
         professsionalId: findprofessionalId,
         bookServiceId: bookServ._id,
         categoryId:req.body.categoryId,

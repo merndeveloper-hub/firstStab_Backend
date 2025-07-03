@@ -239,9 +239,9 @@ const getProfessionalService = async (req, res) => {
       },
        {
         $lookup: {
-          from: "userbookservs",
-          localField: "proServiceId",
-          foreignField: "_id",
+          from: "probookingservices",
+          localField: "_id",
+          foreignField: "proServiceId",
           as: "userBookingStatus",
         },
       },
@@ -323,8 +323,8 @@ const getProfessionalService = async (req, res) => {
         message: "No professionals available for the selected service",
       });
     }
-
-    return res.status(200).json({ status: 200, proService });
+let serviceTime = process.env.bookingTime
+    return res.status(200).json({ status: 200, proService,servieTimer:serviceTime });
   } catch (e) {
     console.log("error", e.message);
     return res.status(400).json({ status: 400, message: e.message });

@@ -6,7 +6,7 @@ const schema = Joi.object().keys({
 });
 
 const schemaBody = Joi.object().keys({
-  quoteAmount: Joi.number().required(),
+  quoteAmount: Joi.number(),
   quoteInfo: Joi.string(),
   quoteDetail: Joi.string(),
   paypal_fee: Joi.string(),
