@@ -35,7 +35,7 @@ const cancelledBooking = async (req, res) => {
     
     const cancelRandomProBooking = await updateDocument(
       "proBookingService",
-      { bookServiceId: id,status:"Accepted"||"Pending",serviceAssign:"Random" },
+      { bookServiceId: id,status:{$in:["Accepted","Pending"]}},
       { status: "Cancelled", cancelledReason: "Cancelled By User" }
     );
     

@@ -14,9 +14,9 @@ const schemaBody = Joi.object().keys({
   userId: Joi.string(),
   proServiceId: Joi.string(),
   professsionalId: Joi.string(),
-  bookServiceId: Joi.string(),
+ // bookServiceId: Joi.string(),
   addInstruction: Joi.string(),
-  userAccpetBookingId: Joi.string(),
+ // userAccpetBookingId: Joi.string(),
   serviceType: Joi.string().required(),
 });
 

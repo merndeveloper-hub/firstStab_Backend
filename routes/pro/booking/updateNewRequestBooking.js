@@ -7,8 +7,8 @@ const schema = Joi.object().keys({
 
 const schemaBody = Joi.object().keys({
   quoteAmount: Joi.number(),
-  quoteInfo: Joi.string(),
-  quoteDetail: Joi.string(),
+  quoteInfo: Joi.string().allow(null, ''),
+  quoteDetail: Joi.string().allow(null, ''),
   paypal_fee: Joi.string(),
   service_fee: Joi.string(),
   tax_fee: Joi.string(),

@@ -33,11 +33,23 @@ const cancelledBooking = async (req, res) => {
       .json({ status: 400, message: "No Booking Found!" });
     }
     
-    const cancelRandomProBooking = await updateDocument(
-      "userBookServ",
-      { _id:cancelbooking.bookServiceId ,status:"Accepted"||"Pending" },
-      { status: "Cancelled", cancelledReason: "Cancelled By Professional" }
-    );
+    console.log();
+    
+  const cancelRandomProBooking = await updateDocument(
+  "userBookServ",
+  { 
+    _id: cancelbooking?.bookServiceId, 
+    status: { $in: ["Accepted", "Pending"] } 
+  },
+  { 
+    status: "Cancelled", 
+    cancelledReason: "Cancelled By Professional" 
+  }
+);
+
+
+    console.log(cancelRandomProBooking,"can");
+    
     
     return res
       .status(200)
