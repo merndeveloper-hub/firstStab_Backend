@@ -257,6 +257,7 @@ const getProfessionalService = async (req, res) => {
             $first: "$userBookingStatus.total_amount_cus_pay",
           },
           total_amount: { $first: "$userBookingStatus.total_amount" },
+           proBookingServiceId: { $first: "$userBookingStatus._id" },
           tax_fee: { $first: "$userBookingStatus.tax_fee" },
           service_fee: { $first: "$userBookingStatus.service_fee" },
           quoteInfo: { $first: "$userBookingStatus.quoteInfo" },
@@ -303,6 +304,7 @@ const getProfessionalService = async (req, res) => {
         $project: {
           _id: 1,
           userbookingstatus: 1,
+          proBookingServiceId:1,
           total_amount_cus_pay: 1,
           total_amount: 1,
           tax_fee: 1,
