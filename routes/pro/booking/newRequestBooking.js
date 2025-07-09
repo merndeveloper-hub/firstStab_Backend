@@ -37,7 +37,7 @@ const newRequestBooking = async (req, res) => {
               }, // Compare userId with _id in user collection
             },
             {
-              $project: { first_Name: 1, last_Name: 1, _id: 0 }, // Return only firstName & lastName
+              $project: { first_Name: 1, last_Name: 1,availability:1,profile:1,totalRating:1, _id: 0 }, // Return only firstName & lastName
             },
           ],
           as: "userDetails",
