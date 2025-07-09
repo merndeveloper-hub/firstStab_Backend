@@ -42,7 +42,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const getProBookService = await updateDocument(
         "proBookingService",
         { _id: id },
-        { status: "confirmed", videoRoomName }
+        { status: "Confirmed", videoRoomName }
       );
 
       if (!getProBookService || getProBookService.length == 0) {
@@ -75,7 +75,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const getProBookService = await updateDocument(
         "proBookingService",
         { _id: id },
-        { status: "confirmed", chatChannelName  }
+        { status: "Confirmed", chatChannelName  }
       );
 
       if (!getProBookService || getProBookService.length == 0) {

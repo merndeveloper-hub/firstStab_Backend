@@ -145,6 +145,7 @@ const proBookingServiceSchema = new mongoose.Schema(
         "Pending",
         "Rejected",
         "Delivered",
+        "Confirmed"
       ],
       default: "OnGoing",
     },

@@ -90,6 +90,7 @@ const userBookServSchema = new mongoose.Schema(
         "Completed",
         "OnGoing",
         "Delivered",
+        "Confirmed"
       ],
       default: "Pending",
     },
