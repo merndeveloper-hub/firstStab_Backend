@@ -16,6 +16,7 @@ import completedBooking from "./completedBooking.js";
 import userResheduleRequest from "./reshedule.js";
 import resheduleAcceptBooking from "./resheduleAccept.js";
 import cancelledRescheduleBooking from "./resheduleReject.js";
+import timerCancelBooking from "./timerCancelBooking.js";
 //import tokenVerification from "../../../middleware/token-verification/index.js";
 //import mostPopularCategory from "../home/mostPopularCategory.js";
 // import releasePayment from "./releasePayment.js";
@@ -44,6 +45,9 @@ router.post("/twilio/token", twilioToken);
 
 ///--------Remove get (created,requested,accepted services)------///
 router.put("/cancelled/:id", cancelledBooking);
+
+///-----------Request timer cancel-----////
+router.put("/timercancel/:id",timerCancelBooking)
 
 
 //----User accepted Pro Accepted services----//

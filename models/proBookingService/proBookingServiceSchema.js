@@ -170,6 +170,7 @@ const proBookingServiceSchema = new mongoose.Schema(
         fixed_price: { type: schemaType.TypeString },
         min_price: { type: schemaType.TypeString },
         max_price: { type: schemaType.TypeString },
+        bookingRequestTime: { type: schemaType.TypeString },
   },
   { timestamps: true }
 );

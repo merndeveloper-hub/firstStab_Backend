@@ -94,7 +94,7 @@ const userBookServSchema = new mongoose.Schema(
       ],
       default: "Pending",
     },
-
+bookingRequestTime: { type: schemaType.TypeString },
     orderRescheduleStatus: {
       type: schemaType.TypeString,
       default: "NA",
@@ -141,6 +141,7 @@ const userBookServSchema = new mongoose.Schema(
         "Schedule Conflict",
         "Service No Longer Needed",
         "Unsatisfactory Provider Options",
+        "Booking Time End"
       ],
     },
     reasonDescription: {
