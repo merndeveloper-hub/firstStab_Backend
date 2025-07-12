@@ -225,6 +225,7 @@ const proSignup = async (req, res) => {
       availability:"offline",
       bgCheck:"true",
       totalRating:0,
+         bookingRequestTime:process.env.bookingRequestTime,
       totalPro: userCount[0] ? userCount[0]?.activeProUsers + 1 : 1,
     });
 

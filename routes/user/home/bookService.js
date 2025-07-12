@@ -435,7 +435,7 @@ console.log(getProCategory[0]._id,"in---------");
         problemDescription: problemDescription,
         orderStartDate: extractedDate,
         orderStartTime: extractedTime,
-         bookingRequestTime:process.env.bookingRequestTime,
+      
         orderEndDate: req.body.subCategories.orderEndDate ? extractedEndDate : null,
         orderEndTime: req.body.subCategories.orderEndTime ? extractedEndTime : null,
         status: "Pending",

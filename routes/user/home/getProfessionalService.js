@@ -121,7 +121,7 @@ const getProfessionalService = async (req, res) => {
       {
         $group: {
           bookingRequestTime: {
-            $first: "$userBookingStatus.bookingRequestTime",
+            $first: "$proDetails.bookingRequestTime",
           },
           _id: "$_id",
           userbookingstatus: { $first: "$userBookingStatus.status" },

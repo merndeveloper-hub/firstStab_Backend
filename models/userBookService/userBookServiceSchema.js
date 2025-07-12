@@ -94,7 +94,7 @@ const userBookServSchema = new mongoose.Schema(
       ],
       default: "Pending",
     },
-bookingRequestTime: { type: schemaType.TypeString },
+
     orderRescheduleStatus: {
       type: schemaType.TypeString,
       default: "NA",

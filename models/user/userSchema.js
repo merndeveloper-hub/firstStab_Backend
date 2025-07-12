@@ -122,6 +122,7 @@ const userSchema = new mongoose.Schema(
       enum: ["Active", "InActive","AdminHideUser","Disabled"],
       default: "Active",
     },
+      bookingRequestTime: { type: schemaType.TypeString },
   },
   { timestamps: true }
 );
