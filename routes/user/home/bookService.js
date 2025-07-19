@@ -12,7 +12,7 @@ import {
 } from "../../../utils/index.js";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
-
+import { getSocket } from '../../../socket.js';
 cloudinary.config({
   cloud_name: "dwebxmktr",
   api_key: "988681166781262",
@@ -442,7 +442,13 @@ console.log(getProCategory[0]._id,"in---------");
       });
 
     }
+ const io = getSocket();
 
+  io.to().emit('', {
+   /// proId,
+   // bookingId,
+    message: 'Your request was accepted by the professional.',
+  });
     return res
       .status(201)
       .json({ status: 201, message: "Book Service successfully", bookServ });
@@ -452,3 +458,7 @@ console.log(getProCategory[0]._id,"in---------");
 };
 
 export default bookService;
+
+
+
+

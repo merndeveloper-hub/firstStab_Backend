@@ -15,6 +15,7 @@ const app = express();
 //Socketf
 import http from "http";
 import { Server } from "socket.io";
+import { initSocket } from './socket.js';
 //import logger from "./logger/index.js";
 //import  arcjetMiddleware  from'./middleware/arcjet/index.js';
 import errorMiddleware from "./middleware/error-middleware/index.js";
@@ -46,7 +47,8 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(pinoHttpMiddleware);
 
-
+// Initialize socket.io
+initSocket(server);
 
 
 //-----logger insert db----/////

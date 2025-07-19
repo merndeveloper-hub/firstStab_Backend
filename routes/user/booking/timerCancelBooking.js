@@ -32,7 +32,7 @@ const timerCancelBooking = async (req, res) => {
    
       const getProBookService = await updateDocument(
         "proBookingService",
-        { _id: id,status:'Pending' },
+        { bookServiceId: id,status:'Pending' },
         { status: "Cancelled" }
       );
 

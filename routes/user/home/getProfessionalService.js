@@ -229,10 +229,10 @@ const getProfessionalService = async (req, res) => {
         message: "No professionals available for the selected service",
       });
     }
-    // let serviceTime = process.env.bookingTime;
+   
     return res
       .status(200)
-      .json({ status: 200, proService, servieTimer: serviceTime });
+      .json({ status: 200, proService });
   } catch (e) {
     console.log("error", e.message);
     return res.status(400).json({ status: 400, message: e.message });
