@@ -33,7 +33,7 @@ const timerCancelBooking = async (req, res) => {
       const getProBookService = await updateDocument(
         "proBookingService",
         { bookServiceId: id,status:'Pending' },
-        { status: "Cancelled" }
+        { status: "Unavailable" }
       );
 
       if (!getProBookService || getProBookService.length == 0) {
@@ -46,7 +46,7 @@ const timerCancelBooking = async (req, res) => {
       const userBookServiceUpdate = await updateDocument(
         "userBookServ",
         { _id: getProBookService.bookServiceId,status:'Pending' },
-        { status: "Cancelled", reasonCancel :"Booking Time End" }
+        { status: "Unavailable", reasonCancel :"Booking Time End" }
       );
 
     

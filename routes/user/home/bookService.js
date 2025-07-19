@@ -444,10 +444,11 @@ console.log(getProCategory[0]._id,"in---------");
     }
  const io = getSocket();
 
-  io.to().emit('', {
+  io.to().emit('userBooking', {
+    bookServ,
    /// proId,
    // bookingId,
-    message: 'Your request was accepted by the professional.',
+    message: 'User has been requested for service',
   });
     return res
       .status(201)
