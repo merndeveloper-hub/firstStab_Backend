@@ -443,8 +443,9 @@ console.log(getProCategory[0]._id,"in---------");
 
     }
  const io = getSocket();
+console.log(io,"io");
 
-  io.to().emit('userBooking', {
+  io.emit('userBooking', {
     bookServ,
    /// proId,
    // bookingId,
