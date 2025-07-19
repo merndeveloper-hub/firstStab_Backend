@@ -15,11 +15,12 @@ const app = express();
 //Socketf
 import http from "http";
 import { Server } from "socket.io";
-import { initSocket } from './socket.js';
+//import { initSocket } from './socket.js';
 //import logger from "./logger/index.js";
 //import  arcjetMiddleware  from'./middleware/arcjet/index.js';
 import errorMiddleware from "./middleware/error-middleware/index.js";
 import handleSocket from "./routes/user/serviceDetail/firestore/socketHandlerSender.js";
+import userBookReqSocket from "./routes/user/serviceDetail/firestore/userBookReqSocket.js";
 
 // const SERVICE_PORT = config.PORT;
 const SERVICE_PORTHTTPS = "5001";
@@ -48,7 +49,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(pinoHttpMiddleware);
 
 // Initialize socket.io
-initSocket(server);
+//initSocket(server);
 
 
 //-----logger insert db----/////
@@ -90,9 +91,13 @@ app.get("/ping", (req, res) => {
 app.post("/log-level", changed);
 
 // Socket.IO
-
+// chat b/w user and pro before booking
 const socketNamespace = io.of("/api/v1/socket");
 handleSocket(socketNamespace);
+
+//user booking request socket
+const socketUserBookReq = io.of("/api/v1/userBookReqSocket");
+userBookReqSocket(socketUserBookReq)
 // io.on("connection", (socket) => {
 //   //when connect
 //   console.log("New client connected with id: ", socket.id);
