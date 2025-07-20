@@ -15,7 +15,17 @@ const chatMessageSchema = new mongoose.Schema(
       type: schemaType.TypeString,
      // ref: "chatRole",
     },
-   
+    userBooking: {
+      type: schemaType.TypeString,
+    //  ref: "chat",
+    }, proBooking: {
+      type: schemaType.TypeString,
+    //  ref: "chat",
+    },
+    isBooking: {
+      type: schemaType.TypeBoolean,
+    //  ref: "chat",
+    },
     message: {
       type: schemaType.TypeString,
     },

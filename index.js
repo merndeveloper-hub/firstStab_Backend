@@ -20,7 +20,7 @@ import { Server } from "socket.io";
 //import  arcjetMiddleware  from'./middleware/arcjet/index.js';
 import errorMiddleware from "./middleware/error-middleware/index.js";
 import handleSocket from "./routes/user/serviceDetail/firestore/socketHandlerSender.js";
-//import userBookReqSocket from "./routes/user/serviceDetail/firestore/userSocket.js";
+
 import { registerAllSockets } from "./routes/user/serviceDetail/firestore/index.js";
 
 //user and pro booking flow socket

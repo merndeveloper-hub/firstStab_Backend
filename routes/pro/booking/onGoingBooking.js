@@ -22,7 +22,7 @@ const getOnGoingBooking = async (req, res) => {
         {
           $match: {
             professsionalId: new mongoose.Types.ObjectId(id),
-            status: { $in: ["Accepted", "Pending", "Approved","Delivered","Requested"] },
+            status: { $in: ["Accepted", "Pending", "Approved","Delivered","Requested","Confirmed"] },
           },
         },
         {

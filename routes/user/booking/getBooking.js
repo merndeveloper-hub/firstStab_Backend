@@ -24,7 +24,7 @@ const booking = async (req, res) => {
           $match: {
             userId: new mongoose.Types.ObjectId(id), // Match userId
             status: {
-              $in: ["Accepted", "Pending", "Requested", "OnGoing", "Delivered"],
+              $in: ["Accepted", "Pending", "Requested", "OnGoing", "Delivered","Confirmed"],
             }, // Match status
           },
         },

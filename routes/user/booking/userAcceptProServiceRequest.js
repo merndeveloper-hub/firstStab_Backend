@@ -55,7 +55,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const userBookServiceUpdate = await updateDocument(
         "userBookServ",
         { _id: getProBookService.bookServiceId },
-        { status: "Accepted", videoRoomName, professionalId: professsionalId  }
+        { status: "Confirmed", videoRoomName, professionalId: professsionalId  }
       );
 
       const remainingProRejected = await updateDocuments(
@@ -88,7 +88,7 @@ const userAcceptProServiceRequest = async (req, res) => {
       const userBookServiceUpdate = await updateDocument(
         "userBookServ",
         { _id: getProBookService.bookServiceId },
-        { status: "Accepted", chatChannelName, professionalId: professsionalId }
+        { status: "Confirmed", chatChannelName, professionalId: professsionalId }
       );
 
       const remainingProRejected = await updateDocuments(
