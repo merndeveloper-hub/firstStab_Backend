@@ -29,7 +29,7 @@ const router = express.Router();
 //router.get("/", newRequestBooking);
 //router.post("/add",multipartMiddleware, addCategory);
 
-//-----Update User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
+//-----pro accept user request booking----//
  router.put("/newrequest/:id",updateNewRequestBooking);
  
 
@@ -37,10 +37,8 @@ const router = express.Router();
  router.put("/delivered/:id", multipartMiddleware, deliveredBooking);
 
 
- //-----Cancelled User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
- 
-
-router.put("/cancelled/:id", cancelledBooking);
+ //-----Pro cancelled pro request booking----//
+ router.put("/cancelled/:id", cancelledBooking);
 
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//

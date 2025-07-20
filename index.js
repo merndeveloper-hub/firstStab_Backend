@@ -20,13 +20,19 @@ import { Server } from "socket.io";
 //import  arcjetMiddleware  from'./middleware/arcjet/index.js';
 import errorMiddleware from "./middleware/error-middleware/index.js";
 import handleSocket from "./routes/user/serviceDetail/firestore/socketHandlerSender.js";
-import userBookReqSocket from "./routes/user/serviceDetail/firestore/userBookReqSocket.js";
+//import userBookReqSocket from "./routes/user/serviceDetail/firestore/userSocket.js";
+import { registerAllSockets } from "./routes/user/serviceDetail/firestore/index.js";
 
+//user and pro booking flow socket
+//import { registerAllSockets } from "./routes/user/serviceDetail/firestore/index.js";
 // const SERVICE_PORT = config.PORT;
 const SERVICE_PORTHTTPS = "5001";
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*", methods: "*" } });
+
+//User and pro booking flow socket
+registerAllSockets(io);
 
 var db = mongoose.connection;
 
@@ -95,9 +101,16 @@ app.post("/log-level", changed);
 const socketNamespace = io.of("/api/v1/socket");
 handleSocket(socketNamespace);
 
-//user booking request socket
-const socketUserBookReq = io.of("/api/v1/userBookReqSocket");
-userBookReqSocket(socketUserBookReq)
+
+
+
+// //user booking request socket
+// const socketUserBookReq = io.of("/api/v1/userBookReqSocket");
+// userBookReqSocket(socketUserBookReq)
+
+
+
+
 // io.on("connection", (socket) => {
 //   //when connect
 //   console.log("New client connected with id: ", socket.id);
