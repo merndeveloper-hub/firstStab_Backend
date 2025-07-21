@@ -1,10 +1,34 @@
 export const proSockets = {
-cancelledProBooking: (io) => {
-io.on("connection", (socket) => {
-console.log("[Socket] New connection on /cancelledProBooking:", socket.id);
-socket.emit("proCancelBooking", { message: "Pro cancelled the booking." });
-});
+cancelledProBooking:  (io) => {
+  io.on("connection", (socket) => {
+    console.log("[Socket] New connection on /cancelledProBooking:", socket.id);
+
+    // Client se event ka intezaar
+    socket.on("cancel_pro_booking", (data) => {
+      const { userId, proId } = data;
+
+      const payload = {
+        message: "Pro cancelled the booking.",
+        userId,
+        proId
+    
+      };
+
+      console.log("🚫 Booking Cancelled by Pro:", payload);
+
+      // Specific user room ko notify karein agar userId diya gaya hai
+    
+        io.to(userId).emit("proCancelBooking", payload);
+        io.to(proId).emit("proCancelBooking", payload);
+    
+    });
+
+    socket.on("disconnect", () => {
+      console.log("[Socket] Disconnected from /cancelledProBooking:", socket.id);
+    });
+  });
 },
+
 
 deliveredProBooking: (io) => {
 io.on("connection", (socket) => {
