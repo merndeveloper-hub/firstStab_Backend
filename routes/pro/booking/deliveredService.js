@@ -115,7 +115,7 @@ if( goingbooking.orderRescheduleStatus == "NA"){
     
     const deliveredRandomProBooking = await updateDocument(
       "userBookServ",
-      { _id: deliveredBooking.bookServiceId,status:"Accepted"||"Pending" },
+      { _id: deliveredBooking.bookServiceId,status:"Accepted"||"Pending"||"Confirmed" },
       { status: "Delivered", serviceImage: uploadedFiles ?  uploadedFiles : undefined, }
     );
     console.log(deliveredRandomProBooking,"deliveredRandomProBooking");

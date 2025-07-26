@@ -1,32 +1,54 @@
 export const proSockets = {
 cancelledProBooking:  (io) => {
+  // io.on("connection", (socket) => {
+  //   console.log("[Socket] New connection on /cancelledProBooking:", socket.id);
+  //  socket.on("join", (userId) => {
+  //     socket.join(userId);
+  //     console.log(`🟢 User ${userId} joined room.`);
+  //   });
+
+  //   // Client se event ka intezaar
+  //   socket.on("cancel_pro_booking", (data) => {
+  //     const { userId, proId } = data;
+
+  //     const payload = {
+  //       message: "Pro cancelled the booking.",
+  //       userId,
+  //       proId
+    
+  //     };
+
+  //     console.log("🚫 Booking Cancelled by Pro:", payload);
+
+  //     // Specific user room ko notify karein agar userId diya gaya hai
+    
+  //       io.to(userId).emit("proCancelBooking", payload);
+  //       io.to(proId).emit("proCancelBooking", payload);
+    
+  //   });
+
+  //   socket.on("disconnect", () => {
+  //     console.log("[Socket] Disconnected from /cancelledProBooking:", socket.id);
+  //   });
+  // });
+
+
+
+  
   io.on("connection", (socket) => {
-    console.log("[Socket] New connection on /cancelledProBooking:", socket.id);
+  console.log("New socket connected:", socket.id);
 
-    // Client se event ka intezaar
-    socket.on("cancel_pro_booking", (data) => {
-      const { userId, proId } = data;
+  socket.on("cancel_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
 
-      const payload = {
-        message: "Pro cancelled the booking.",
-        userId,
-        proId
-    
-      };
+});
 
-      console.log("🚫 Booking Cancelled by Pro:", payload);
-
-      // Specific user room ko notify karein agar userId diya gaya hai
-    
-        io.to(userId).emit("proCancelBooking", payload);
-        io.to(proId).emit("proCancelBooking", payload);
-    
-    });
-
-    socket.on("disconnect", () => {
-      console.log("[Socket] Disconnected from /cancelledProBooking:", socket.id);
-    });
+  // Example: Send message to both User and Pro
+  socket.on("proCancelBooking_message", (message) => {
+    io.to(roomName).emit("proCancelBooking", message);
   });
+});
 },
 
 
