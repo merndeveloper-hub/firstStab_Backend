@@ -61,25 +61,54 @@ cancelledProBooking:  (io) => {
 
   // Example: Send message to both User and Pro
   socket.on("proCancelBooking_message", (message) => {
-    io.to("user_pro_common_room").emit("proCancelBooking", message);
+    io.to("pro_cancel_join_room").emit("proCancelBooking", message);
   });
 });
 },
 
 
 deliveredProBooking: (io) => {
-io.on("connection", (socket) => {
-console.log("[Socket] New connection on /deliveredProBooking:", socket.id);
-socket.emit("proDeliveredBooking", { message: "Pro delivered the service." });
+// io.on("connection", (socket) => {
+// console.log("[Socket] New connection on /deliveredProBooking:", socket.id);
+// socket.emit("proDeliveredBooking", { message: "Pro delivered the service." });
+// });
+ io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proDelivered_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proDeliveredBooking_message", (message) => {
+    io.to("pro_delivered_room").emit("proDeliveredBooking", message);
+  });
 });
 },
 
 proAcceptUserServiceRequest: (io) => {
-io.on("connection", (socket) => {
-console.log("[Socket] New connection on /proAcceptUserServiceRequest:", socket.id);
-socket.emit("proAcceptUserServiceRequest", { message: "Pro accepted the user's request." });
+// io.on("connection", (socket) => {
+// console.log("[Socket] New connection on /proAcceptUserServiceRequest:", socket.id);
+// socket.emit("proAcceptUserServiceRequest", { message: "Pro accepted the user's request." });
+// });
+ io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proAccept_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proAcceptBooking_message", (message) => {
+    io.to("pro_Accept_room").emit("proAcceptBooking", message);
+  });
 });
 },
+
 
 resheduleProAcceptBooking: (io) => {
 io.on("connection", (socket) => {
