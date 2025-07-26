@@ -42,8 +42,7 @@ const schema = Joi.object({
         "orderStart Date is required",
       "any.required": "orderStart Date is required.",
     }),
-    orderEndDate: Joi.string()
-    .required()
+    orderEndDate: Joi.string().allow("").optional()
     .messages({
       "string.pattern.base":
         "order  EndDate is required",
@@ -56,8 +55,7 @@ const schema = Joi.object({
         "orderStart Time is required",
       "any.required": "orderStart Time is required.",
     }),
-    orderEndTime: Joi.string()
-    .required()
+    orderEndTime: Joi.string().allow("").optional()
     .messages({
       "string.pattern.base":
         "orderEnd Time is required",

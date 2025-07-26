@@ -35,7 +35,22 @@ cancelledProBooking:  (io) => {
 
 
   
-  io.on("connection", (socket) => {
+//   io.on("connection", (socket) => {
+//   console.log("New socket connected:", socket.id);
+
+//   socket.on("join_room", (roomName) => {
+//   socket.join(roomName);
+//   console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+// });
+
+//   // Example: Send message to both User and Pro
+//   socket.on("send_common_message", (message) => {
+//     io.to(roomName).emit("common_message", message);
+//   });
+// });
+
+ io.on("connection", (socket) => {
   console.log("New socket connected:", socket.id);
 
   socket.on("cancel_join_room", (roomName) => {
@@ -46,7 +61,7 @@ cancelledProBooking:  (io) => {
 
   // Example: Send message to both User and Pro
   socket.on("proCancelBooking_message", (message) => {
-    io.to(roomName).emit("proCancelBooking", message);
+    io.to("user_pro_common_room").emit("proCancelBooking", message);
   });
 });
 },

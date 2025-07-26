@@ -153,7 +153,7 @@ server.listen(port, () => {
 });
 
 const closeServer = () => {
-  serverlogger.info("closing app");
+ // serverlogger.info("closing app");
 };
 
 process.on("SIGTERM", closeServer);
