@@ -38,6 +38,11 @@ function extractDate(dateString) {
 
 // Function to extract time in hh:mm:ss format
 function extractTime(timeString) {
+  if (!timeString || typeof timeString !== "string" || !timeString.includes(":")) {
+    console.error("Invalid timeString:", timeString);
+    return "00:00:00"; // Or throw an error / return null based on your app logic
+  }
+
   const [hours, minutes, seconds] = timeString.split(":");
   const formatted = `${hours.padStart(2, "0")}:${minutes.padStart(
     2,
@@ -46,6 +51,7 @@ function extractTime(timeString) {
 
   return formatted;
 }
+
 
 // const { admin } = require("../firebase/admin");
 

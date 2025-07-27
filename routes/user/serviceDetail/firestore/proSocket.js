@@ -109,6 +109,28 @@ proAcceptUserServiceRequest: (io) => {
 });
 },
 
+unavailableSocket: (io) => {
+// io.on("connection", (socket) => {
+// console.log("[Socket] New connection on /proAcceptUserServiceRequest:", socket.id);
+// socket.emit("proAcceptUserServiceRequest", { message: "Pro accepted the user's request." });
+// });
+ io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("unAvailable_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("unAvailable_message", (message) => {
+    io.to("unAvailable_room").emit("unAvailableBooking", message);
+  });
+});
+},
+
+
 
 resheduleProAcceptBooking: (io) => {
 io.on("connection", (socket) => {

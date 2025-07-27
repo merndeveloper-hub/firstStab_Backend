@@ -117,7 +117,14 @@ const getProfessionalService = async (req, res) => {
           path: "$userBookingStatus",
           preserveNullAndEmptyArrays: true,
         },
-      },
+      },{
+    $match: {
+      $or: [
+        { "userBookingStatus.status": { $ne: "Completed" } },
+        { "userBookingStatus": { $eq: null } } // keep documents with no match
+      ]
+    }
+  },
       {
         $group: {
           bookingRequestTime: {

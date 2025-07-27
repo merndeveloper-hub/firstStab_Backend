@@ -16,4 +16,5 @@ proSockets.proAcceptUserServiceRequest(io.of("/api/v1/proAcceptUserRequest"));
 proSockets.resheduleProAcceptBooking(io.of("/api/v1/proResheduleAccept"));
 proSockets.cancelledProRescheduleBooking(io.of("/api/v1/proCancelledReschedule"));
 proSockets.resheduleDeliveredProBooking(io.of("/api/v1/proResheduleDelivered"));
+proSockets.unavailableSocket(io.of("/api/v1/unAvailable"))
 };
