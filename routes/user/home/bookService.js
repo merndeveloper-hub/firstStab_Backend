@@ -208,7 +208,7 @@ console.log(req.body,"body");
     let extractedEndDate 
     let extractedEndTime
 
-console.log(extractedTime,"extractedTime");
+
 
 
 
@@ -217,7 +217,7 @@ console.log(extractedTime,"extractedTime");
       
       extractedDate = extractDate(req.body.subCategories.orderStartDate);
       extractedEndDate = extractDate(req.body.subCategories.orderEndDate);
-      extractedTime = extractTime(req.body.subCategories.orderStartTime);
+      extractedTime = extractTime(req.body.subCategories.orderStartTime);      
       extractedEndTime = extractTime(req.body.subCategories.orderEndTime);
     }
     
