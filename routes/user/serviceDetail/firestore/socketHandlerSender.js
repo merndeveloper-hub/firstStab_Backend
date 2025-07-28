@@ -129,14 +129,7 @@ const handleSocket = (io) => {
     socket.on(
       "send_message",
       async ({
-        chatId,
-        senderId,
-        receiverId,
-        message,
-        role,
-        userBooking,
-        proBooking,
-        isBooking,
+      c
       }) => {
         try {
           // Create and store the message

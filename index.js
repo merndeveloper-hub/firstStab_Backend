@@ -22,6 +22,7 @@ import errorMiddleware from "./middleware/error-middleware/index.js";
 import handleSocket from "./routes/user/serviceDetail/firestore/socketHandlerSender.js";
 
 import { registerAllSockets } from "./routes/user/serviceDetail/firestore/index.js";
+import chatLimit from "./routes/user/serviceDetail/firestore/chatLimitSocket.js";
 
 //user and pro booking flow socket
 //import { registerAllSockets } from "./routes/user/serviceDetail/firestore/index.js";
@@ -101,12 +102,11 @@ app.post("/log-level", changed);
 const socketNamespace = io.of("/api/v1/socket");
 handleSocket(socketNamespace);
 
+// chat b/w user and pro before booking
+const chatLimitSocket = io.of("/api/v1/chatLimit");
+chatLimit(chatLimitSocket);
 
 
-
-// //user booking request socket
-// const socketUserBookReq = io.of("/api/v1/userBookReqSocket");
-// userBookReqSocket(socketUserBookReq)
 
 
 

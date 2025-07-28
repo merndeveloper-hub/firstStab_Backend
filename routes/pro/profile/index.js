@@ -7,6 +7,7 @@ import getSingleProfile from "./get.js";
 
 ///Add Video and profile pic media--///
 import multipart from "connect-multiparty";
+import updateAvailability from "./updateAvailability.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -16,6 +17,8 @@ router.put(
   "/update/:id",multipartMiddleware,
   updateProfile
 );
+
+router.put("/availabilityUpdate/:id",updateAvailability)
 
 router.get("/:id", getSingleProfile);
 
