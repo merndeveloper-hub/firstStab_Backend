@@ -6,6 +6,7 @@ import updateProfile from "./update.js";
 import findUser from "./get.js";
 
 import multipart from "connect-multiparty";
+import updateAvailability from "./updateAvailability.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -18,6 +19,8 @@ const router = express.Router();
 // router.get("/", getAddress);
 // router.post("/add",addAddress);
  router.put("/update/:id",multipartMiddleware,updateProfile);
+ 
+router.put("/availabilityUpdate/:id",updateAvailability)
 //router.delete("/:id", deleteAddress);
 // Get Single Blog
 router.get("/:id", findUser);
