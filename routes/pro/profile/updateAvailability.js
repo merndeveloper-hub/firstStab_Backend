@@ -16,7 +16,7 @@ const updateAvailability = async (req, res) => {
     await schema.validateAsync(req.body);
     const { id } = req.params;
     const{availability} = req.body
-    const findPro = await findOne("user", { _id: id, userType: "pro" });
+    const findPro = await findOne("user", { _id: id });
     if (!findPro) {
       return res.status(404).send({ status: 404, message: "No Professional found" });
     }
