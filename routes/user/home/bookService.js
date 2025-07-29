@@ -270,7 +270,7 @@ console.log(req.body,"body");
         message: "Book Service not created successfully",
       });
     }
-console.log("checking");
+console.log("checking",bookServ._id);
 
     //----------------SEEN PRO DASHBOARD userBookServICE Random Professional--------
     if (bookServ && !findprofessionalId) {
@@ -432,7 +432,7 @@ console.log(getProCategory[0]._id,"in---------");
         media: uploadedFiles ?  uploadedFiles : undefined,
         proServiceId: getProCategory[0]._id,
         professsionalId: findprofessionalId,
-        bookServiceId: bookServ._id,
+        bookServiceId: bookServ?._id,
         categoryId:req.body.categoryId,
           subCategoryId:req.body.subCategories.id,
       

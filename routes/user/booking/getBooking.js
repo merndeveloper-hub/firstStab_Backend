@@ -90,7 +90,7 @@ const booking = async (req, res) => {
               },
               {
                 $project: {
-                  _id:0,
+                  _id:1,
                   service_fee: 1,
                   tax_fee: 1,
                   total_amount: 1,
@@ -202,7 +202,7 @@ const booking = async (req, res) => {
               },
               {
                 $project: {
-                  _id:0,
+                  _id:1,
                   service_fee: 1,
                   tax_fee: 1,
                   total_amount: 1,
