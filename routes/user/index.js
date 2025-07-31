@@ -23,6 +23,7 @@ import  booking from "./booking/index.js";
 import account from "./account/index.js";
 import info from "./info/index.js";
 import home from "./home/index.js";
+import inbox from "./inbox/index.js";
 import serviceDetail from "./serviceDetail/index.js";
 const router = express.Router();
 
@@ -38,9 +39,7 @@ const router = express.Router();
 router.use("/account", account);
  router.use("/booking", booking);
  router.use("/servicedetail", serviceDetail);
- 
- 
-// router.use("/pandoras", pandoras);
+  router.use("/inbox", inbox);
 // router.use("/getdata", getNfts);
 // router.use("/allowlist", allowlist);
 // router.use("/", activity);
