@@ -122,27 +122,6 @@ const getBookingChats = async (req, res) => {
             as: "userDetails",
           },
         },
-        // {
-        //   $lookup: {
-        //     from: "subcategories", // Join with "users" collection
-        //     let: { subCategoryId: { $toObjectId: "$subCategoryId" } }, // Extract professsionalId
-        //     pipeline: [
-        //       {
-        //         $match: {
-        //           $expr: { $eq: ["$_id", "$$subCategoryId"] },
-        //         }, // Compare userId with _id in users collection
-        //       },
-        //       {
-        //         $project: {
-        //           categoryName:1,
-        //           name: 1,  
-        //           _id: 0,
-        //         }, // Return only required fields
-        //       },
-        //     ],
-        //     as: "procategories",
-        //   },
-        // }, 
         {
           $lookup: {
             from: "probookingservices", // Join with "users" collection

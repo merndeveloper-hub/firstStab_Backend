@@ -115,7 +115,7 @@ await schema.validateAsync(req.body)
     //   },
     // ]);
     const user = await insertNewDocument("user", {
-      //...req.body,
+      ...req.body,
       password: req.body.password,
       email,
       mobile,

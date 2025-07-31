@@ -11,8 +11,8 @@ const schema = Joi.object().keys({
   id: Joi.string().required(),
 });
 
-// const schemaBody = Joi.object({
-//   amount: Joi.number().required(),
+ const schemaBody = Joi.object({
+   isVirtual: Joi.string(),
 //   userId: Joi.string(),
 //   proServiceId: Joi.string(),
 //   professsionalId: Joi.string(),
@@ -23,15 +23,15 @@ const schema = Joi.object().keys({
 //   reciever: Joi.string(),
 //   type: Joi.string(),
 //   receiverEmail: Joi.string(),
-// });
+ });
 
 
 //serviceImage
 const completedBooking = async (req, res) => {
   try {
-   // await schemaBody.validateAsync(req.body);
-    // const {
-    //   amount,
+   await schemaBody.validateAsync(req.body);
+     const {
+       isVirtual
     //   userId,
     //   proServiceId,
     //   professsionalId,
@@ -42,7 +42,7 @@ const completedBooking = async (req, res) => {
     //   reciever,
     //   type,
     //   receiverEmail,
-    // } = req.body;
+     } = req.body;
     const getToken = await getAccessToken();
     console.log(getToken, "getToken-------");
 
@@ -63,6 +63,27 @@ const completedBooking = async (req, res) => {
         .json({ status: 400, message: "No Booking Found!" });
     }
 
+
+if(isVirtual == "virtual"){
+const deliveredBooking = await updateDocument(
+      "userBookServ",
+      { _id: id},
+      { status: "Completed"  }
+    );
+
+    
+    if (!deliveredBooking || deliveredBooking.length == 0) {
+      return res
+      .status(400)
+      .json({ status: 400, message: "No Booking Found!" });
+    }
+    
+    const deliveredRandomProBooking = await updateDocument(
+      "proBookingService",
+      { bookServiceId: id},
+      { status: "Completed"  }
+    );
+}else{
 
 
  
@@ -85,7 +106,7 @@ const completedBooking = async (req, res) => {
       { bookServiceId: id,status:"Delivered"},
       { status: "Completed"  }
     );
-    
+}  
     const BASE_URL = process.env.PAYPAL_API_DEVELOPMENT_URL; // Use live URL in production
     console.log(BASE_URL, "1");
 
