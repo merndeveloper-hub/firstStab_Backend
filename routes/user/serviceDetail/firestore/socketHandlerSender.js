@@ -5,8 +5,8 @@ import {
   find
 } from "../../../../helpers/index.js";
 
-const onlineUsers = new Map();
-console.log(onlineUsers, "online");
+// const onlineUsers = new Map();
+// console.log(onlineUsers, "online");
 
 const handleSocket = (io) => {
   io.on("connection", (socket) => {
@@ -14,7 +14,7 @@ const handleSocket = (io) => {
 
     socket.on("join", (userId) => {
        socket.join(userId);
-      onlineUsers.set(userId, socket.id);
+    //  onlineUsers.set(userId, socket.id);
       console.log(`User ${userId} joined socket`);
     });
 
@@ -88,9 +88,10 @@ console.log(senderId,"send");
 console.log(receiverId,"reciever");
 
 
-          socket.emit("message_sent", newMessage);
-        //  io.to("user_Requested_room").emit("receive_message", newMessage);
-           socket.emit("receive_message", newMessage);
+         // socket.emit("message_sent", newMessage);
+          io.to("chatRoom").emit("message_sent", newMessage);
+          io.to("chatRoom").emit("receive_message", newMessage);
+         //  socket.emit("receive_message", newMessage);
       } catch (err) {
           socket.emit("chat_error", {
             status: "error",
@@ -102,15 +103,15 @@ console.log(receiverId,"reciever");
     );
     console.log("final");
 
-    socket.on("disconnect", () => {
-      for (let [userId, socketId] of onlineUsers.entries()) {
-        if (socketId === socket.id) {
-          onlineUsers.delete(userId);
-          break;
-        }
-      }
-      console.log("[Socket] Disconnected:", socket.id);
-    });
+  //   socket.on("disconnect", () => {
+  //     for (let [userId, socketId] of onlineUsers.entries()) {
+  //       if (socketId === socket.id) {
+  //         onlineUsers.delete(userId);
+  //         break;
+  //       }
+  //     }
+  //     console.log("[Socket] Disconnected:", socket.id);
+  //   });
   });
 };
 

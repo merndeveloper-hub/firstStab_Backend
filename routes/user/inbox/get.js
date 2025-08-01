@@ -19,6 +19,24 @@ const getBookingChats = async (req, res) => {
             senderId: id,
           },
         },
+          // Sort by createdAt descending to get the latest message first
+  {
+    $sort: {
+      chatId: 1,
+      createdAt: -1,
+    },
+  },
+  // Group by chatId to get the last message per chat
+  {
+    $group: {
+      _id: "$chatId",
+      lastMessage: { $first: "$$ROOT" },
+    },
+  },
+  // Replace root with lastMessage document
+  {
+    $replaceRoot: { newRoot: "$lastMessage" },
+  },
         {
           $lookup: {
             from: "users", // Join with "users" collection
