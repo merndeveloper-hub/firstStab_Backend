@@ -38,7 +38,7 @@ const handleSocket = (io) => {
               userBooking,
               proBooking,
             });
-            if (findUserChat.length <= 7) {
+            if (findUserChat.length > 7) {
               socket.emit("chat_error", {
                 status: "error",
                 message: "User chat limit exceeded",
@@ -51,7 +51,7 @@ const handleSocket = (io) => {
               userBooking,
               proBooking,
             });
-            if (findProChat.length <= 7) {
+            if (findProChat.length > 7) {
               socket.emit("chat_error", {
                 status: "error",
                 message: "Pro chat limit exceeded",

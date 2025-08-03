@@ -5,11 +5,11 @@ import { insertNewDocument,findOne, updateDocument } from "../../../../helpers/i
 const schemaBody = Joi.object().keys({
   userId: Joi.string().required(),
   professsionalId: Joi.string().required(),
-  proServiceId: Joi.string(),
+  proBookId: Joi.string().required(),
   bookServiceId: Joi.string().required(),
   serviceType: Joi.string(),
   commit: Joi.string().allow("").optional(),
-  reviewStar: Joi.number().required(),
+  reviewStar: Joi.number().allow("").optional(),
 });
 
 const reviewService = async (req, res) => {
@@ -18,7 +18,7 @@ const reviewService = async (req, res) => {
     const {
       userId,
       professsionalId,
-      proServiceId,
+      proBookId,
       bookServiceId,
       serviceType,
       commit,
@@ -42,7 +42,7 @@ const reviewService = async (req, res) => {
     }
 
     const findProBooking = await findOne("proBookingService", {
-      proServiceId: proServiceId,
+      _id: proBookId,
       status: "Completed",
     });
 

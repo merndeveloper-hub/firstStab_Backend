@@ -6,9 +6,13 @@ const reviewSchema = new mongoose.Schema(
     userId: { type: schemaType.TypeObjectId, ref: "user" },
     professsionalId: { type: schemaType.TypeObjectId, ref: "user" },
     bookServiceId: { type: schemaType.TypeObjectId, ref: "userBookServ" },
-    proServiceId: { type: schemaType.TypeObjectId, ref: "proCategory" },
+    proBookId: { type: schemaType.TypeObjectId, ref: "proCategory" },
     commit: { type: schemaType.TypeString },
     reviewStar: { type: schemaType.TypeNumber },
+    role: {
+              type: schemaType.TypeString,
+              enum: ['user', 'pro']
+            },
     serviceType: {
       type: schemaType.TypeString,
       enum: ["isChat", "isVirtual", "isRemote", "isInPerson"],

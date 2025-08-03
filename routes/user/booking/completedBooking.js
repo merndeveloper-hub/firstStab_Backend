@@ -1,8 +1,5 @@
 import Joi from "joi";
-import {
-  findOne,
-  updateDocument,
-} from "../../../helpers/index.js";
+import { findOne, updateDocument } from "../../../helpers/index.js";
 
 import getAccessToken from "../account/paymentMethod/accessToken.js";
 import axios from "axios";
@@ -11,38 +8,37 @@ const schema = Joi.object().keys({
   id: Joi.string().required(),
 });
 
- const schemaBody = Joi.object({
-   isVirtual: Joi.string(),
-//   userId: Joi.string(),
-//   proServiceId: Joi.string(),
-//   professsionalId: Joi.string(),
-//   bookServiceId: Joi.string(),
-//   userAccpetBookingId: Joi.string(),
-//   paymentMethod: Joi.string(),
-//   sender: Joi.string(),
-//   reciever: Joi.string(),
-//   type: Joi.string(),
-//   receiverEmail: Joi.string(),
- });
-
+const schemaBody = Joi.object({
+  isVirtual: Joi.string(),
+  //   userId: Joi.string(),
+  //   proServiceId: Joi.string(),
+  //   professsionalId: Joi.string(),
+  //   bookServiceId: Joi.string(),
+  //   userAccpetBookingId: Joi.string(),
+  //   paymentMethod: Joi.string(),
+  //   sender: Joi.string(),
+  //   reciever: Joi.string(),
+  //   type: Joi.string(),
+  //   receiverEmail: Joi.string(),
+});
 
 //serviceImage
 const completedBooking = async (req, res) => {
   try {
-   await schemaBody.validateAsync(req.body);
-     const {
-       isVirtual
-    //   userId,
-    //   proServiceId,
-    //   professsionalId,
-    //   bookServiceId,
-    //   userAccpetBookingId,
-    //   paymentMethod,
-    //   sender,
-    //   reciever,
-    //   type,
-    //   receiverEmail,
-     } = req.body;
+    await schemaBody.validateAsync(req.body);
+    const {
+      isVirtual,
+      //   userId,
+      //   proServiceId,
+      //   professsionalId,
+      //   bookServiceId,
+      //   userAccpetBookingId,
+      //   paymentMethod,
+      //   sender,
+      //   reciever,
+      //   type,
+      //   receiverEmail,
+    } = req.body;
     const getToken = await getAccessToken();
     console.log(getToken, "getToken-------");
 
@@ -51,9 +47,9 @@ const completedBooking = async (req, res) => {
         .status(400)
         .json({ status: 400, message: "Paypal Authorization Failed!" });
     }
-    
+
     await schema.validateAsync(req.params);
-   
+
     const { id } = req.params;
     const deliveredUserBooking = await findOne("userBookServ", { _id: id });
 
@@ -63,50 +59,43 @@ const completedBooking = async (req, res) => {
         .json({ status: 400, message: "No Booking Found!" });
     }
 
+    if (isVirtual == "virtual") {
+      const deliveredBooking = await updateDocument(
+        "userBookServ",
+        { _id: id },
+        { status: "Completed" }
+      );
 
-if(isVirtual == "virtual"){
-const deliveredBooking = await updateDocument(
-      "userBookServ",
-      { _id: id},
-      { status: "Completed"  }
-    );
+      if (!deliveredBooking || deliveredBooking.length == 0) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "No Booking Found!" });
+      }
 
-    
-    if (!deliveredBooking || deliveredBooking.length == 0) {
-      return res
-      .status(400)
-      .json({ status: 400, message: "No Booking Found!" });
+      const deliveredRandomProBooking = await updateDocument(
+        "proBookingService",
+        { bookServiceId: id },
+        { status: "Completed" }
+      );
+    } else {
+      const deliveredBooking = await updateDocument(
+        "userBookServ",
+        { _id: id, status: "Delivered" },
+        { status: "Completed" }
+      );
+
+      if (!deliveredBooking || deliveredBooking.length == 0) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "No Booking Found!" });
+      }
+
+      const deliveredRandomProBooking = await updateDocument(
+        "proBookingService",
+        { bookServiceId: id, status: "Delivered" },
+        { status: "Completed" }
+      );
     }
-    
-    const deliveredRandomProBooking = await updateDocument(
-      "proBookingService",
-      { bookServiceId: id},
-      { status: "Completed"  }
-    );
-}else{
-
-
- 
-
-    const deliveredBooking = await updateDocument(
-      "userBookServ",
-      { _id: id,status:"Delivered" },
-      { status: "Completed"  }
-    );
-
-    
-    if (!deliveredBooking || deliveredBooking.length == 0) {
-      return res
-      .status(400)
-      .json({ status: 400, message: "No Booking Found!" });
-    }
-    
-    const deliveredRandomProBooking = await updateDocument(
-      "proBookingService",
-      { bookServiceId: id,status:"Delivered"},
-      { status: "Completed"  }
-    );
-}  
     const BASE_URL = process.env.PAYPAL_API_DEVELOPMENT_URL; // Use live URL in production
     console.log(BASE_URL, "1");
 
@@ -141,14 +130,11 @@ const deliveredBooking = await updateDocument(
     );
     console.log(response.data, "data-------------");
 
-    
-    return res
-      .status(200)
-      .json({
-        status: 200,
-        message: "Delivered Service By Professional",
-        deliveredBooking,
-      });
+    return res.status(200).json({
+      status: 200,
+      message: "Delivered Service By Professional",
+     // deliveredBooking,
+    });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });
@@ -156,9 +142,6 @@ const deliveredBooking = await updateDocument(
 };
 
 export default completedBooking;
-
-
-
 
 // import Joi from "joi";
 // import getAccessToken from "./accessToken.js";

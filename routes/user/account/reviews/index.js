@@ -1,5 +1,6 @@
 import express from "express";
 import reviewService from "./add.js";
+import getReviews from "./get.js";
 
 
 
@@ -10,7 +11,7 @@ import reviewService from "./add.js";
 const router = express.Router();
 
 
-// router.get("/", getAddress);
+router.get("/:id", getReviews);
  router.post("/",reviewService);
 
 
