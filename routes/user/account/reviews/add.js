@@ -10,6 +10,7 @@ const schemaBody = Joi.object().keys({
   serviceType: Joi.string(),
   commit: Joi.string().allow("").optional(),
   reviewStar: Joi.number().allow("").optional(),
+  role:Joi.string(),
 });
 
 const reviewService = async (req, res) => {
@@ -23,6 +24,7 @@ const reviewService = async (req, res) => {
       serviceType,
       commit,
       reviewStar,
+      role
     } = req.body;
 
     const findUser = await findOne("user", { _id: userId });
@@ -45,6 +47,7 @@ const reviewService = async (req, res) => {
       _id: proBookId,
       status: "Completed",
     });
+
 
     if (!findProBooking || findProBooking.length == 0) {
       return res.status(400).json({
