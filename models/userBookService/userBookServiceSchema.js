@@ -194,6 +194,7 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
     },
     chatChannelName: { type: schemaType.TypeString },
+     quoteAmount: { type: schemaType.TypeNumber },
     createdAt: {
       type: schemaType.TypeDate,
       default: Date.now,

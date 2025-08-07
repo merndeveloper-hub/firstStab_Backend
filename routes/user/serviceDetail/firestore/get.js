@@ -20,8 +20,10 @@ const getChatMessages = async (req, res) => {
 //   const messages = await Message.find({ chatId: req.params.chatId }).sort('timestamp');
 //   res.json(messages);
 // });
-const {senderId,receiverId} = req.body
-const messages = await findAndSort('chatMessage',{senderId,receiverId},{timestamp:1})
+const {senderId,receiverId} = req.params
+console.log(req.params);
+
+const messages = await find('chatMessage',{senderId,receiverId})
 return res.status(200).json({ status:200, data:messages });
 
     // if (!clientId || !proId) {

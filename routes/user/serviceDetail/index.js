@@ -16,6 +16,8 @@ const router = express.Router();
 
 
 
+// get pro chat
+router.get("/conversation/:receiverId/:senderId", getChat);
 
 ///--------On going cancelbooking Remove get (created,requested,accepted services)------///
 router.put("/:id", cancelledBooking);
@@ -28,7 +30,5 @@ router.put("/completed/:id", completedBookedService);
 //---------pro chat to user----------//
 router.post("/chat", sendChat);
 
-// get pro chat
-router.get("/conversation", getChat);
 
 export default router;

@@ -20,6 +20,7 @@ import userResheduleRequest from "./reshedule.js";
 import resheduleAcceptBooking from "./resheduleAccept.js";
 import cancelledRescheduleBooking from "./resheduleReject.js";
 import resheduleDeliveredBooking from "./resheduleDeliveredService.js";
+import priceQuoteBooking from "./priceQuoteBooking.js";
 
 const multipartMiddleware = multipart();
 
@@ -32,6 +33,8 @@ const router = express.Router();
 //-----pro accept user request booking----//
  router.put("/newrequest/:id",updateNewRequestBooking);
  
+ //pro quote the user booking
+ router.put("/quote/:id",priceQuoteBooking)
 
  //----- Pro delivered service--------//
  router.put("/delivered/:id", multipartMiddleware, deliveredBooking);

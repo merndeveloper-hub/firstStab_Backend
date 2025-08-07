@@ -15,7 +15,10 @@ const getBookingChats = async (req, res) => {
     const getProBookChat = await getAggregate("chatMessage", [
       {
         $match: {
-          senderId: id,
+         $or: [
+      { senderId: id },
+      { receiverId: id }
+    ]
         },
       },
       {

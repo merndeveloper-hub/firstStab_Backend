@@ -71,13 +71,13 @@ if( goingbooking.orderRescheduleStatus == "NA"){
           return res.status(400).json({ message: "Only image and video files are allowed." });
         }
     
-        if (isImage && fileSizeMB > maxImageSizeMB) {
-          return res.status(400).json({ message: "Image size should not exceed 2MB." });
-        }
+        // if (isImage && fileSizeMB > maxImageSizeMB) {
+        //   return res.status(400).json({ message: "Image size should not exceed 2MB." });
+        // }
     
-        if (isVideo && fileSizeMB > maxVideoSizeMB) {
-          return res.status(400).json({ message: "Video size should not exceed 5MB." });
-        }
+        // if (isVideo && fileSizeMB > maxVideoSizeMB) {
+        //   return res.status(400).json({ message: "Video size should not exceed 5MB." });
+        // }
     
         const uploadOptions = {
           resource_type: isVideo ? "video" : "image",
@@ -166,13 +166,13 @@ if( goingbooking.orderRescheduleStatus == "NA"){
           const isImage = allowedImageTypes.includes(file.type);
           const isVideo = allowedVideoTypes.includes(file.type);
       
-          if (!isImage && !isVideo) {
-            return res.status(400).json({ message: "Only image and video files are allowed." });
-          }
+          // if (!isImage && !isVideo) {
+          //   return res.status(400).json({ message: "Only image and video files are allowed." });
+          // }
       
-          if (isImage && fileSizeMB > maxImageSizeMB) {
-            return res.status(400).json({ message: "Image size should not exceed 2MB." });
-          }
+          // if (isImage && fileSizeMB > maxImageSizeMB) {
+          //   return res.status(400).json({ message: "Image size should not exceed 2MB." });
+          // }
       
           if (isVideo && fileSizeMB > maxVideoSizeMB) {
             return res.status(400).json({ message: "Video size should not exceed 5MB." });
