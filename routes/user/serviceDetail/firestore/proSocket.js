@@ -88,6 +88,27 @@ deliveredProBooking: (io) => {
 });
 },
 
+quoteAmountProBooking: (io) => {
+// io.on("connection", (socket) => {
+// console.log("[Socket] New connection on /deliveredProBooking:", socket.id);
+// socket.emit("proDeliveredBooking", { message: "Pro delivered the service." });
+// });
+ io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proQuoteAmount_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proQuoteAmountBooking_message", (message) => {
+    io.to("pro_quoteAmount_room").emit("proQuoteAmountBooking", message);
+  });
+});
+},
+
 proAcceptUserServiceRequest: (io) => {
 // io.on("connection", (socket) => {
 // console.log("[Socket] New connection on /proAcceptUserServiceRequest:", socket.id);

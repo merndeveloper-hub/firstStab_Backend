@@ -294,3 +294,21 @@
 {"level":"info","time":"2025-08-07T16:56:15.974Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
 {"level":"info","time":"2025-08-07T16:56:15.975Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
 {"level":"error","time":"2025-08-07T16:57:01.397Z","hostname":"PKKHICS01L5128","context":"userService","message":"Error: queryTxt ETIMEOUT cluster0.1wehduf.mongodb.net\n    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)"}
+{"level":"info","time":"2025-08-07T18:39:10.033Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:39:10.034Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:07.913Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:07.915Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:12.016Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:12.017Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:35.419Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:35.421Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:47.017Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:47.018Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:54.039Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:43:54.040Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:44:06.237Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:44:06.239Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:45:30.446Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:45:30.446Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:45:39.973Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-08-07T18:45:39.974Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}

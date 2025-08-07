@@ -18,4 +18,5 @@ proSockets.cancelledProRescheduleBooking(io.of("/api/v1/proCancelledReschedule")
 proSockets.resheduleDeliveredProBooking(io.of("/api/v1/proResheduleDelivered"));
 proSockets.unavailableSocket(io.of("/api/v1/unAvailable"))
 proSockets.availabilitySocket(io.of("/api/v1/availability"))
+proSockets.quoteAmountProBooking(io.of("/api/v1/quoteAmount"))
 };
