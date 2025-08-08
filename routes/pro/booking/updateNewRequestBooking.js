@@ -21,7 +21,7 @@ const updateNewRequestBooking = async (req, res) => {
     await schema.validateAsync(req.params);
     await schemaBody.validateAsync(req.body);
     const { id } = req.params;
-    const { quoteAmount, quoteInfo, quoteDetail,paypal_fee,service_fee,tax_fee,total_amount,total_amount_cus_pay } = req.body;
+    const {  quoteInfo, quoteDetail,paypal_fee,service_fee,tax_fee,total_amount,total_amount_cus_pay } = req.body;
 
 
   
@@ -58,7 +58,7 @@ console.log(proBookService,"proBookService");
     const updateProBookService = await updateDocument(
       "proBookingService",
       { _id: id },
-      { status: "Accepted",...req.body,service_fee:0.05,tax_fee:1.5,total_amount:quoteAmount+0.05+1.5 ,total_amount_cus_pay:quoteAmount+0.05+1.5 }
+      { status: "Accepted",...req.body,service_fee:0.05,tax_fee:1.5,total_amount:req.body.quoteAmount+0.05+1.5 ,total_amount_cus_pay:req.body.quoteAmount+0.05+1.5 }
     );
 
     return res
