@@ -271,6 +271,7 @@ console.log(req.body,"body");
       });
     }
 console.log("checking",bookServ._id);
+let probookService;
 
     //----------------SEEN PRO DASHBOARD userBookServICE Random Professional--------
     if (bookServ && !findprofessionalId) {
@@ -333,7 +334,7 @@ if(!getProCategory || getProCategory.length == 0){
   // No pro service found in this scenario
   console.log(bookServ,"insert");
   
-  const probookService = await insertNewDocument("proBookingService", {
+   probookService = await insertNewDocument("proBookingService", {
     ...req.body,
     inPersonOTP:inPersonOTP ? inPersonOTP : undefined,
     proServiceId: getProCategory._id,
@@ -360,7 +361,7 @@ if(!getProCategory || getProCategory.length == 0){
 }
 for (const doc of getProCategory) {
         console.log(findSubCategorie._id,"findSubCategorie._id");
-        const probookService = await insertNewDocument("proBookingService", {
+        probookService = await insertNewDocument("proBookingService", {
           ...req.body,
           inPersonOTP:inPersonOTP ? inPersonOTP : undefined,
           media: uploadedFiles ?  uploadedFiles : undefined,
@@ -427,7 +428,7 @@ for (const doc of getProCategory) {
 
 console.log(getProCategory[0]._id,"in---------");
 
-      const probookService = await insertNewDocument("proBookingService", {
+       probookService = await insertNewDocument("proBookingService", {
         ...req.body,
         media: uploadedFiles ?  uploadedFiles : undefined,
         proServiceId: getProCategory[0]._id,
@@ -461,9 +462,11 @@ console.log(getProCategory[0]._id,"in---------");
 //    // bookingId,
 //     message: 'User has been requested for service',
 //   });
+
+let proBookServiceId = probookService?._id
     return res
       .status(201)
-      .json({ status: 201, message: "Book Service successfully", bookServ });
+      .json({ status: 201, message: "Book Service successfully", bookServ,proBookServiceId });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
   }
