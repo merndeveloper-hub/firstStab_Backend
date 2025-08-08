@@ -55,11 +55,39 @@ console.log(proBookService,"proBookService");
     // Emit data to React Native frontend via Socket.io
   //  req.io.emit("updateBookingService", findUserBookService);
 
-    const updateProBookService = await updateDocument(
+if(proBookService?.quoteAmount){
+ const updateProBookService = await updateDocument(
       "proBookingService",
       { _id: id },
-      { status: "Accepted",...req.body,service_fee:0.05,tax_fee:1.5,total_amount:req.body.quoteAmount+0.05+1.5 ,total_amount_cus_pay:req.body.quoteAmount+0.05+1.5 }
+      { status: "Accepted",service_fee:0.05,tax_fee:1.5,total_amount:Number(proBookService?.quoteAmount)+0.05+1.5 ,total_amount_cus_pay:Number(proBookService?.quoteAmount)+0.05+1.5 }
     );
+      return res
+      .status(200)
+      .json({
+        status: 200,
+        message: "Pro quoted service",
+        data: { updateProBookService },
+      });
+}else if(proBookService?.fixed_price){
+ const updateProBookService = await updateDocument(
+      "proBookingService",
+      { _id: id },
+      { status: "Accepted",service_fee:0.05,tax_fee:1.5,total_amount:Number(proBookService?.fixed_price)+0.05+1.5 ,total_amount_cus_pay:Number(proBookService?.fixed_price)+0.05+1.5 }
+    );
+      return res
+      .status(200)
+      .json({
+        status: 200,
+        message: "Pro quoted service",
+        data: { updateProBookService },
+      });
+}
+
+    // const updateProBookService = await updateDocument(
+    //   "proBookingService",
+    //   { _id: id },
+    //   { status: "Accepted",...req.body,service_fee:0.05,tax_fee:1.5,total_amount:req.body.quoteAmount+0.05+1.5 ,total_amount_cus_pay:req.body.quoteAmount+0.05+1.5 }
+    // );
 
     return res
       .status(200)
