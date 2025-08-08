@@ -1,7 +1,7 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
 import Joi from "joi";
-import { insertNewDocument } from "../../../../helpers/index.js";
+import { insertNewDocument} from "../../../../helpers/index.js";
 import Stripe from "stripe";
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -165,8 +165,11 @@ const createPaypalOrder = async (req, res) => {
      ],
    };
  
+
+
    const userPayment = await insertNewDocument("userPayment", {
      ...req.body,
+  
      paymentMethod: "Stripe",
      sender: "User",
      reciever: "Admin",

@@ -21,7 +21,10 @@ const userPaymentSchema = new mongoose.Schema(
       type: SchemaType.TypeNumber,
       //  required: true
     },
-
+  totalAmount: {
+      type: SchemaType.TypeNumber,
+      //  required: true
+    },
     paymentMethod: { type: SchemaType.TypeString },
     sender: { type: SchemaType.TypeString },
     reciever: { type: SchemaType.TypeString },

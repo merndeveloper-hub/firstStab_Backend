@@ -193,7 +193,7 @@ proId: 1,
           },
           _id: "$_id",
           userbookingstatus: { $first: "$userBookingStatus.status" },
-         // chatChannelName:{ $first: "$userBookingStatus.chatChannelName" },
+          quoteAmount:{ $first: "$userBookingStatus.quoteAmount" },
           //videoRoomName:{ $first: "$userBookingStatus.videoRoomName" },
 
           total_amount_cus_pay: {
@@ -308,7 +308,7 @@ proId: 1,
   fixed_price: 1,
   min_price: 1,
   max_price: 1,
- 
+ quoteAmount:1,
   status: 1,
   serviceStatus: 1,
   serviceCountry: 1,

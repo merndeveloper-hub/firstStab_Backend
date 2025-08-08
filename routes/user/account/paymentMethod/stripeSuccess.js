@@ -3,7 +3,7 @@
 
 
 import Stripe from "stripe";
-import { updateDocument } from "../../../../helpers/index.js";
+import { updateDocument,findAndSort } from "../../../../helpers/index.js";
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -37,7 +37,17 @@ const stripeSuccess = async(req, res) => {
           cardFunding: card?.funding,
           cardCountry: card?.country,
         };
+// Pehle se saved totalAmount nikal lo (agar hai)
+const lastPayment = await findAndSort("userPayment", { stripeSessionId: session.id,sender:'User' },{ createdAt: -1  });
 
+// Agar last totalAmount hai to use le lo, warna 0
+const previousAmount = lastPayment?.totalAmount || 0;
+
+// Ab ka amount (req.body se)
+const currentAmount = amount || 0;
+
+// Total calculate karo
+const totalAmount = previousAmount + currentAmount;
         if (session.payment_status === "paid") {
           // Example: find and update existing payment document
           await updateDocument(
@@ -45,6 +55,7 @@ const stripeSuccess = async(req, res) => {
             { stripeSessionId: session.id },
             {
               status: "Success",
+              totalAmount,
               paymentIntentId: session.payment_intent?.id || null,
               paymentMethod: session.payment_intent?.payment_method?.type || "card",
               transactionId: session.payment_intent?.id,

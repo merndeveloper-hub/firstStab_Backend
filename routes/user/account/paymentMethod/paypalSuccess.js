@@ -1,6 +1,6 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
-import { updateDocument } from "../../../../helpers/index.js";
+import { updateDocument,findAndSort } from "../../../../helpers/index.js";
 
 const paypalSuccess = async (req, res) => {
   try {
@@ -45,11 +45,23 @@ const paypalSuccess = async (req, res) => {
       executeResponse.data.purchase_units[0].reference_id; // purchase_units[0].reference_id
 
     const paypalLink = executeResponse.data.links[0].href; // links[0].href
+    
+// Pehle se saved totalAmount nikal lo (agar hai)
+const lastPayment = await findAndSort("userPayment", { paypalOrderId: token,sender:'User' },{ createdAt: -1  });
 
+// Agar last totalAmount hai to use le lo, warna 0
+const previousAmount = lastPayment?.totalAmount || 0;
+
+// Ab ka amount (req.body se)
+const currentAmount = amount || 0;
+
+// Total calculate karo
+const totalAmount = previousAmount + currentAmount;
     await updateDocument(
       "userPayment",
       { paypalOrderId: token },
       {
+        totalAmount,
         status: executeResponse.data.status,
         authorizationId: executeResponse.data.id,
         payer,
