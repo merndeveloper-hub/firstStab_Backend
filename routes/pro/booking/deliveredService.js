@@ -256,6 +256,8 @@ const schema = Joi.object().keys({
 
 const schemaBody = Joi.object().keys({
   serviceImage: Joi.array().allow("").optional(),
+   FinishedTime: Joi.string().required(),
+  FinishedDate: Joi.string().required(),
 });
 
 // ✅ Helper function for parallel uploads
@@ -315,6 +317,7 @@ const deliveredBooking = async (req, res) => {
     await schemaBody.validateAsync(req.body);
     const { id } = req.params;
 
+ const { FinishedTime, FinishedDate} = req.body;
     const goingbooking = await findOne("proBookingService", { _id: id });
 
     if (!goingbooking) {
@@ -331,6 +334,7 @@ const deliveredBooking = async (req, res) => {
     const updateData = {
       status: "Delivered",
       serviceImage: uploadedFiles.length ? uploadedFiles : undefined,
+     FinishedTime, FinishedDate 
     };
 
     if (goingbooking.orderRescheduleStatus !== "NA") {

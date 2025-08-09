@@ -8,10 +8,18 @@ const schema = Joi.object().keys({
   id: Joi.string().required(),
 });
 
+const schemaBody = Joi.object().keys({
+  CancelDate: Joi.string().required(),
+   CancelTime: Joi.string().required(),
+});
+
+
 const cancelledBooking = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
+       await schemaBody.validateAsync(req.body);
     const { id } = req.params;
+    const { CancelDate,CancelTime } = req.body;
     const goingbooking = await findOne("userBookServ", { _id: id });
 
     if (!goingbooking || goingbooking.length == 0) {
@@ -23,7 +31,7 @@ const cancelledBooking = async (req, res) => {
     const cancelbooking = await updateDocument(
       "userBookServ",
       { _id: id },
-      { status: "Cancelled", cancelledReason: "Cancelled By User" }
+      { status: "Cancelled", cancelledReason: "Cancelled By User",CancelDate,CancelTime }
     );
 
     
@@ -36,7 +44,7 @@ const cancelledBooking = async (req, res) => {
     const cancelRandomProBooking = await updateDocument(
       "proBookingService",
       { bookServiceId: id,status:{$in:["Accepted","Pending"]}},
-      { status: "Cancelled", cancelledReason: "Cancelled By User" }
+      { status: "Cancelled", cancelledReason: "Cancelled By User",CancelDate,CancelTime }
     );
     
     return res

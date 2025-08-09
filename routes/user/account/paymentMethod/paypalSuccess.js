@@ -46,22 +46,22 @@ const paypalSuccess = async (req, res) => {
 
     const paypalLink = executeResponse.data.links[0].href; // links[0].href
     
-// Pehle se saved totalAmount nikal lo (agar hai)
-const lastPayment = await findAndSort("userPayment", { paypalOrderId: token,sender:'User' },{ createdAt: -1  });
+// // Pehle se saved totalAmount nikal lo (agar hai)
+// const lastPayment = await findAndSort("userPayment", { paypalOrderId: token,sender:'User' },{ createdAt: -1  });
 
-// Agar last totalAmount hai to use le lo, warna 0
-const previousAmount = lastPayment?.totalAmount || 0;
+// // Agar last totalAmount hai to use le lo, warna 0
+// const previousAmount = lastPayment?.totalAmount || 0;
 
-// Ab ka amount (req.body se)
-const currentAmount = amount || 0;
+// // Ab ka amount (req.body se)
+// const currentAmount = amount || 0;
 
-// Total calculate karo
-const totalAmount = previousAmount + currentAmount;
+// // Total calculate karo
+// const totalAmount = previousAmount + currentAmount;
     await updateDocument(
       "userPayment",
       { paypalOrderId: token },
       {
-        totalAmount,
+       // totalAmount,
         status: executeResponse.data.status,
         authorizationId: executeResponse.data.id,
         payer,

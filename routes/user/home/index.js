@@ -25,7 +25,7 @@ router.get("/getproservice",getProfessionalService);
 //router.get("/single/:id", getSingleCategory);
 
 
-//Book Service
+//Create Service by User
 router.post("/bookservice",multipartMiddleware, bookService)
 
 

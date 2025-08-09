@@ -45,7 +45,9 @@ const proBookingServiceSchema = new mongoose.Schema(
 
     StartedTime: { type: schemaType.TypeString, default: null },
     FinishedTime: { type: schemaType.TypeString, default: null },
-    CancelDateTime: { type: schemaType.TypeString, default: null },
+    FinishedDate: { type: schemaType.TypeString, default: null },
+    CancelDate: { type: schemaType.TypeString, default: null },
+    CancelTime: { type: schemaType.TypeString, default: null },
     CancelCharges: { type: schemaType.TypeNumber, default: 0.0 },
     CancelSlot: { type: schemaType.TypeNumber, default: 0 },
     ExtendedTime: { type: schemaType.TypeString, default: null },

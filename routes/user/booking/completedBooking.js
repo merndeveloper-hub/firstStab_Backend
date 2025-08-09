@@ -10,6 +10,8 @@ const schema = Joi.object().keys({
 
 const schemaBody = Joi.object({
   isVirtual: Joi.string(),
+  FinishedTime: Joi.string().required(),
+  FinishedDate: Joi.string().required(),
   //   userId: Joi.string(),
   //   proServiceId: Joi.string(),
   //   professsionalId: Joi.string(),
@@ -28,6 +30,7 @@ const completedBooking = async (req, res) => {
     await schemaBody.validateAsync(req.body);
     const {
       isVirtual,
+      FinishedTime, FinishedDate
       //   userId,
       //   proServiceId,
       //   professsionalId,
@@ -63,7 +66,7 @@ const completedBooking = async (req, res) => {
       const deliveredBooking = await updateDocument(
         "userBookServ",
         { _id: id },
-        { status: "Completed" }
+        { status: "Completed",FinishedTime, FinishedDate }
       );
 
       if (!deliveredBooking || deliveredBooking.length == 0) {
@@ -75,13 +78,13 @@ const completedBooking = async (req, res) => {
       const deliveredRandomProBooking = await updateDocument(
         "proBookingService",
         { bookServiceId: id },
-        { status: "Completed" }
+        { status: "Completed",FinishedTime, FinishedDate }
       );
     } else {
       const deliveredBooking = await updateDocument(
         "userBookServ",
         { _id: id, status: "Delivered" },
-        { status: "Completed" }
+        { status: "Completed",FinishedTime, FinishedDate }
       );
 
       if (!deliveredBooking || deliveredBooking.length == 0) {
@@ -93,7 +96,7 @@ const completedBooking = async (req, res) => {
       const deliveredRandomProBooking = await updateDocument(
         "proBookingService",
         { bookServiceId: id, status: "Delivered" },
-        { status: "Completed" }
+        { status: "Completed,",FinishedTime, FinishedDate }
       );
     }
     const BASE_URL = process.env.PAYPAL_API_DEVELOPMENT_URL; // Use live URL in production

@@ -21,7 +21,7 @@ const updateNewRequestBooking = async (req, res) => {
     await schema.validateAsync(req.params);
     await schemaBody.validateAsync(req.body);
     const { id } = req.params;
-    const {  quoteInfo, quoteDetail,paypal_fee,service_fee,tax_fee,total_amount,total_amount_cus_pay } = req.body;
+    const {  quoteAmount,quoteInfo, quoteDetail,paypal_fee,service_fee,tax_fee,total_amount,total_amount_cus_pay } = req.body;
 
 
   
@@ -81,6 +81,19 @@ if(proBookService?.quoteAmount){
         message: "Pro quoted service",
         data: { updateProBookService },
       });
+}else if(quoteAmount){
+ const updateProBookService = await updateDocument(
+      "proBookingService",
+      { _id: id },
+      { status: "Accepted",service_fee:0.05,tax_fee:1.5,total_amount:quoteAmount+0.05+1.5 ,total_amount_cus_pay:quoteAmount+0.05+1.5 }
+    );
+      return res
+      .status(200)
+      .json({
+        status: 200,
+        message: "Pro quoted service",
+        data: { updateProBookService },
+      });
 }
 
     // const updateProBookService = await updateDocument(
@@ -89,13 +102,13 @@ if(proBookService?.quoteAmount){
     //   { status: "Accepted",...req.body,service_fee:0.05,tax_fee:1.5,total_amount:req.body.quoteAmount+0.05+1.5 ,total_amount_cus_pay:req.body.quoteAmount+0.05+1.5 }
     // );
 
-    return res
-      .status(200)
-      .json({
-        status: 200,
-        message: "Pro quoted service",
-        data: { updateProBookService },
-      });
+    // return res
+    //   .status(200)
+    //   .json({
+    //     status: 200,
+    //     message: "Pro quoted service",
+    //     data: { updateProBookService },
+    //   });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

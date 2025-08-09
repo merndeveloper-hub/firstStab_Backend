@@ -100,17 +100,17 @@ const userResheduleRequest = async (req, res) => {
 
     const findBooking = await findOne("userBookServ", {
       _id: bookServiceId,
-      status: "Accepted",
+      status: "Confirmed",
     });
     const findproBooking = await findOne("proBookingService", {
       bookServiceId,
-      status: "Accepted",
+      status: "Confirmed",
     });
    
     if (findBooking && findproBooking) {
       const getProBookService = await updateDocument(
         "proBookingService",
-        { bookServiceId, status: "Accepted" },
+        { bookServiceId, status: "Confirmed" },
         {
           status: "Requested",
           orderRescheduleStatus: "Requested",
@@ -121,7 +121,7 @@ const userResheduleRequest = async (req, res) => {
 
       const userBookServiceUpdate = await updateDocument(
         "userBookServ",
-        { _id: bookServiceId, status: "Accepted" },
+        { _id: bookServiceId, status: "Confirmed" },
         {
           status: "Requested",
           orderRescheduleStatus: "Requested",

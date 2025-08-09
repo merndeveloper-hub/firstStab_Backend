@@ -33,7 +33,7 @@ const router = express.Router();
 //-----pro accept user request booking----//
  router.put("/newrequest/:id",updateNewRequestBooking);
  
- //pro quote the user booking
+ //pro quote the user booking before booking accept
  router.put("/quote/:id",priceQuoteBooking)
 
  //----- Pro delivered service--------//
