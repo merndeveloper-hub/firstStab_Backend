@@ -173,24 +173,62 @@ availabilitySocket: (io) => {
 },
 
 
-resheduleProAcceptBooking: (io) => {
+resheduleDeliveredProBooking: (io) => {
+
 io.on("connection", (socket) => {
-console.log("[Socket] New connection on /resheduleProAcceptBooking:", socket.id);
-socket.emit("resheduleProAcceptBooking", { message: "Pro accepted reschedule request." });
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proResheduleDeliverd_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proResheduleDeliverd_message", (message) => {
+    io.to("proResheduleDeliverd_room").emit("proResheduleDeliverd", message);
+  });
+});
+},
+
+resheduleProAcceptBooking: (io) => {
+
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proResheduleAccept_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proResheduleAccept_message", (message) => {
+    io.to("proResheduleAccept_room").emit("proResheduleAccept", message);
+  });
 });
 },
 
 cancelledProRescheduleBooking: (io) => {
-io.on("connection", (socket) => {
-console.log("[Socket] New connection on /cancelledProRescheduleBooking:", socket.id);
-socket.emit("cancelledProRescheduleBooking", { message: "Pro cancelled reschedule request." });
-});
-},
 
-resheduleDeliveredProBooking: (io) => {
+
 io.on("connection", (socket) => {
-console.log("[Socket] New connection on /resheduleDeliveredProBooking:", socket.id);
-socket.emit("proResheduleDeliveredBooking", { message: "Pro completed rescheduled service." });
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proResheduleCancel_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
 });
-},
+
+  // Example: Send message to both User and Pro
+  socket.on("proResheduleCancel_message", (message) => {
+    io.to("proResheduleCancel_room").emit("proResheduleCancel", message);
+  });
+});
+}
 };
+
+
+

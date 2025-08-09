@@ -65,10 +65,7 @@ io.on("connection", (socket) => {
 },
 
 userAcceptProServiceRequest: (io) => {
-// io.on("connection", (socket) => {
-// console.log("[Socket] New connection on /userAcceptProServiceRequest:", socket.id);
-// socket.emit("userAcceptProServiceRequest", { message: "User accepted the Pro's request." });
-// });
+
 io.on("connection", (socket) => {
   console.log("New socket connected:", socket.id);
 
@@ -86,23 +83,58 @@ io.on("connection", (socket) => {
 },
 
 userResheduleRequest: (io) => {
+
 io.on("connection", (socket) => {
-console.log("[Socket] New connection on /userResheduleRequest:", socket.id);
-socket.emit("userResheduleRequest", { message: "User requested reschedule." });
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userResheduleRequest_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userResheduleRequest_message", (message) => {
+    io.to("userResheduleRequest_room").emit("userResheduleRequest", message);
+  });
 });
 },
 
 resheduleAcceptBooking: (io) => {
+
+
 io.on("connection", (socket) => {
-console.log("[Socket] New connection on /resheduleAcceptBooking:", socket.id);
-socket.emit("resheduleAcceptBooking", { message: "User accepted reschedule." });
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userResheduleAccept_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userResheduleAccept_message", (message) => {
+    io.to("userResheduleAccept_room").emit("userResheduleAccept", message);
+  });
 });
 },
 
 cancelledRescheduleBooking: (io) => {
+
+
 io.on("connection", (socket) => {
-console.log("[Socket] New connection on /cancelledRescheduleBooking:", socket.id);
-socket.emit("cancelledRescheduleBooking", { message: "User cancelled the reschedule." });
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userResheduleCancel_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userResheduleCancel_message", (message) => {
+    io.to("userResheduleCancel_room").emit("userResheduleCancel", message);
+  });
 });
 },
 };
