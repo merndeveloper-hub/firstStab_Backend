@@ -47,6 +47,9 @@ const schema = Joi.object({
   status: Joi.string(),
   userType: Joi.string().required(),
   country: Joi.string().required(),
+  state: Joi.string().required(),
+city: Joi.string().required(),
+zipCode: Joi.string().required()
 });
 
 const userSignup = async (req, res) => {

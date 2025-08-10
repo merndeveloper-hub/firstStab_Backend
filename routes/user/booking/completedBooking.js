@@ -115,7 +115,7 @@ const completedBooking = async (req, res) => {
           {
             recipient_type: "EMAIL",
             amount: {
-              value: "1",
+              value: "2",
               currency: "USD",
             },
             receiver: "sb-koped40938811@personal.example.com",

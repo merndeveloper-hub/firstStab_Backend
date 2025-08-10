@@ -80,8 +80,8 @@ const createPaypalOrder = async (req, res) => {
       ],
       application_context: {
         return_url:
-       //   "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
-        "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
+          "http://localhost:5000/api/v1/user/account/payment/paypalsuccess",
+       // "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
         
        cancel_url:
          "http://3.110.42.187:5000/api/v1/user/account/payment/paypalcancel",

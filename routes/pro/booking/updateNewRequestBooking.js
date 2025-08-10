@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
+import taxJarCal from "../../../lib/taxCollector/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -33,7 +34,33 @@ const updateNewRequestBooking = async (req, res) => {
         .status(400)
         .json({ status: 400, message: "Does not exist new booking service!" });
     }
-console.log(proBookService,"proBookService");
+
+
+//Payment Cal
+
+const registerationFees = await findOne("adminFees")
+
+    if (paymentMethod == "paypal") {
+      const baseAmount = parseFloat(registerationFees?.registerationFees); // from frontend or DB
+  
+    }
+
+// PayPal fee calculation
+const feePercentage = 3.49 / 100;
+const fixedFee = 0.49;
+
+// Get tax from TaxJar (assumed to be a number)
+let user = proBookService?.userId
+const getTaxVal = await taxJarCal(user);
+// if (typeof getTaxVal !== 'number') {
+//   throw new Error("Invalid tax value from TaxJar");
+// }
+console.log(getTaxVal, "getTaxVal---");
+
+// Calculate PayPal fee and total charge
+const paypalFee = parseFloat((baseAmount * feePercentage + fixedFee + Number(getTaxVal)).toFixed(2));
+const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is what user pays
+
 
     const findUserBookService = await findOne("userBookServ", {
       _id: proBookService.bookServiceId,
