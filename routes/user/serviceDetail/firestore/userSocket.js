@@ -137,4 +137,63 @@ io.on("connection", (socket) => {
   });
 });
 },
+//Extend User Booking Socket
+
+userExtendRequest: (io) => {
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userExtendRequest_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userExtendRequest_message", (message) => {
+    io.to("userExtendRequest_room").emit("userExtendRequest", message);
+  });
+});
+},
+
+extendAcceptBooking: (io) => {
+
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userExtendAccept_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userExtendAccept_message", (message) => {
+    io.to("userExtendAccept_room").emit("userExtendAccept", message);
+  });
+});
+},
+
+cancelledExtendBooking: (io) => {
+
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userExtendCancel_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userExtendCancel_message", (message) => {
+    io.to("userExtendCancel_room").emit("userExtendCancel", message);
+  });
+});
+},
 };
+
+

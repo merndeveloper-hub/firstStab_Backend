@@ -227,7 +227,49 @@ io.on("connection", (socket) => {
     io.to("proResheduleCancel_room").emit("proResheduleCancel", message);
   });
 });
+},
+
+
+extendProAcceptBooking: (io) => {
+
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proExtendAccept_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proExtendAccept_message", (message) => {
+    io.to("proExtendAccept_room").emit("proExtendAccept", message);
+  });
+});
+},
+
+cancelledProExtendBooking: (io) => {
+
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("proExtendCancel_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("proExtendCancel_message", (message) => {
+    io.to("proExtendCancel_room").emit("proExtendCancel", message);
+  });
+});
 }
+
+
+
 };
 
 

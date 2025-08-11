@@ -8,13 +8,13 @@ const schema = Joi.object().keys({
 
 const schemaBody = Joi.object().keys({
   quoteAmount: Joi.number(),
-  quoteInfo: Joi.string().allow(null, ''),
-  quoteDetail: Joi.string().allow(null, ''),
+  quoteInfo: Joi.string().allow(null, ""),
+  quoteDetail: Joi.string().allow(null, ""),
   paypal_fee: Joi.string(),
   service_fee: Joi.string(),
   tax_fee: Joi.string(),
   total_amount: Joi.string(),
-  total_amount_cus_pay: Joi.string()
+  total_amount_cus_pay: Joi.string(),
 });
 
 const updateNewRequestBooking = async (req, res) => {
@@ -22,12 +22,18 @@ const updateNewRequestBooking = async (req, res) => {
     await schema.validateAsync(req.params);
     await schemaBody.validateAsync(req.body);
     const { id } = req.params;
-    const {  quoteAmount,quoteInfo, quoteDetail,paypal_fee,service_fee,tax_fee,total_amount,total_amount_cus_pay } = req.body;
+    const {
+      quoteAmount,
+      quoteInfo,
+      quoteDetail,
+      paypal_fee,
+      service_fee,
+      tax_fee,
+      total_amount,
+      total_amount_cus_pay,
+    } = req.body;
 
-
-  
     const proBookService = await findOne("proBookingService", { _id: id });
-
 
     if (!proBookService || proBookService.length == 0) {
       return res
@@ -35,93 +41,115 @@ const updateNewRequestBooking = async (req, res) => {
         .json({ status: 400, message: "Does not exist new booking service!" });
     }
 
+    //Payment Cal
 
-//Payment Cal
+    const platform = await findOne("adminFees");
 
-const registerationFees = await findOne("adminFees")
+    const paltformCharges = parseFloat(platform?.platformFees); 
+    console.log("paltformCharges",paltformCharges);
+    
+const serviceAmount = parseFloat(proBookService?.quoteAmount || proBookService?.fixed_price); 
+console.log(serviceAmount,"serviceAmount");
 
-    if (paymentMethod == "paypal") {
-      const baseAmount = parseFloat(registerationFees?.registerationFees); // from frontend or DB
-  
-    }
+let totalTaxJarAmt = paltformCharges + serviceAmount
 
-// PayPal fee calculation
-const feePercentage = 3.49 / 100;
-const fixedFee = 0.49;
+console.log("totalTaxJatamt",totalTaxJarAmt);
 
-// Get tax from TaxJar (assumed to be a number)
-let user = proBookService?.userId
-const getTaxVal = await taxJarCal(user);
-// if (typeof getTaxVal !== 'number') {
-//   throw new Error("Invalid tax value from TaxJar");
-// }
-console.log(getTaxVal, "getTaxVal---");
+    // PayPal fee calculation
+    const feePercentage = 3.49 / 100;
+    const fixedFee = 0.49;
 
-// Calculate PayPal fee and total charge
-const paypalFee = parseFloat((baseAmount * feePercentage + fixedFee + Number(getTaxVal)).toFixed(2));
-const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is what user pays
+    // Get tax from TaxJar (assumed to be a number)
 
+    let bookData = {
+      user: proBookService?.professsionalId,
+      totalAmt:totalTaxJarAmt
+    };
+    const getTaxVal = await taxJarCal(bookData);
+    
+    console.log(getTaxVal, "getTaxVal---");
+
+    
+const subTotalBeforePayPalFee = serviceAmount + paltformCharges + getTaxVal;
+
+    // Calculate PayPal fee and total charge
+    const paypalFee = parseFloat(
+      (baseAmount * feePercentage + fixedFee + Number(getTaxVal)).toFixed(2)
+    );
+    const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is what user pays
 
     const findUserBookService = await findOne("userBookServ", {
       _id: proBookService.bookServiceId,
     });
 
-    console.log(findUserBookService,"findUserBookService");
-    
+    console.log(findUserBookService, "findUserBookService");
 
     const updateUserBookService = await updateDocument(
       "userBookServ",
       { _id: findUserBookService._id },
       {
-        
         quoteCount: findUserBookService.quoteCount + 1,
-       // proBookingServiceId: id,
+        // proBookingServiceId: id,
       }
     );
 
     // Emit data to React Native frontend via Socket.io
-  //  req.io.emit("updateBookingService", findUserBookService);
+    //  req.io.emit("updateBookingService", findUserBookService);
 
-if(proBookService?.quoteAmount){
- const updateProBookService = await updateDocument(
-      "proBookingService",
-      { _id: id },
-      { status: "Accepted",service_fee:0.05,tax_fee:1.5,total_amount:Number(proBookService?.quoteAmount)+0.05+1.5 ,total_amount_cus_pay:Number(proBookService?.quoteAmount)+0.05+1.5 }
-    );
-      return res
-      .status(200)
-      .json({
+    if (proBookService?.quoteAmount) {
+      const updateProBookService = await updateDocument(
+        "proBookingService",
+        { _id: id },
+        {
+          status: "Accepted",
+          service_fee: 0.05,
+          tax_fee: 1.5,
+          total_amount: Number(proBookService?.quoteAmount) + 0.05 + 1.5,
+          total_amount_cus_pay:
+            Number(proBookService?.quoteAmount) + 0.05 + 1.5,
+        }
+      );
+      return res.status(200).json({
         status: 200,
         message: "Pro quoted service",
         data: { updateProBookService },
       });
-}else if(proBookService?.fixed_price){
- const updateProBookService = await updateDocument(
-      "proBookingService",
-      { _id: id },
-      { status: "Accepted",service_fee:0.05,tax_fee:1.5,total_amount:Number(proBookService?.fixed_price)+0.05+1.5 ,total_amount_cus_pay:Number(proBookService?.fixed_price)+0.05+1.5 }
-    );
-      return res
-      .status(200)
-      .json({
+    } else if (proBookService?.fixed_price) {
+      const updateProBookService = await updateDocument(
+        "proBookingService",
+        { _id: id },
+        {
+          status: "Accepted",
+          service_fee: 0.05,
+          tax_fee: 1.5,
+          total_amount: Number(proBookService?.fixed_price) + 0.05 + 1.5,
+          total_amount_cus_pay:
+            Number(proBookService?.fixed_price) + 0.05 + 1.5,
+        }
+      );
+      return res.status(200).json({
         status: 200,
         message: "Pro quoted service",
         data: { updateProBookService },
       });
-}else if(quoteAmount){
- const updateProBookService = await updateDocument(
-      "proBookingService",
-      { _id: id },
-      { status: "Accepted",service_fee:0.05,tax_fee:1.5,total_amount:quoteAmount+0.05+1.5 ,total_amount_cus_pay:quoteAmount+0.05+1.5 }
-    );
-      return res
-      .status(200)
-      .json({
+    } else if (quoteAmount) {
+      const updateProBookService = await updateDocument(
+        "proBookingService",
+        { _id: id },
+        {
+          status: "Accepted",
+          service_fee: 0.05,
+          tax_fee: 1.5,
+          total_amount: quoteAmount + 0.05 + 1.5,
+          total_amount_cus_pay: quoteAmount + 0.05 + 1.5,
+        }
+      );
+      return res.status(200).json({
         status: 200,
         message: "Pro quoted service",
         data: { updateProBookService },
       });
-}
+    }
 
     // const updateProBookService = await updateDocument(
     //   "proBookingService",

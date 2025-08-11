@@ -7,8 +7,8 @@ import getBookingChat from "./get-single-blog.js";
 
 const router = express.Router();
 
-router.get("/single", getBookingChat);
-router.get("/:id", getBookingChats);
+router.post("/single", getBookingChat);
+router.get("/:id/:user", getBookingChats);
 
 
 export default router;

@@ -17,7 +17,7 @@ const router = express.Router();
 
 
 // get pro chat
-router.get("/conversation/:receiverId/:senderId", getChat);
+router.get("/conversation/:receiverId/:senderId/:proBooking", getChat);
 
 ///--------On going cancelbooking Remove get (created,requested,accepted services)------///
 router.put("/:id", cancelledBooking);

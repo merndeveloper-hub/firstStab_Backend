@@ -1,23 +1,27 @@
 import Joi from "joi";
 import { find } from "../../../helpers/index.js";
 
-
 const schema = Joi.object().keys({
   senderId: Joi.string().required(),
-    receiverId: Joi.string().required(),
+  receiverId: Joi.string().required(),
 });
 
 const getBookingChat = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
 
-    const { senderId,receiverId } = req.body;
+    const { senderId, receiverId } = req.body;
 
+    const getChat = await find("chatMessage", {
+      $or: [
+        { senderId, receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    });
 
-    const getChat = await find("chatMessage",{senderId,receiverId})
-if(!getChat || getChat.length == 0){
-  return res.status(200).json({ status: 200, message: "No Messages" });
-}
+    if (!getChat || getChat.length == 0) {
+      return res.status(200).json({ status: 200, message: "No Messages" });
+    }
 
     return res.status(200).json({ status: 200, getChat });
   } catch (e) {

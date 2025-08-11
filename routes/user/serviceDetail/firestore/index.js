@@ -10,6 +10,12 @@ userSockets.userResheduleRequest(io.of("/api/v1/userResheduleRequest"));
 userSockets.resheduleAcceptBooking(io.of("/api/v1/userResheduleAccept"));
 userSockets.cancelledRescheduleBooking(io.of("/api/v1/userCancelledReschedule"));
 
+userSockets.userExtendRequest(io.of("/api/v1/userExtendRequest"));
+userSockets.extendAcceptBooking(io.of("/api/v1/userExtendAccept"));
+userSockets.cancelledExtendBooking(io.of("/api/v1/userCancelledExtend"));
+
+
+
 proSockets.cancelledProBooking(io.of("/api/v1/proCancelledBooking"));
 proSockets.deliveredProBooking(io.of("/api/v1/proDeliveredBooking"));
 proSockets.proAcceptUserServiceRequest(io.of("/api/v1/proAcceptUserRequest"));
@@ -19,4 +25,7 @@ proSockets.resheduleDeliveredProBooking(io.of("/api/v1/proResheduleDelivered"));
 proSockets.unavailableSocket(io.of("/api/v1/unAvailable"))
 proSockets.availabilitySocket(io.of("/api/v1/availability"))
 proSockets.quoteAmountProBooking(io.of("/api/v1/quoteAmount"))
+
+proSockets.extendProAcceptBooking(io.of("/api/v1/proExtendAccept"));
+proSockets.cancelledProExtendBooking(io.of("/api/v1/proCancelledExtend"));
 };
