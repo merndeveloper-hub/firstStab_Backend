@@ -194,6 +194,28 @@ io.on("connection", (socket) => {
   });
 });
 },
+
+
+payExtendBooking: (io) => {
+
+
+io.on("connection", (socket) => {
+  console.log("New socket connected:", socket.id);
+
+  socket.on("userExtendPay_join_room", (roomName) => {
+  socket.join(roomName);
+  console.log(`Socket ${socket.id} joined room ${roomName}`);
+
+});
+
+  // Example: Send message to both User and Pro
+  socket.on("userExtendPay_message", (message) => {
+    io.to("userExtendPay_room").emit("userExtendPay", message);
+  });
+});
+},
+
+
 };
 
 

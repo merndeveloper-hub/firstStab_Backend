@@ -14,6 +14,7 @@ userSockets.userExtendRequest(io.of("/api/v1/userExtendRequest"));
 userSockets.extendAcceptBooking(io.of("/api/v1/userExtendAccept"));
 userSockets.cancelledExtendBooking(io.of("/api/v1/userCancelledExtend"));
 
+userSockets.payExtendBooking(io.of("/api/v1/userPayExtendBooking"));
 
 
 proSockets.cancelledProBooking(io.of("/api/v1/proCancelledBooking"));
