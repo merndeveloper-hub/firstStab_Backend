@@ -6,6 +6,8 @@ const schema = Joi.object({
   registerationFees: Joi.number(),
   platformFees: Joi.number(),
   currency: Joi.string(),
+    paypalFeePercentage:Joi.number(),
+    paypalFixedFee:Joi.number()
 });
 
 const schemaId = Joi.object({
@@ -17,7 +19,7 @@ const updateAdminCharge = async (req, res) => {
     await schemaId.validateAsync(req.params);
 
     const { id } = req.params;
-    const { registerationFees, platformFees, currency } = req.body;
+    const { registerationFees, platformFees, currency,paypalFeePercentage,paypalFixedFee } = req.body;
     let getadminFees = await findOne("adminFees", { _id: id });
 
     if (!getadminFees || getadminFees.length === 0) {

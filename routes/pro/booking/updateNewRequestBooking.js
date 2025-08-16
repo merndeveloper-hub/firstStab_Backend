@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 import taxJarCal from "../../../lib/taxCollector/index.js";
+import { calculateTotalAmount } from "../../../utils/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -44,39 +45,49 @@ const updateNewRequestBooking = async (req, res) => {
     //Payment Cal
 
     const platform = await findOne("adminFees");
+    //1) Platform fees
+    const paltformCharges = parseFloat(platform?.platformFees);
+    console.log("paltformCharges", paltformCharges);
 
-    const paltformCharges = parseFloat(platform?.platformFees); 
-    console.log("paltformCharges",paltformCharges);
-    
-const serviceAmount = parseFloat(proBookService?.quoteAmount || proBookService?.fixed_price); 
-console.log(serviceAmount,"serviceAmount");
+    const paypalFeePercentage = parseFloat(platform?.paypalFeePercentage);
+    console.log("paltformCharges", paypalFeePercentage);
 
-let totalTaxJarAmt = paltformCharges + serviceAmount
+    const paypalFixedFee = parseFloat(platform?.paypalFixedFee);
+    console.log("paltformCharges", paltformCharges);
 
-console.log("totalTaxJatamt",totalTaxJarAmt);
+    //2) pro quote amount
+    const serviceAmount = parseFloat(
+      proBookService?.quoteAmount || proBookService?.fixed_price
+    );
+    console.log(serviceAmount, "serviceAmount");
 
-    // PayPal fee calculation
-    const feePercentage = 3.49 / 100;
-    const fixedFee = 0.49;
+    let totalTaxJarAmt = paltformCharges + serviceAmount;
+
+    console.log("totalTaxJatamt", totalTaxJarAmt);
+
+    // // PayPal fee calculation
+    // const feePercentage = 3.49 / 100;
+    // const fixedFee = 0.49;
 
     // Get tax from TaxJar (assumed to be a number)
 
     let bookData = {
       user: proBookService?.professsionalId,
-      totalAmt:totalTaxJarAmt
+      totalAmt: totalTaxJarAmt,
     };
+    //3)tax jar amount
     const getTaxVal = await taxJarCal(bookData);
-    
+
     console.log(getTaxVal, "getTaxVal---");
 
-    
-const subTotalBeforePayPalFee = serviceAmount + paltformCharges + getTaxVal;
-
-    // Calculate PayPal fee and total charge
-    const paypalFee = parseFloat(
-      (baseAmount * feePercentage + fixedFee + Number(getTaxVal)).toFixed(2)
+    const totalAmount = calculateTotalAmount(
+      serviceAmount,
+      paltformCharges,
+      Number(getTaxVal),
+      paypalFeePercentage,
+      paypalFixedFee
     );
-    const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is what user pays
+    console.log("Total Amount user should pay:", totalAmount);
 
     const findUserBookService = await findOne("userBookServ", {
       _id: proBookService.bookServiceId,
@@ -102,11 +113,13 @@ const subTotalBeforePayPalFee = serviceAmount + paltformCharges + getTaxVal;
         { _id: id },
         {
           status: "Accepted",
-          service_fee: 0.05,
-          tax_fee: 1.5,
-          total_amount: Number(proBookService?.quoteAmount) + 0.05 + 1.5,
-          total_amount_cus_pay:
-            Number(proBookService?.quoteAmount) + 0.05 + 1.5,
+          service_fee: serviceAmount,
+          platformFees: paltformCharges,
+          paypalFixedFee: paypalFixedFee,
+          paypalFeePercentage: paypalFeePercentage,
+          tax_fee: getTaxVal,
+          total_amount: Number(totalAmount),
+          total_amount_cus_pay: Number(totalAmount),
         }
       );
       return res.status(200).json({
@@ -120,11 +133,13 @@ const subTotalBeforePayPalFee = serviceAmount + paltformCharges + getTaxVal;
         { _id: id },
         {
           status: "Accepted",
-          service_fee: 0.05,
-          tax_fee: 1.5,
-          total_amount: Number(proBookService?.fixed_price) + 0.05 + 1.5,
-          total_amount_cus_pay:
-            Number(proBookService?.fixed_price) + 0.05 + 1.5,
+          service_fee: serviceAmount,
+          platformFees: paltformCharges,
+          paypalFixedFee: paypalFixedFee,
+          paypalFeePercentage: paypalFeePercentage,
+          tax_fee: getTaxVal,
+          total_amount: Number(totalAmount),
+          total_amount_cus_pay: Number(totalAmount),
         }
       );
       return res.status(200).json({
@@ -138,10 +153,13 @@ const subTotalBeforePayPalFee = serviceAmount + paltformCharges + getTaxVal;
         { _id: id },
         {
           status: "Accepted",
-          service_fee: 0.05,
-          tax_fee: 1.5,
-          total_amount: quoteAmount + 0.05 + 1.5,
-          total_amount_cus_pay: quoteAmount + 0.05 + 1.5,
+          service_fee: serviceAmount,
+          platformFees: paltformCharges,
+          paypalFixedFee: paypalFixedFee,
+          paypalFeePercentage: paypalFeePercentage,
+          tax_fee: getTaxVal,
+          total_amount: Number(totalAmount),
+          total_amount_cus_pay: Number(totalAmount),
         }
       );
       return res.status(200).json({

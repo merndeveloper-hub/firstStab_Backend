@@ -53,6 +53,25 @@ function extractTime(timeString) {
 }
 
 
+function calculateTotalAmount(serviceFee, platformFeePercentage, taxJarTaxAmount, paypalFeePercentage, paypalFixedFee) {
+  // const platformFee = serviceFee * platformFeePercentage;
+  // console.log(platformFee,"platformFee");
+  
+  const subTotalBeforePayPalFee = serviceFee + platformFeePercentage + taxJarTaxAmount;
+console.log(subTotalBeforePayPalFee,"subTotalBeforePayPalFee");
+console.log(paypalFeePercentage,"paypalFeePercentage");
+console.log(paypalFixedFee,"paypalFixedFee");
+
+
+  const totalAmount = (subTotalBeforePayPalFee + paypalFixedFee) / (1 - paypalFeePercentage);
+console.log(totalAmount,"totalAmount");
+
+  return Number(totalAmount.toFixed(2));
+}
+
+
+
+
 // const { admin } = require("../firebase/admin");
 
 // async function sendPushNotification(token, title, body, data = {}) {
@@ -65,4 +84,4 @@ function extractTime(timeString) {
 
 // module.exports = { sendPushNotification };
 
-export { generateUniqueNumber, extractDate, extractTime };
+export { generateUniqueNumber, extractDate, extractTime,calculateTotalAmount };

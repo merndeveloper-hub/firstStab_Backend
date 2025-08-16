@@ -16,15 +16,34 @@ const userPaymentSchema = new mongoose.Schema(
       type: SchemaType.ObjectID,
       ref: "proBookingService",
     },
-
+ requestId: {
+      type: SchemaType.TypeString,
+      deafult: 0,
+      //  required: true,
+    },
+    quoteAmount: { type: SchemaType.TypeNumber },
+ //   paypal_fee: { type: schemaType.TypeNumber },
+     platformFees: {
+          type: SchemaType.TypeNumber,
+        }, 
+         paypalFixedFee: {
+          type: SchemaType.TypeNumber,
+        },
+        paypalFeePercentage: {
+          type: SchemaType.TypeNumber,
+        },
+    service_fee: { type: SchemaType.TypeNumber },
+    tax_fee: { type: SchemaType.TypeNumber },
+   // total_amount: { type: SchemaType.TypeNumber },
+    //total_amount_cus_pay: { type: SchemaType.TypeNumber },
     amount: {
       type: SchemaType.TypeNumber,
       //  required: true
     },
-  totalAmount: {
-      type: SchemaType.TypeNumber,
-      //  required: true
-    },
+  // totalAmount: {
+  //     type: SchemaType.TypeNumber,
+  //     //  required: true
+  //   },
     paymentMethod: { type: SchemaType.TypeString },
     sender: { type: SchemaType.TypeString },
     reciever: { type: SchemaType.TypeString },

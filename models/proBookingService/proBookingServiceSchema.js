@@ -50,6 +50,7 @@ const proBookingServiceSchema = new mongoose.Schema(
     CancelTime: { type: schemaType.TypeString, default: null },
     CancelCharges: { type: schemaType.TypeNumber, default: 0.0 },
     CancelSlot: { type: schemaType.TypeNumber, default: 0 },
+
     ExtendedTime: { type: schemaType.TypeString, default: null },
     ExtensionCharges: { type: schemaType.TypeNumber, default: 0.0 },
 
@@ -59,7 +60,16 @@ const proBookingServiceSchema = new mongoose.Schema(
       //  required: true,
     },
     quoteAmount: { type: schemaType.TypeNumber },
-    paypal_fee: { type: schemaType.TypeNumber },
+ //   paypal_fee: { type: schemaType.TypeNumber },
+     platformFees: {
+          type: schemaType.TypeNumber,
+        }, 
+         paypalFixedFee: {
+          type: schemaType.TypeNumber,
+        },
+        paypalFeePercentage: {
+          type: schemaType.TypeNumber,
+        },
     service_fee: { type: schemaType.TypeNumber },
     tax_fee: { type: schemaType.TypeNumber },
     total_amount: { type: schemaType.TypeNumber },
@@ -122,21 +132,29 @@ const proBookingServiceSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "",
     },
+
     orderExtendStatus: {
       type: schemaType.TypeString,
       default: "NA",
     },
+
     orderRescheduleEndTime: {
       type: schemaType.TypeString,
       default: "",
     },
+
     orderExtendEndTime: {
       type: schemaType.TypeString,
       default: "NA",
-    }, orderRescheduleRequest: {
+    }, 
+    
+    
+    orderRescheduleRequest: {
           type: schemaType.TypeString,
           default: "NA",
         },
+
+        
     status: {
       type: schemaType.TypeString,
       enum: [

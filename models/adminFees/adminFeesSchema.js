@@ -9,7 +9,14 @@ const adminFeesSchema = new mongoose.Schema(
     },
     platformFees: {
       type: schemaType.TypeNumber,
+    }, 
+     paypalFixedFee: {
+      type: schemaType.TypeNumber,
     },
+    paypalFeePercentage: {
+      type: schemaType.TypeNumber,
+    },
+
      currency: {
       type: schemaType.TypeString,
     },

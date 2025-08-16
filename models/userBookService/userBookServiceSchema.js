@@ -67,7 +67,15 @@ const userBookServSchema = new mongoose.Schema(
     refundAmount: { type: schemaType.TypeNumber, default: 0 },
     ExtendedTime: { type: schemaType.TypeString, default: "" },
     ExtensionCharges: { type: schemaType.TypeNumber, default: 0.0 },
-
+  platformFees: {
+          type: schemaType.TypeNumber,
+        }, 
+         paypalFixedFee: {
+          type: schemaType.TypeNumber,
+        },
+        paypalFeePercentage: {
+          type: schemaType.TypeNumber,
+        },
     quoteCount: {
       type: schemaType.TypeNumber,
       default: 0,

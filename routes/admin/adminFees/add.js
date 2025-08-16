@@ -7,12 +7,14 @@ const schema = Joi.object({
   registerationFees: Joi.number().required(),
   platformFees: Joi.number().required(),
   currency:Joi.string().required(),
+  paypalFeePercentage:Joi.number(),
+  paypalFixedFee:Joi.number()
 });
 
 const adminCharges = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
-    const { registerationFees, platformFees,currency } = req.body;
+    const { registerationFees, platformFees,currency,paypalFeePercentage,paypalFixedFee } = req.body;
  
     const adminAppCharges = await insertNewDocument("adminFees", {
       ...req.body,

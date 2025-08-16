@@ -1,7 +1,7 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
 import Joi from "joi";
-import { insertNewDocument} from "../../../../helpers/index.js";
+import { insertNewDocument,findOne} from "../../../../helpers/index.js";
 import Stripe from "stripe";
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -39,6 +39,9 @@ const createPaypalOrder = async (req, res) => {
     const getToken = await getAccessToken();
     console.log(getToken, "getToken---------");
 
+    let getBooking = await findOne("proBookingService",{bookServiceId})
+    console.log(getBooking,"getBooking");
+    
     if (!getToken || getToken.length == 0) {
       return res
         .status(400)
@@ -72,7 +75,7 @@ const createPaypalOrder = async (req, res) => {
               name: "Website service",
               description: "crate a website wiht fully functional",
               unit_amount: { currency_code: "USD", value: amount },
-              quantity: "1",
+            quantity: "1",
             }
           
           ],
@@ -118,8 +121,19 @@ const createPaypalOrder = async (req, res) => {
       ],
     };
 
+
+    ////Extend Scenario------------------------------------------------
+    
+console.log("checking");
+
     const userPayment = await insertNewDocument("userPayment", {
       ...req.body,
+      requestId:getBooking?.requestId,
+platformFees:getBooking?.platformFees,
+//paypalFixedFee:paypalFixedFee,
+//paypalFeePercentage:paypalFeePercentage,
+service_fee:getBooking?.service_fee,
+tax_fee:getBooking?.tax_fee,
       paymentMethod: "Paypal",
       sender: "User",
       reciever: "Admin",
