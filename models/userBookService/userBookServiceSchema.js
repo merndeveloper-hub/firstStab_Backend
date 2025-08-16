@@ -138,6 +138,14 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "NA",
     },
+          orderRescheduleReason: {
+          type: schemaType.TypeString,
+          default: "NA",
+        },
+          orderRescheduleNumber: {
+          type: schemaType.TypeString,
+          default: "NA",
+        },
     reasonCancel: {
       type: schemaType.TypeString,
       enum: [

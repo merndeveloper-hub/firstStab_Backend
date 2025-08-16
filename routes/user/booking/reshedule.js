@@ -14,6 +14,8 @@ const schemaBody = Joi.object().keys({
   orderRescheduleStartDate: Joi.string(),
   orderRescheduleEndDate: Joi.string().allow("").optional(),
   orderRescheduleEndTime: Joi.string().allow("").optional(),
+   orderRescheduleReason:Joi.string(),
+orderRescheduleNumber:Joi.string().allow("").optional(),
 });
 
 //Rejected
@@ -33,8 +35,11 @@ const userResheduleRequest = async (req, res) => {
       orderRescheduleEndDate,
       orderRescheduleRequest,
       orderRescheduleEndTime,
+    orderRescheduleReason,
+orderRescheduleNumber,
     } = req.body;
 
+    // Booking found
     const userBooking = await findOne("userBookServ", {
       _id: bookServiceId,
     });
@@ -54,6 +59,31 @@ const userResheduleRequest = async (req, res) => {
       return res.status(400).json({
         status: 400,
         message: "Booking Not Found",
+      });
+    }
+
+    //already apply reshedule:
+     const userBookingReshedule = await findOne("userBookServ", {
+      _id: bookServiceId,
+      orderRescheduleNumber:"1"
+    });
+
+
+    if (!userBookingReshedule || userBookingReshedule.length == 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Booking Already Reshedule",
+      });
+    }
+  
+    const proBookingReshedule = await findOne("proBookingService", {
+      bookServiceId,
+      orderRescheduleNumber:"1",
+    });
+    if (!proBookingReshedule || proBookingReshedule.length == 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Booking Already Reshedule",
       });
     }
  
@@ -79,6 +109,9 @@ const userResheduleRequest = async (req, res) => {
         message: "Booking already completed",
       });
     }
+
+
+
   
     const findResheduleProBooking = await findOne("proBookingService", {
       bookServiceId,
@@ -91,6 +124,7 @@ const userResheduleRequest = async (req, res) => {
       status: "Requested",
       orderRescheduleStatus: "Requested",
       orderRescheduleRequest: "professional",
+
     });
     
     if (findResheduleProBooking && findResheduleUserBooking) {
@@ -99,6 +133,8 @@ const userResheduleRequest = async (req, res) => {
         message: "Professional already requested reshedule booking",
       });
     }
+
+
   
     const findBooking = await findOne("userBookServ", {
       _id: bookServiceId,
@@ -117,6 +153,8 @@ const userResheduleRequest = async (req, res) => {
           status: "Requested",
           orderRescheduleStatus: "Requested",
           orderRescheduleRequest: "user",
+          orderRescheduleReason:orderRescheduleReason,
+orderRescheduleNumber:"1",
           ...req.body,
         }
       );
@@ -128,6 +166,8 @@ const userResheduleRequest = async (req, res) => {
           status: "Requested",
           orderRescheduleStatus: "Requested",
           orderRescheduleRequest: "user",
+             orderRescheduleReason:orderRescheduleReason,
+orderRescheduleNumber:"1",
           ...req.body,
         }
       );

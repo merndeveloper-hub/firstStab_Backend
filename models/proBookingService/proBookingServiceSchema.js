@@ -120,6 +120,14 @@ const proBookingServiceSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "NA",
     },
+      orderRescheduleReason: {
+      type: schemaType.TypeString,
+      default: "NA",
+    },
+      orderRescheduleNumber: {
+      type: schemaType.TypeString,
+      default: "NA",
+    },
     orderRescheduleStartTime: {
       type: schemaType.TypeString,
       default: "",
