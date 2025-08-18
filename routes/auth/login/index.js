@@ -6,6 +6,7 @@ import {
   findOne,
   insertNewDocument,
   updateDocument,
+  find
 } from "../../../helpers/index.js";
 import Joi from "joi";
 
@@ -16,14 +17,14 @@ const schema = Joi.object({
 });
 
 const loginUser = async (req, res) => {
-  const { email, password,userType } = req.body;
-  
+  const { email, password, userType } = req.body;
+
   try {
     await schema.validateAsync(req.body);
 
     const user = await findOneAndSelect(
       "user",
-      { email,userType }
+      { email, userType }
     );
 
 
@@ -166,40 +167,41 @@ const loginUser = async (req, res) => {
           // block_duration: null,
         }
       );
-   
-      var token = jwt.sign({ id: user._id ,role:user.userType}, SECRET, {
+
+      var token = jwt.sign({ id: user._id, role: user.userType }, SECRET, {
         expiresIn: JWT_EXPIRES_IN,
       });
-      var refresh_token = jwt.sign({ id: user._id, role:user.userType}, REFRESH_TOKEN_SECRET, {
+      var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
         expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
       });
 
 
-const US_COUNTRIES = [
-  "United States",
-  "American Samoa",
-  "Guam",
-  "Northern Mariana Islands",
-  "Puerto Rico",
-  "U.S. Virgin Islands",
-  "United States Minor Outlying Islands",
-];
+      const US_COUNTRIES = [
+        "United States",
+        "American Samoa",
+        "Guam",
+        "Northern Mariana Islands",
+        "Puerto Rico",
+        "U.S. Virgin Islands",
+        "United States Minor Outlying Islands",
+      ];
 
-const isUS = US_COUNTRIES.includes(user?.country);
-const region = isUS ? "US" : "Non-US";
+      const isUS = US_COUNTRIES.includes(user?.country);
+      const region = isUS ? "US" : "Non-US";
 
+      let fcmTokens = await find("token", { fcmToken: { $exists: true } })
 
       const inserttoken = await insertNewDocument("token", {
         user_id: user._id,
-        token:refresh_token,
-        type:"refresh"
+        token: refresh_token,
+        type: "refresh"
       });
       req.userId = user._id;
-     
-  //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });
 
-      
-  return res.status(200).send({ status: 200, data:{user,  region:region, token,refresh_token} });
+      //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });
+
+
+      return res.status(200).send({ status: 200, data: { user, region: region, token, refresh_token, fcmTokens } });
 
 
     } else {

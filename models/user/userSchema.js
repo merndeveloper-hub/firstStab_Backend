@@ -113,6 +113,7 @@ const userSchema = new mongoose.Schema(
       
     },
     userType: { type: schemaType.TypeString, enum: ["user", "pro","admin"] },
+  
     created_date: {
       type: schemaType.TypeDate,
       default: Date.now,

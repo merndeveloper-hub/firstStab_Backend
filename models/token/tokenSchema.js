@@ -6,12 +6,15 @@ const tokenSchema = new mongoose.Schema(
     user_id: {
       type: SchemaType.ObjectID,
       ref: "user",
-      required: true,
+     // required: true,
     },
     token: {
       type: SchemaType.TypeString,
-      required: true,
+      //required: true,
       unique: true
+    },
+    fcmToken:{
+      type:SchemaType.TypeString
     },
     expiresAt: {
       type: SchemaType.TypeDate,
@@ -19,7 +22,7 @@ const tokenSchema = new mongoose.Schema(
     type: {
       type: SchemaType.TypeString,
       enum: ['access', 'refresh'],
-      required: true
+      //required: true
     }
   },
   { timestamps: true }

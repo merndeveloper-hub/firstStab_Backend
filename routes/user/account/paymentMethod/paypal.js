@@ -139,7 +139,8 @@ tax_fee:getBooking?.tax_fee,
       reciever: "Admin",
       type: "UserBooking",
       paypalOrderId: response.data.id,
-      status: "Success",
+     // status: "Success",
+     status:'CREATED',
     });
 
     return res.status(201).json({ status: 201, data: data });

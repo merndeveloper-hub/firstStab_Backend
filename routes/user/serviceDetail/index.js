@@ -8,6 +8,8 @@ import getChat from "./firestore/get.js";
 
 import cancelledBooking from "./bookedServiceCancel.js";
 import completedBookedService from "./bookedServiceCompleted.js";
+import sendNotification from "./firestore/sendNotification.js";
+import updateFcmToken from "./firestore/updateFcmToken.js";
 
 
 
@@ -15,6 +17,8 @@ const router = express.Router();
 
 
 
+//update FCM token
+router.put("/:fcmToken",updateFcmToken)
 
 // get pro chat
 router.get("/conversation/:receiverId/:senderId/:proBooking", getChat);
@@ -29,6 +33,11 @@ router.put("/completed/:id", completedBookedService);
 
 //---------pro chat to user----------//
 router.post("/chat", sendChat);
+
+
+// sendNotification
+router.post("/sendNotification",sendNotification)
+
 
 
 export default router;

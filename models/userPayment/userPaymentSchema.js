@@ -40,6 +40,10 @@ const userPaymentSchema = new mongoose.Schema(
       type: SchemaType.TypeNumber,
       //  required: true
     },
+    retryCount: {
+      type: SchemaType.TypeNumber,
+      //  required: true
+    },
   // totalAmount: {
   //     type: SchemaType.TypeNumber,
   //     //  required: true
@@ -91,23 +95,24 @@ const userPaymentSchema = new mongoose.Schema(
     },
 
     payer: {
-      payerId: { type: String }, // payer_id
-      payerEmail: { type: String },
-      payerFirstName: { type: String },
-      payerLastName: { type: String },
-      payerCountryCode: { type: String },
+      payerId: {type: SchemaType.TypeString }, // payer_id
+      payerEmail: {type: SchemaType.TypeString },
+      payerFirstName: {type: SchemaType.TypeString },
+      payerLastName: {type: SchemaType.TypeString },
+      payerCountryCode: {type: SchemaType.TypeString },
     },
 
     paymentSource: {
-      paypalAccountId: { type: String },
-      paypalEmail: { type: String },
-      paypalAccountStatus: { type: String },
+      paypalAccountId: {type: SchemaType.TypeString },
+      paypalEmail: {type: SchemaType.TypeString },
+      paypalAccountStatus: {type: SchemaType.TypeString },
     },
 
-    purchaseUnitReference: { type: String }, // purchase_units[0].reference_id
+    purchaseUnitReference: {type: SchemaType.TypeString }, // purchase_units[0].reference_id
 
-    paypalLink: { type: String }, // links[0].href
-
+    paypalLink: {type: SchemaType.TypeString }, // links[0].href
+payout_batch_id: {type: SchemaType.TypeString,default:"" }, // links[0].href
+batch_status: {type: SchemaType.TypeString,default:"Pending" }, // links[0].href
     createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

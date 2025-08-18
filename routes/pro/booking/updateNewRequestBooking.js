@@ -57,7 +57,7 @@ const updateNewRequestBooking = async (req, res) => {
 
     //2) pro quote amount
     const serviceAmount = parseFloat(
-      proBookService?.quoteAmount || proBookService?.fixed_price
+      proBookService?.quoteAmount || proBookService?.fixed_price || quoteAmount
     );
     console.log(serviceAmount, "serviceAmount");
 
@@ -73,7 +73,7 @@ const updateNewRequestBooking = async (req, res) => {
 
     let bookData = {
       user: proBookService?.professsionalId,
-      totalAmt: totalTaxJarAmt,
+      totalAmt: Number(totalTaxJarAmt),
     };
     //3)tax jar amount
     const getTaxVal = await taxJarCal(bookData);

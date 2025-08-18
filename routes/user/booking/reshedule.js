@@ -69,7 +69,7 @@ orderRescheduleNumber,
     });
 
 
-    if (!userBookingReshedule || userBookingReshedule.length == 0) {
+    if (userBookingReshedule) {
       return res.status(400).json({
         status: 400,
         message: "Booking Already Reshedule",
@@ -80,7 +80,7 @@ orderRescheduleNumber,
       bookServiceId,
       orderRescheduleNumber:"1",
     });
-    if (!proBookingReshedule || proBookingReshedule.length == 0) {
+    if (proBookingReshedule) {
       return res.status(400).json({
         status: 400,
         message: "Booking Already Reshedule",
