@@ -18,7 +18,7 @@ const router = express.Router();
 
 
 //update FCM token
-router.put("/:fcmToken",updateFcmToken)
+router.put("/:id/:fcmToken",updateFcmToken)
 
 // get pro chat
 router.get("/conversation/:receiverId/:senderId/:proBooking", getChat);

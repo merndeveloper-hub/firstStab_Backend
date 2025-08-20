@@ -189,15 +189,15 @@ const loginUser = async (req, res) => {
       const isUS = US_COUNTRIES.includes(user?.country);
       const region = isUS ? "US" : "Non-US";
 
-      let fcmTokens = await find("token", { fcmToken: { $exists: true } })
-
+      
       const inserttoken = await insertNewDocument("token", {
         user_id: user._id,
         token: refresh_token,
         type: "refresh"
       });
       req.userId = user._id;
-
+      
+      let fcmTokens = await find("token", {  user_id: user._id })
       //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });
 
 

@@ -6,12 +6,12 @@ const tokenSchema = new mongoose.Schema(
     user_id: {
       type: SchemaType.ObjectID,
       ref: "user",
-     // required: true,
+   //  required: true,
     },
     token: {
       type: SchemaType.TypeString,
       //required: true,
-      unique: true
+     // unique: true
     },
     fcmToken:{
       type:SchemaType.TypeString

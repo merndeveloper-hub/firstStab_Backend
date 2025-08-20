@@ -43,6 +43,40 @@ const newRequestBooking = async (req, res) => {
           as: "userDetails",
         },
       },
+       {
+        $lookup: {
+          from: "tokens", // Join with "user" collection
+          let: { userId: { $toObjectId: "$userId" } }, // Extract userId from proBookingService
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$user_id", "$$userId"] },
+              }, // Compare userId with _id in user collection
+            },
+            {
+              $project: { user_id: 1, }, // Return only firstName & lastName
+            },
+          ],
+          as: "userFcmToken",
+        },
+      },
+       {
+        $lookup: {
+          from: "tokens", // Join with "user" collection
+          let: { professsionalId: { $toObjectId: "$professsionalId" } }, // Extract userId from proBookingService
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$user_id", "$$professsionalId"] },
+              }, // Compare userId with _id in user collection
+            },
+            {
+              $project: { user_id: 1, }, // Return only firstName & lastName
+            },
+          ],
+          as: "proFcmToken",
+        },
+      },
       {
         $lookup: {
             from: "subcategories", // Join with "users" collection
@@ -71,60 +105,9 @@ const newRequestBooking = async (req, res) => {
           },
         },
       },
-      // {
-      //   $project: {
-      //     professsionalId: 1,
-      //     status: 1,
-      //     userDetails: 1,
-      //     subcategory: 1, // Include the new subcategory object
-      //     serviceType: 0, // Exclude the original serviceType field if not needed
-      //   },
-      // },
-
-      // {
-      //   $match: {
-      //     professsionalId: new mongoose.Types.ObjectId(id),
-      //     status: {$in:["Accepted","Pending"]}
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: "users", // Join with "user" collection
-      //     let: { userId: { $toObjectId: "$userId" } }, // Extract userId from proBookingService
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: { $eq: ["$_id", "$$userId"] },
-      //         }, // Compare userId with _id in user collection
-      //       },
-      //       {
-      //         $project: { first_Name: 1, last_Name: 1, _id: 0 }, // Return only firstName & lastName
-      //       },
-      //     ],
-      //     as: "userDetails",
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: "subcategories", // Join with "users" collection
-      //     let: { subCategoryId: { $toObjectId: "$subCategoryId" } }, // Extract professsionalId
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: { $eq: ["$_id", "$$subCategoryId"] },
-      //         }, // Compare userId with _id in users collection
-      //       },
-      //       {
-      //         $project: {
-      //           categoryName:1,
-      //           name: 1,  
-      //           _id: 0,
-      //         }, // Return only required fields
-      //       },
-      //     ],
-      //     as: "procategories",
-      //   },
-      // }
+    
+      
+      
     
     ]);
 

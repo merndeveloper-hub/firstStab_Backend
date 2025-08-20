@@ -78,6 +78,46 @@ const booking = async (req, res) => {
             as: "proDetails",
           },
         },
+         {
+          $lookup: {
+            from: "tokens", // Join with "users" collection
+            let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$user_id", "$$professionalId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  user_id: 1,
+               
+                }, // Return only required fields
+              },
+            ],
+            as: "proFcmToken",
+          },
+        },
+         {
+          $lookup: {
+            from: "tokens", // Join with "users" collection
+            let: { userId: { $toObjectId: "$userId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$user_id", "$$userId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  user_id: 1,
+               
+                }, // Return only required fields
+              },
+            ],
+            as: "userFcmToken",
+          },
+        },
         {
           $lookup: {
             from: "probookingservices", // Join with "users" collection

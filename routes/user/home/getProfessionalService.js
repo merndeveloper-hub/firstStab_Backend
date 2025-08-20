@@ -150,6 +150,20 @@ proId: 1,
           preserveNullAndEmptyArrays: true,
         },
       },
+        {
+        $lookup: {
+          from: "tokens",
+          localField: "proId",
+          foreignField: "user_id",
+          as: "proFcmToken",
+        },
+      },
+      {
+        $unwind: {
+          path: "$proFcmToken",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $lookup: {
           from: "probookingservices",
@@ -188,6 +202,9 @@ proId: 1,
   //},
       {
         $group: {
+          proFcmToken: {
+            $first: "$proFcmToken.fcmToken",
+          },
           bookingRequestTime: {
             $first: "$proDetails.bookingRequestTime",
           },
@@ -295,6 +312,7 @@ proId: 1,
       {
         $project: {
           bookingRequestTime: 1,
+          proFcmToken:1,
         //  chatChannelName:1,
          // videoRoomName:1,
           _id: 1,

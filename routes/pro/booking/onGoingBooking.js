@@ -81,6 +81,40 @@ const getOnGoingBooking = async (req, res) => {
             as: "proDetails",
           },
         },
+         {
+          $lookup: {
+            from: "tokens", // Join with "user" collection
+            let: { professsionalId: { $toObjectId: "$professsionalId" } }, // Extract userId from proBookingService
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$user_id", "$$professsionalId"] },
+                }, // Compare userId with _id in user collection
+              },
+              {
+                $project: { user_id: 1}, // Return only firstName & lastName
+              },
+            ],
+            as: "proFcmToken",
+          },
+        },
+         {
+          $lookup: {
+            from: "tokens", // Join with "user" collection
+            let: { userId: { $toObjectId: "$userId" } }, // Extract userId from proBookingService
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$user_id", "$$userId"] },
+                }, // Compare userId with _id in user collection
+              },
+              {
+                $project: { user_id: 1}, // Return only firstName & lastName
+              },
+            ],
+            as: "userFcmToken",
+          },
+        },
         {
           $lookup: {
             from: "subcategories", // Join with "users" collection

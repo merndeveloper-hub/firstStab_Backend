@@ -113,6 +113,50 @@ const getBookingChats = async (req, res) => {
           as: "userDetails",
         },
       },
+       {
+        $lookup: {
+          from: "tokens",
+          let: { senderId: { $toObjectId: "$senderId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$user_id", "$$senderId"] },
+              },
+            },
+            {
+              $project: {
+                user_id: 1
+              
+               
+                // ... add more fields as needed
+              },
+            },
+          ],
+          as: "userFcmToken",
+        },
+      },
+        {
+        $lookup: {
+          from: "tokens",
+          let: { receiverId: { $toObjectId: "$receiverId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$user_id", "$$receiverId"] },
+              },
+            },
+            {
+              $project: {
+                user_id: 1
+              
+               
+                // ... add more fields as needed
+              },
+            },
+          ],
+          as: "proFcmToken",
+        },
+      },
       // Lookup for proBooking
       {
         $lookup: {
@@ -291,6 +335,50 @@ const getBookingChats = async (req, res) => {
             },
           ],
           as: "proDetails",
+        },
+      },
+         {
+        $lookup: {
+          from: "tokens",
+          let: { receiverId: { $toObjectId: "$receiverId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$user_id", "$$receiverId"] },
+              },
+            },
+            {
+              $project: {
+                user_id: 1
+              
+               
+                // ... add more fields as needed
+              },
+            },
+          ],
+          as: "userFcmToken",
+        },
+      },
+        {
+        $lookup: {
+          from: "tokens",
+          let: { senderId: { $toObjectId: "$senderId" } },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$user_id", "$$senderId"] },
+              },
+            },
+            {
+              $project: {
+                user_id: 1
+              
+               
+                // ... add more fields as needed
+              },
+            },
+          ],
+          as: "proFcmToken",
         },
       },
       // Lookup for proBooking
