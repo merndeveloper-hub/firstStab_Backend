@@ -125,8 +125,8 @@ const getBookingChats = async (req, res) => {
             },
             {
               $project: {
-                user_id: 1
-              
+                user_id: 1,
+              fcmToken:1
                
                 // ... add more fields as needed
               },
@@ -147,8 +147,8 @@ const getBookingChats = async (req, res) => {
             },
             {
               $project: {
-                user_id: 1
-              
+                user_id: 1,
+              fcmToken:1
                
                 // ... add more fields as needed
               },
@@ -349,8 +349,8 @@ const getBookingChats = async (req, res) => {
             },
             {
               $project: {
-                user_id: 1
-              
+                user_id: 1,
+              fcmToken:1
                
                 // ... add more fields as needed
               },
@@ -371,8 +371,8 @@ const getBookingChats = async (req, res) => {
             },
             {
               $project: {
-                user_id: 1
-              
+                user_id: 1,
+              fcmToken:1
                
                 // ... add more fields as needed
               },

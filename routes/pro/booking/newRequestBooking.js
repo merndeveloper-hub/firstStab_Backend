@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { find, findOne, getAggregate } from "../../../helpers/index.js";
 import mongoose from "mongoose";
-import getProfessional from "./getProfessionalService.js";
+
 
 const schema = Joi.object().keys({
   id: Joi.string().required()
@@ -54,7 +54,7 @@ const newRequestBooking = async (req, res) => {
               }, // Compare userId with _id in user collection
             },
             {
-              $project: { user_id: 1, }, // Return only firstName & lastName
+              $project: { user_id: 1,fcmToken:1 }, // Return only firstName & lastName
             },
           ],
           as: "userFcmToken",
@@ -71,7 +71,7 @@ const newRequestBooking = async (req, res) => {
               }, // Compare userId with _id in user collection
             },
             {
-              $project: { user_id: 1, }, // Return only firstName & lastName
+              $project: { user_id: 1,fcmToken:1 }, // Return only firstName & lastName
             },
           ],
           as: "proFcmToken",

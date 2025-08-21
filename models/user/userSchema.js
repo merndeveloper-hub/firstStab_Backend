@@ -57,7 +57,8 @@ const userSchema = new mongoose.Schema(
     },
     address_line2: {
       type: schemaType.TypeString,
-    }, country: {
+    },
+    country: {
       type: schemaType.TypeString,
     },
     state: {
@@ -78,11 +79,9 @@ const userSchema = new mongoose.Schema(
     },
     longitude: {
       type: schemaType.TypeString,
-     
     },
     latitude: {
       type: schemaType.TypeString,
-    
     },
     businessname: {
       type: schemaType.TypeString,
@@ -92,11 +91,9 @@ const userSchema = new mongoose.Schema(
     },
     avgReviewsPro: {
       type: schemaType.TypeNumber,
-      
     },
     totalReviewsPro: {
       type: schemaType.TypeNumber,
-     
     },
     businessphoneNo: {
       type: schemaType.TypeString,
@@ -109,21 +106,25 @@ const userSchema = new mongoose.Schema(
       type: schemaType.TypeString,
     },
     totalPro: {
-      type: schemaType.TypeNumber
-      
+      type: schemaType.TypeNumber,
     },
-    userType: { type: schemaType.TypeString, enum: ["user", "pro","admin"] },
-  
+    totalAmount: {
+      type: schemaType.TypeNumber,
+      default: 0,
+    },
+    availableAmount: { type: schemaType.TypeNumber, default: 0 }, // paisa/cents
+    pendingAmount: { type: schemaType.TypeNumber, default: 0 },
+  chargesAmount: { type: schemaType.TypeNumber, default: 0 },
     created_date: {
       type: schemaType.TypeDate,
       default: Date.now,
     },
     status: {
       type: schemaType.TypeString,
-      enum: ["Active", "InActive","AdminHideUser","Disabled"],
+      enum: ["Active", "InActive", "AdminHideUser", "Disabled"],
       default: "Active",
     },
-      bookingRequestTime: { type: schemaType.TypeString },
+    bookingRequestTime: { type: schemaType.TypeString },
   },
   { timestamps: true }
 );

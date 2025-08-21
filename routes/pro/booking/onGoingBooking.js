@@ -92,7 +92,7 @@ const getOnGoingBooking = async (req, res) => {
                 }, // Compare userId with _id in user collection
               },
               {
-                $project: { user_id: 1}, // Return only firstName & lastName
+                $project: { user_id: 1,fcmToken:1}, // Return only firstName & lastName
               },
             ],
             as: "proFcmToken",
@@ -109,7 +109,7 @@ const getOnGoingBooking = async (req, res) => {
                 }, // Compare userId with _id in user collection
               },
               {
-                $project: { user_id: 1}, // Return only firstName & lastName
+                $project: { user_id: 1,fcmToken:1}, // Return only firstName & lastName
               },
             ],
             as: "userFcmToken",
@@ -177,6 +177,39 @@ const getOnGoingBooking = async (req, res) => {
               },
             ],
             as: "userDetails",
+          },
+        },  {
+          $lookup: {
+            from: "tokens", // Join with "user" collection
+            let: { professsionalId: { $toObjectId: "$professsionalId" } }, // Extract userId from proBookingService
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$user_id", "$$professsionalId"] },
+                }, // Compare userId with _id in user collection
+              },
+              {
+                $project: { user_id: 1,fcmToken:1}, // Return only firstName & lastName
+              },
+            ],
+            as: "proFcmToken",
+          },
+        },
+         {
+          $lookup: {
+            from: "tokens", // Join with "user" collection
+            let: { userId: { $toObjectId: "$userId" } }, // Extract userId from proBookingService
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$user_id", "$$userId"] },
+                }, // Compare userId with _id in user collection
+              },
+              {
+                $project: { user_id: 1,fcmToken:1}, // Return only firstName & lastName
+              },
+            ],
+            as: "userFcmToken",
           },
         },
         {
