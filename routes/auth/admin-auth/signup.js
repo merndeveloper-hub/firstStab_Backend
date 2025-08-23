@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 // const { SECRET } = require("../../../config");
 import {
   findOneAndSelect,
-  findOne,
   insertNewDocument,
 } from "../../../helpers/index.js";
 import Joi from "joi";
@@ -59,6 +58,7 @@ const adminSignup = async (req, res) => {
     }
     const user = await insertNewDocument("user", {
       mobile:'',
+      userType,
       ...req.body,
     
       password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),

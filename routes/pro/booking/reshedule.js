@@ -12,6 +12,7 @@ const schemaBody = Joi.object().keys({
   orderRescheduleStartDate: Joi.string(),
   orderRescheduleEndDate: Joi.string().allow("").optional(),
   orderRescheduleEndTime: Joi.string().allow("").optional(),
+  orderRescheduleReason: Joi.string().allow("").optional(),
 });
 
 //Rejected
@@ -32,6 +33,7 @@ const userResheduleRequest = async (req, res) => {
       orderRescheduleEndDate,
       orderRescheduleRequest,
       orderRescheduleEndTime,
+      orderRescheduleReason
     } = req.body;
    
 

@@ -65,7 +65,7 @@ const completedBooking = async (req, res) => {
     } else {
       const deliveredBooking = await updateDocument(
         "userBookServ",
-        { _id: id, status: "Delivered" },
+        { _id: id },
         { status: "Completed", FinishedTime, FinishedDate }
       );
 
@@ -77,19 +77,21 @@ const completedBooking = async (req, res) => {
 
       const deliveredRandomProBooking = await updateDocument(
         "proBookingService",
-        { bookServiceId: id, status: "Delivered" },
+        { bookServiceId: id },
         { status: "Completed", FinishedTime, FinishedDate }
       );
     }
 
+
+    /// is pr hume km krna han is mein proBookSERVICE ID SE MATCH KRWNA HI ----PENDING
     let getPayment = await findOne("userPayment", { bookServiceId: id });
     console.log(getPayment, "getPayment");
     let findPro = await findOne("user", { _id: getPayment?.professsionalId });
-    if (!getPayment || getPayment.length == 0) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "User Payment Not Found!" });
-    }
+   // if (!getPayment || getPayment.length == 0) {
+   //   return res
+    //    .status(400)
+    //    .json({ status: 400, message: "User Payment Not Found!" });
+   // }
 
     // ✅ paypalOrderId direct object se lo
     if (

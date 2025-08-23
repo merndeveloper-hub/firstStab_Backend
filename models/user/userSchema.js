@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: schemaType.TypeString,
-      unique: true,
+     // unique: true,
     },
     password: {
       type: schemaType.TypeString,
@@ -125,6 +125,7 @@ const userSchema = new mongoose.Schema(
       default: "Active",
     },
     bookingRequestTime: { type: schemaType.TypeString },
+     userType: { type: schemaType.TypeString,enum:['user','pro','admin'] },
   },
   { timestamps: true }
 );

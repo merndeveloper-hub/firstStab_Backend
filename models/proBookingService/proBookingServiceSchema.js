@@ -6,21 +6,21 @@ const proBookingServiceSchema = new mongoose.Schema(
     media: {
       type: schemaType.TypeArray,
     },
-      serviceImage: {
-          type: schemaType.TypeArray,
-        },
-        inPersonOTP:{
-          type: schemaType.TypeString
-        },
+    serviceImage: {
+      type: schemaType.TypeArray,
+    },
+    inPersonOTP: {
+      type: schemaType.TypeString,
+    },
     userId: {
       type: schemaType.ObjectID,
       ref: "user",
       // required: true,
     },
-     addressId: {
-          type: schemaType.ObjectID,
-          ref: "address",
-        },
+    addressId: {
+      type: schemaType.ObjectID,
+      ref: "address",
+    },
     professsionalId: {
       type: schemaType.ObjectID,
       ref: "user",
@@ -60,16 +60,16 @@ const proBookingServiceSchema = new mongoose.Schema(
       //  required: true,
     },
     quoteAmount: { type: schemaType.TypeNumber },
- //   paypal_fee: { type: schemaType.TypeNumber },
-     platformFees: {
-          type: schemaType.TypeNumber,
-        }, 
-         paypalFixedFee: {
-          type: schemaType.TypeNumber,
-        },
-        paypalFeePercentage: {
-          type: schemaType.TypeNumber,
-        },
+    //   paypal_fee: { type: schemaType.TypeNumber },
+    platformFees: {
+      type: schemaType.TypeNumber,
+    },
+    paypalFixedFee: {
+      type: schemaType.TypeNumber,
+    },
+    paypalFeePercentage: {
+      type: schemaType.TypeNumber,
+    },
     service_fee: { type: schemaType.TypeNumber },
     tax_fee: { type: schemaType.TypeNumber },
     total_amount: { type: schemaType.TypeNumber },
@@ -82,6 +82,46 @@ const proBookingServiceSchema = new mongoose.Schema(
     cancelledReason: {
       type: schemaType.TypeString,
       default: "",
+    },
+    reasonCancel: {
+      type: schemaType.TypeString,
+      enum: [
+        // User side reasons
+        "Change of Plans",
+        "Delayed Need",
+        "Emergency Situation",
+        "Financial Reasons",
+        "Found an Alternative Solution",
+        "Schedule Conflict",
+        "Service No Longer Needed",
+        "Unsatisfactory Provider Options",
+        "Booking Time End",
+        "Rescheduling",
+
+        // Pro side reasons
+        "Provider No Show", // Pro meeting mein nahi aaya
+        "Provider Delayed", // Pro late ho gaya
+        "Provider Cancelled", // Pro ne khud cancel kiya
+        "Provider Double Booked", // Pro ne ek hi waqt pe multiple bookings le li
+
+        // User side specific
+        "User No Show", // User meeting mein nahi aaya
+        "User Cancelled", // User ne khud cancel kiya
+        "User Did Not Respond", // User ne timely response nahi diya
+
+        // Platform / Technical
+        "Technical Issues", // App/connection/technical problem
+        "Payment Issues", // Payment fail ya refund related
+        "Verification Issues", // Background check / KYC failure
+        "Policy Violation", // Rules breach hone ki wajah se cancel
+
+        // Generic
+        "Others",
+      ],
+    },
+
+    reasonDescription: {
+      type: schemaType.TypeString,
     },
     serviceType: {
       type: schemaType.TypeString,
@@ -120,11 +160,11 @@ const proBookingServiceSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "NA",
     },
-      orderRescheduleReason: {
+    orderRescheduleReason: {
       type: schemaType.TypeString,
       default: "NA",
     },
-      orderRescheduleNumber: {
+    orderRescheduleNumber: {
       type: schemaType.TypeString,
       default: "NA",
     },
@@ -154,15 +194,13 @@ const proBookingServiceSchema = new mongoose.Schema(
     orderExtendEndTime: {
       type: schemaType.TypeString,
       default: "NA",
-    }, 
-    
-    
-    orderRescheduleRequest: {
-          type: schemaType.TypeString,
-          default: "NA",
-        },
+    },
 
-        
+    orderRescheduleRequest: {
+      type: schemaType.TypeString,
+      default: "NA",
+    },
+
     status: {
       type: schemaType.TypeString,
       enum: [
@@ -174,32 +212,40 @@ const proBookingServiceSchema = new mongoose.Schema(
         "Rejected",
         "Delivered",
         "Confirmed",
-        "Unavailable"
+        "Unavailable",
       ],
       default: "OnGoing",
     },
     videoRoomName: {
       type: schemaType.TypeString,
     },
-     orderRatingPending: {
-               type: schemaType.TypeString,
-                    default: "Yes",
-            },
+    orderRatingPending: {
+      type: schemaType.TypeString,
+      default: "Yes",
+    },
     chatChannelName: { type: schemaType.TypeString },
-     complexity_tier: {
-          type: schemaType.TypeString,
-          enum: ["moderate", "complex", "simple"],
-        // required: true,
-        },
-        price_model: {
-          type: schemaType.TypeString,
-          enum: ["fixed", "range", "quote_only"],
-         // required: true,
-        },
-        fixed_price: { type: schemaType.TypeString },
-        min_price: { type: schemaType.TypeString },
-        max_price: { type: schemaType.TypeString },
-      
+    ProfessionalPayableAmount: { type: schemaType.TypeNumber },
+    userPayableAmount: { type: schemaType.TypeNumber },
+    CancellationChargesApplyTo: {
+      type: schemaType.TypeString,
+     // enum: ["pro", "user"],
+    },
+    RefundableAmount: { type: schemaType.TypeNumber, default: 0.0 },
+     amountToReturn:{ type: schemaType.TypeString,  },
+       priceToReturn:{ type: schemaType.TypeNumber },
+    complexity_tier: {
+      type: schemaType.TypeString,
+      enum: ["moderate", "complex", "simple"],
+      // required: true,
+    },
+    price_model: {
+      type: schemaType.TypeString,
+      enum: ["fixed", "range", "quote_only"],
+      // required: true,
+    },
+    fixed_price: { type: schemaType.TypeString },
+    min_price: { type: schemaType.TypeString },
+    max_price: { type: schemaType.TypeString },
   },
   { timestamps: true }
 );
@@ -233,3 +279,7 @@ export default proBookingServiceSchema;
 // bookingPayment
 // bookingStatus
 // bookingTimeline
+
+// ProfessionalPayableAmount: { type: schemaType.TypeNumber, required: true },
+// CancellationChargesApplyTo: { type: schemaType.TypeString, default: null },
+// RefundableAmount: { type: schemaType.TypeNumber, default: 0.00 },

@@ -9,6 +9,7 @@ import faqQuestion from "./faqQuestion/index.js";
 import adminLogs from "./adminLogs/index.js";
 import adminCharges from "./adminFees/index.js";
 import certificate  from "./certificate/index.js";
+import booking  from "./booking/index.js";
 
 const router = express.Router();
 
@@ -34,6 +35,9 @@ router.use("/user",user)
 
 //-----------Admin Pro---------------//
 router.use("/pro",pro)
+
+//-----------Admin Booking---------------//
+router.use("/booking",booking)
 
 //-----------Admin Pro Certificate---------------//
 router.use("/certificate",certificate)

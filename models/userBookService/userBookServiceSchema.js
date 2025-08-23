@@ -24,6 +24,12 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "",
     },
+      ProfessionalPayableAmount: { type: schemaType.TypeNumber },
+       userPayableAmount: { type: schemaType.TypeNumber },
+   CancellationChargesApplyTo: { type: schemaType.TypeString, enum:['pro','user'] },
+   RefundableAmount: { type: schemaType.TypeNumber, default: 0.00 },
+   amountToReturn:{ type: schemaType.TypeString, enum:['pro','user']  },
+   priceToReturn:{ type: schemaType.TypeNumber },
     orderRatingPending: {
       type: schemaType.TypeString,
       default: "Yes",
@@ -146,23 +152,43 @@ const userBookServSchema = new mongoose.Schema(
           type: schemaType.TypeString,
           default: "NA",
         },
-    reasonCancel: {
-      type: schemaType.TypeString,
-      enum: [
-        "Change of Plans",
-        "Delayed Need",
-        "Emergency Situation",
-        "Financial Reasons",
-        "Found an Alternative Solution",
-        "No Show",
-        "Others",
-        "Rescheduling",
-        "Schedule Conflict",
-        "Service No Longer Needed",
-        "Unsatisfactory Provider Options",
-        "Booking Time End",
-      ],
-    },
+   reasonCancel: {
+  type: schemaType.TypeString,
+  enum: [
+    // User side reasons
+    "Change of Plans",
+    "Delayed Need",
+    "Emergency Situation",
+    "Financial Reasons",
+    "Found an Alternative Solution",
+    "Schedule Conflict",
+    "Service No Longer Needed",
+    "Unsatisfactory Provider Options",
+    "Booking Time End",
+    "Rescheduling",
+
+    // Pro side reasons
+    "Provider No Show",          // Pro meeting mein nahi aaya
+    "Provider Delayed",          // Pro late ho gaya
+    "Provider Cancelled",        // Pro ne khud cancel kiya
+    "Provider Double Booked",    // Pro ne ek hi waqt pe multiple bookings le li
+
+    // User side specific
+    "User No Show",              // User meeting mein nahi aaya
+    "User Cancelled",            // User ne khud cancel kiya
+    "User Did Not Respond",      // User ne timely response nahi diya
+
+    // Platform / Technical
+    "Technical Issues",          // App/connection/technical problem
+    "Payment Issues",            // Payment fail ya refund related
+    "Verification Issues",       // Background check / KYC failure
+    "Policy Violation",          // Rules breach hone ki wajah se cancel
+
+    // Generic
+    "Others"
+  ]
+},
+
     reasonDescription: {
       type: schemaType.TypeString,
     },
