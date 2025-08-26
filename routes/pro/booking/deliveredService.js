@@ -314,10 +314,12 @@ const uploadMediaFiles = async (files) => {
 const deliveredBooking = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
-    await schemaBody.validateAsync(req.body);
+  //  await schemaBody.validateAsync(req.body);
     const { id } = req.params;
 
  const { FinishedTime, FinishedDate} = req.body;
+ console.log(req.body,"body");
+ 
     const goingbooking = await findOne("proBookingService", { _id: id });
 
     if (!goingbooking) {
@@ -334,7 +336,8 @@ const deliveredBooking = async (req, res) => {
     const updateData = {
       status: "Delivered",
       serviceImage: uploadedFiles.length ? uploadedFiles : undefined,
-     FinishedTime, FinishedDate 
+     FinishedTime, 
+     FinishedDate 
     };
 
     if (goingbooking.orderRescheduleStatus !== "NA") {

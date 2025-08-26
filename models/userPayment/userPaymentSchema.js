@@ -9,7 +9,7 @@ const userPaymentSchema = new mongoose.Schema(
       required: true,
     },
     professsionalId: { type: SchemaType.ObjectID, ref: "user" },
-    bookServiceId: { type: SchemaType.ObjectID, ref: "userBookServ" },
+    bookServiceId: { type: SchemaType.ObjectID },
     proServiceId: { type: SchemaType.ObjectID, ref: "proCategory" },
     categoryId: { type: SchemaType.ObjectID, ref: "category" },
     userAccpetBookingId: {

@@ -74,6 +74,7 @@ const proBookingServiceSchema = new mongoose.Schema(
     tax_fee: { type: schemaType.TypeNumber },
     total_amount: { type: schemaType.TypeNumber },
     total_amount_cus_pay: { type: schemaType.TypeNumber },
+     total_amount_cus_pay_with_charges: { type: schemaType.TypeNumber },
     quoteInfo: { type: schemaType.TypeString, maxlength: 2000 },
     quoteDetail: { type: schemaType.TypeString }, // Text in MongoDB is stored as a long string
 

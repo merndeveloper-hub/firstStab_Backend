@@ -24,7 +24,7 @@ const loginUser = async (req, res) => {
 
     const user = await findOneAndSelect(
       "user",
-      { email, userType }
+      { email, userType,status: "Active" }
     );
 
 

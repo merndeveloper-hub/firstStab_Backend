@@ -188,7 +188,7 @@ const userBookServSchema = new mongoose.Schema(
     "Others"
   ]
 },
-
+total_amount_cus_pay_with_charges: { type: schemaType.TypeNumber },
     reasonDescription: {
       type: schemaType.TypeString,
     },

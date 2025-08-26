@@ -81,17 +81,23 @@ const completedBooking = async (req, res) => {
         { status: "Completed", FinishedTime, FinishedDate }
       );
     }
+  
 
-
+      const getProBooking = await findOne(
+        "proBookingService",
+        { bookServiceId: id },
+       
+      );
+    
     /// is pr hume km krna han is mein proBookSERVICE ID SE MATCH KRWNA HI ----PENDING
-    let getPayment = await findOne("userPayment", { bookServiceId: id });
+    let getPayment = await findOne("userPayment", { bookServiceId: getProBooking?._id });
     console.log(getPayment, "getPayment");
     let findPro = await findOne("user", { _id: getPayment?.professsionalId });
-   // if (!getPayment || getPayment.length == 0) {
-   //   return res
+    // if (!getPayment || getPayment.length == 0) {
+    //   return res
     //    .status(400)
     //    .json({ status: 400, message: "User Payment Not Found!" });
-   // }
+    // }
 
     // ✅ paypalOrderId direct object se lo
     if (
@@ -164,13 +170,9 @@ const completedBooking = async (req, res) => {
         const userPayment = await insertNewDocument("userPayment", payoutDoc); // ✅ fixed
         console.log(userPayment, "userPayment");
         console.log("✅ Payout saved:", userPayment);
-        
 
-
-
-
-// 🔄 Polling start
-pollPayout(userPayment._id, payoutDoc.payout_batch_id);
+        // 🔄 Polling start
+        pollPayout(userPayment._id, payoutDoc.payout_batch_id);
       } catch (err) {
         console.error("❌ Payout error:", err.response?.data || err.message);
       }

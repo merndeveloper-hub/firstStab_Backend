@@ -4,38 +4,48 @@ import mongoose from "mongoose";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
-});
-
-const schemaBody = Joi.object().keys({
-  month: Joi.number().required(),
+   month: Joi.number().required(),
    year: Joi.number().required(),
 });
+
+// const schemaBody = Joi.object().keys({
+//   month: Joi.number().required(),
+//    year: Joi.number().required(),
+// });
 
 
 const getPayments = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
-await schemaBody.validateAsync(req.body);
+//await schemaBody.validateAsync(req.body);
 
-    const { id } = req.params;
-const {month,year} = req.body
+    const { id,month,year } = req.params;
+    console.log(req.params,"params");
+    const monthNum = Number(month);
+const yearNum = Number(year);
+//const {month,year} = req.body
     const getUserPayment = await getAggregate("userPayment", [
   
-      {
+     {
     $addFields: {
       monthNum: { $month: "$createdAt" },
       yearNum: { $year: "$createdAt" },
-      month: { $dateToString: { format: "%B", date: "$createdAt" } },
-      year: { $dateToString: { format: "%Y", date: "$createdAt" } }
     }
   },
   {
-    $match: {
-      userId: new mongoose.Types.ObjectId(id),
-      monthNum: month,
-      yearNum: year
-    }
-  },
+  $match: {
+    $and: [
+      { monthNum: monthNum },
+      { yearNum: yearNum },
+      {
+        $or: [
+          { userId: new mongoose.Types.ObjectId(id) },
+          { professsionalId: new mongoose.Types.ObjectId(id) }
+        ]
+      }
+    ]
+  }
+},
   // 👤 Lookup for User Info
   {
     $lookup: {
@@ -258,7 +268,7 @@ const {month,year} = req.body
     console.log(getUserPayment, "getUserReview");
 
 if(!getUserPayment || getUserPayment.length == 0){
-  return res.status(200).json({ status: 200, message: "No Reviews." });
+  return res.status(200).json({ status: 200, message: "Payment not found!" });
 }
 
     return res.status(200).json({ status: 200, getUserPayment });
