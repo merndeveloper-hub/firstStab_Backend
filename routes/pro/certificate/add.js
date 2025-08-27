@@ -26,7 +26,7 @@ const uploadFile = async (file) => {
     quality: "auto:eco", // More efficient
     allowed_formats: [
       "jpg", "jpeg", "png", "jfif", "avif", "pdf",
-      "mp4", "mov", "avi", "webm", "mkv"
+      "mp4", "mov", "avi", "webm", "mkv","pdf"
     ],
   });
   await unlinkFile(file.path); // Cleanup local file
@@ -60,12 +60,18 @@ const addCertificate = async (req, res) => {
     await Promise.all(uploadTasks);
 
     if(preCondition == "true"){
+      console.log("true");
+      console.log(req.body,"body---");
+      
+console.log(req.files,"BOYD-----");
+console.log(req.file,"file");
 
       // Validations (post-upload)
       if (!req.body.selfieVideo)
         return res.status(400).json({ status: 400, message: "Selfie video is required" });
     }
       
+
     if (isUSBased === "true" && !req.body.formW9)
       return res.status(400).json({ status: 400, message: "TIN is required for US-based Pros" });
 

@@ -1,8 +1,8 @@
-import userOTP from "../../../models/index.js";
+
 import bcrypt from "bcryptjs";
 import send_email from "../../../lib/node-mailer/index.js";
-import { insertNewDocument, findOneAndSelect, findOne } from "../../../helpers/index.js";
-import mongoose from "mongoose";
+import { insertNewDocument } from "../../../helpers/index.js";
+
 
 const sendOTP = async (req, res) => {
 

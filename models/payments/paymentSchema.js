@@ -27,7 +27,19 @@ const PaymentSchema = new mongoose.Schema(
       //  required: true,
       // index: true
     },
-
+  paypalFixedFee: {
+          type: SchemaType.TypeNumber,
+        },
+        paypalFeePercentage: {
+          type: SchemaType.TypeNumber,
+        },
+    stripeFixedFee: {
+          type: SchemaType.TypeNumber,
+        },
+        stripeFeePercentage: {
+          type: SchemaType.TypeNumber,
+        },
+    tax_fee: { type: SchemaType.TypeNumber },
     // Stripe-specific
     stripeSessionId: { type: SchemaType.TypeString },
    stripeAccountId: { type: SchemaType.TypeString },
