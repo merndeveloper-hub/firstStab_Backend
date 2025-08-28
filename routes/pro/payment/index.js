@@ -12,6 +12,7 @@ import stripeSuccess from "./stripeSuccess.js";
 import stripeCancel from "./stripeCancel.js";
 import getbgLink from "./bgLink.js";
 import startStripeOnboarding from "./stripeOnbording.js";
+import afterLoginBgLink from "./afterLoginBgLink.js";
 //import sendPayout from "./adminToProAccount.js";
 //import capturePayment from "./capturePayment.js";
 
@@ -21,6 +22,9 @@ const router = express.Router();
 //   "/checkout",
 //   stripePayment
 // );
+
+////-------after Login BgLink get--------------//
+router.get("/afterbglink/:id",afterLoginBgLink)
 
 
 ///---------------Auth token----------------//
