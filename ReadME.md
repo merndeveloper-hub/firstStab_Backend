@@ -78,3 +78,13 @@ ADD _ID PRO
 
 ------admin panel ip---
 http://13.126.40.123:5000/
+
+
+
+--------------Email--------------------
+
+
+1) jb background verify hojye email krni
+2) jb pro register hojye tb email
+3) jb user register hojye tb email
+4) otp verify hoga tb email ajyegi for pro and user.

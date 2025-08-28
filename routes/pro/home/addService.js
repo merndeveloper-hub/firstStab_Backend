@@ -58,7 +58,7 @@ const createService = async (req, res) => {
       if (!getFixedPrice) {
         return res.status(400).json({
           status: 400,
-          message: `fixed price is equal to ${Number(
+          message: `The fixed price for this service is ${Number(
             getSubcategory?.fixed_price
           )}`,
         });
@@ -74,17 +74,13 @@ const createService = async (req, res) => {
       if (!getMinPrice) {
         return res.status(400).json({
           status: 400,
-          message: `Min price should be equal to ${Number(
-            getSubcategory?.min_price
-          )} or greater than ${Number(getSubcategory?.min_price)}`,
+          message: `The minimum price must be at least ${Number(getSubcategory?.min_price)}`,
         });
       }
       if (!getMaxPrice) {
         return res.status(400).json({
           status: 400,
-          message: `Max price should be equal to ${Number(
-            getSubcategory?.max_price
-          )} or less than ${Number(getSubcategory?.max_price)}`,
+          message:`The maximum price must not exceed ${Number(getSubcategory?.max_price)}`,
         });
       }
     }
@@ -126,7 +122,7 @@ const createService = async (req, res) => {
         const category = await insertNewDocument("proCategory", {
           ...req.body,
           //  status: "InActive",
-          status: "Pending",
+          status: "InActive",
         });
 
         return res.status(200).json({
@@ -142,7 +138,7 @@ const createService = async (req, res) => {
       const category = await insertNewDocument("proCategory", {
         ...req.body,
         //  status: "InActive",
-        status: "pending",
+        status: "InActive",
       });
 
       return res.status(200).json({

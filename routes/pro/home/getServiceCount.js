@@ -36,6 +36,8 @@ const getServiceCategoryCount = async (req, res) => {
       );
       return {
         name: category ? category.name : "Unknown",
+        image: category ? category.image : "Unknown",
+        icon: category ? category.icon : "Unknown",
         subCategoryName: subCategoryName ? subCategoryName.name : "Unknown",
         businessName:businessName? businessName?.businessname : "Unknown",
         subCategoryCount: item.subCategories.length,

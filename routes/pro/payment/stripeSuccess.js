@@ -47,7 +47,7 @@ const stripeSuccess = async (req, res) => {
     ) {
       console.log("vertn");
 
-      const invitationUrl = await createCandidatesCertn(
+    const  invitationUrl = await createCandidatesCertn(
         id,
         bgServiceName,
         bgValidation,
@@ -55,7 +55,8 @@ const stripeSuccess = async (req, res) => {
         userCountry,
         proCategoryId
       );
-    } else {
+    } 
+    else {
       const invitationUrl = await createCandidates(
         id,
         bgServiceName,
@@ -117,11 +118,20 @@ const stripeSuccess = async (req, res) => {
         }
       );
     }
+//console.log(invitationURL,"invitationURL...");
 
-    return res.json({
-      status: 200,
-      data: { message: "Success", invitationURL: invitationURL.invitation_url },
-    });
+ return res.send(`
+  <html>
+    <body style="background:#fff; text-align:center; padding-top:50px;">
+      <h2>Redirecting...</h2>
+    </body>
+  </html>
+`);
+
+    // return res.json({
+    //   status: 200,
+    //   data: { message: "Success", invitationURL: invitationURL?.invitation_url },
+    // });
 
     //  return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {

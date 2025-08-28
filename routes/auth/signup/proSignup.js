@@ -146,7 +146,7 @@ const proSignup = async (req, res) => {
         .status(400)
         .send({ status: 400, message: "User already exists with this email" });
     }
-    const mobileExist = await findOneAndSelect("user", { mobile });
+    const mobileExist = await findOneAndSelect("user", { mobile,status: "Active" });
     if (mobileExist) {
       return res
         .status(400)
