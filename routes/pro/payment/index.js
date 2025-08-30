@@ -52,7 +52,7 @@ router.get("/stripecancel", stripeCancel);
 
 
 //------------bg link get from proCategories-----//
-router.get("/bglink/:id", getbgLink);
+router.get("/bglink/:id/:register", getbgLink);
 
 //------------stripe pro onboarding-----//
 router.get("/stripeonboarding", startStripeOnboarding);
