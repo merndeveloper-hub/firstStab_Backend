@@ -56,7 +56,7 @@ console.log("true---------------");
   let decideCountry = getCountry == true? "US":"Non-US" 
     return res.status(200).json({ status: 200, data: { url,certnURL,decideCountry } });
   } else{
-      const getURL = await findOne("proCategory", { proId: id });
+      const getURL = await findOne("proCategory", { _id: id });
     console.log(getURL, "url-----");
 
 console.log("false--------------");

@@ -88,7 +88,7 @@ const createService = async (req, res) => {
 
     // }
 
-    // less than 5000 pro certificate condition
+    //* less than 5000 pro certificate condition   *//
     const findPro = await findOne("user", {
       _id: proId,
       totalPro: { $lt: 5000 }, // $lt means "less than"
@@ -118,6 +118,8 @@ const createService = async (req, res) => {
       });
       console.log(findbg, "findbg");
 
+
+      //* less than 5k documents apply  *//
       if (findbg) {
         const category = await insertNewDocument("proCategory", {
           ...req.body,
@@ -134,7 +136,8 @@ const createService = async (req, res) => {
         });
       }
 
-      // apply bg
+
+      //* apply bg  less than 5k documents   *//
       const category = await insertNewDocument("proCategory", {
         ...req.body,
         //  status: "InActive",
@@ -151,7 +154,7 @@ const createService = async (req, res) => {
     }
 
     console.log("GREATER THAN 5000");
-
+//* Greater than 5000 pro certificate condition   *//
     const subCategoryId = subCategories[0]?.id;
 
     const findService = await findOne("proCategory", {
@@ -161,8 +164,7 @@ const createService = async (req, res) => {
     });
     console.log(findService, "findService");
 
-    // Check if a document already exists with the same proId, categoryId, and subCategory id
-
+    //* Check if a document already exists with the same proId, categoryId, and subCategory id *//
     if (findService) {
       return res.status(400).json({
         status: 400,
@@ -178,6 +180,7 @@ const createService = async (req, res) => {
 
     console.log(findSubCategory, "findSubCategory------");
 
+    // ** checkr --> basic_plus , basic_criminal_and_plv ,agr basic_plis lya how hain is mein basic_criminal_and_plv yeh bhe cover ho jta hain **//
     if (
       findSubCategory?.bgServiceName == "checkr" &&
       findSubCategory?.bgPackageName == "basic_plus"
@@ -223,7 +226,8 @@ const createService = async (req, res) => {
         user: "not free",
         bg: "not apply",
       });
-    } else if (
+    } else if (     // ** checkr --> plv , basic_criminal_and_plv ,agr plv lya how hain is mein basic_criminal_and_plv yeh bhe cover ho jta hain **//
+
       findSubCategory?.bgServiceName == "checkr" &&
       findSubCategory?.bgPackageName == "plv"
     ) {
@@ -262,7 +266,8 @@ const createService = async (req, res) => {
         user: "not free",
         bg: "not apply",
       });
-    } else if (
+    } else if ( // ** checkr --> agr basic_criminal_and_plv  lya how hain is mein plv,basic_plus yeh bhe cover ho jta hain **//
+
       findSubCategory?.bgServiceName == "checkr" &&
       findSubCategory?.bgPackageName == "basic_criminal_and_plv"
     ) {
@@ -301,7 +306,7 @@ const createService = async (req, res) => {
         user: "not free",
         bg: "not apply",
       });
-    } else if (findSubCategory?.bgServiceName == "certn") {
+    } else if (findSubCategory?.bgServiceName == "certn") { //* certn bg check **//
       const findService = await find("proCategory", {
         proId,
         bgServiceName: findSubCategory?.bgServiceName,

@@ -41,33 +41,6 @@ const getProfessional = async (req, res) => {
 
     const proService = await getAggregate("proCategory", [
      
-      // {
-      //   $match: { categoryId: new mongoose.Types.ObjectId(categoryId) } // Match the categoryId as ObjectId
-      // },
-      // {
-      //   $project: {
-      //     userId: 1,
-      //     price: 1,
-      //     categoryId: 1,
-      //     createdAt: 1,
-      //     updatedAt: 1,
-      //     subCategories: {
-      //       $filter: {
-      //         input: "$subCategories",
-      //         as: "sub",
-      //         cond: {
-      //           $and: [
-      //             { $eq: ["$$sub.id", new mongoose.Types.ObjectId(subCategorieId)] }, // Match subCategory ID as ObjectId
-      //             { $eq: [`$$sub.${servieType}`, true] } // Check if the given key is true
-      //           ]
-      //         }
-      //       }
-      //     }
-      //   }
-      // },
-      // {
-      //   $match: { "subCategories.0": { $exists: true } } // Ensure at least one matching subCategory exists
-      // }
       {
         $match: { categoryId:  new mongoose.Types.ObjectId(categoryId) } // Match categoryId
       },

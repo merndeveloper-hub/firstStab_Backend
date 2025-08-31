@@ -38,6 +38,7 @@ const createPaypalOrder = async (req, res) => {
 
     const findProCategory = await findOne("proCategory", {
       proId: professionalId,
+      status:'Pending'
     });
 
     const platform = await findOne("adminFees");
@@ -180,8 +181,9 @@ const createPaypalOrder = async (req, res) => {
       });
 
       return res.status(201).json({ status: 201, data: data });
-    } else if (paymentMethod == "stripe") {
-      const pro = await findOne("payment", { professionalId });
+    } 
+    else if (paymentMethod == "stripe") {
+      const pro = await findOne("payment", { professionalId,status:'Pending' });
 
       if (pro?.stripeAccountId) {
         throw new Error("Stripe onboarding incomplete. Please onboard first.");
@@ -205,28 +207,26 @@ const createPaypalOrder = async (req, res) => {
       // }
       console.log(getTaxVal, "getTaxVal---");
 
-    
-
       // Example calculation - aapne jaisa fees logic diya tha
       const amountInCents = Math.round(amountInDollars * 100);
-      console.log(amountInCents,"amountcents");
-      
+      console.log(amountInCents, "amountcents");
+
       const stripeFeePercent = stripeFeePercentage;
-      console.log(stripeFeePercent,"fee percenet");
-      
-      const fixedFee = stripeFixedFee ; // in cents
-console.log(fixedFee,"fee");
+      console.log(stripeFeePercent, "fee percenet");
+
+      const fixedFee = stripeFixedFee; // in cents
+      console.log(fixedFee, "fee");
 
       let taxAmount = Number(getTaxVal).toFixed(2);
-console.log(taxAmount,"TAX");
+      console.log(taxAmount, "TAX");
 
       const totalAmountInCents = Math.ceil(
         (amountInCents + fixedFee + Number(taxAmount)) / (1 - stripeFeePercent)
       );
-      console.log(totalAmountInCents,"totalAmountInCents");
-      
+      console.log(totalAmountInCents, "totalAmountInCents");
+
       const feeAmountInCents = totalAmountInCents - amountInCents;
-console.log(feeAmountInCents,"feeAmountInCents");
+      console.log(feeAmountInCents, "feeAmountInCents");
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -243,8 +243,8 @@ console.log(feeAmountInCents,"feeAmountInCents");
           },
         ],
         mode: "payment",
-  success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-  //success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+        success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+        //success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
         cancel_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripecancel?session_id={CHECKOUT_SESSION_ID}`,
         metadata: {
           professionalId: req.body.professionalId,
@@ -278,11 +278,11 @@ console.log(feeAmountInCents,"feeAmountInCents");
         stripeSessionId: session.id, // session.id
         stripeSessionUrl: session.url, // session.url
         status: "Pending", // will be 'Success' after webhook confirms
-        baseAmount:amountInDollars,
+        baseAmount: amountInDollars,
         tax_fee: getTaxVal,
         stripeFixedFee: stripeFixedFee,
         stripeFeePercentage: stripeFeePercentage,
-        finalAmount:totalAmountInCents,
+        finalAmount: totalAmountInCents,
       });
 
       return res.status(201).json({ status: 201, data: data });
