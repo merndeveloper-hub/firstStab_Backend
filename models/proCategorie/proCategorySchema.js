@@ -66,14 +66,20 @@ const proCategorySchema = new mongoose.Schema(
     },
     serviceStatus: {
       type: schemaType.TypeString,
-      enum: ["invited", "pending", "completed"],
+      default:'pending',
+      enum: ["invited", "pending","success","failure"],
     }, // e.g., 'invited', 'pending', 'completed'
+    rejectReason:{
+      type:schemaType.TypeString
+    },
     serviceCountry: {
       type: schemaType.TypeString,
       enum: ["US", "NON-US", "Both"],
     },
     bgServiceName: { type: schemaType.TypeString, enum: ["checkr", "certn"] },
-
+checkrReportStatus:{
+  type:schemaType.TypeString
+},
     candidateId: { type: schemaType.TypeString }, // From Checkr response
     invitationUrl: { type: schemaType.TypeString }, // From Checkr response
     invitationId: { type: schemaType.TypeString },

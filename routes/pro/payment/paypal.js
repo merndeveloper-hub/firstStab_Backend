@@ -12,35 +12,34 @@ import proTaxJarCal from "../../../lib/taxCollector/proTaxCal.js";
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const schema = Joi.object({
-  //amount: Joi.number().required(),
+
   professionalId: Joi.string().required(),
-  // subCategorieId: Joi.string().required(),
+  proCategoryId: Joi.string().required(),
   paymentMethod: Joi.string(),
-  //sender: Joi.string(),
-  // reciever: Joi.string(),
-  //  currency:Joi.string(),
-  // type: Joi.string(),
+
 });
 
 const createPaypalOrder = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
     const {
-      //  amount,
-      subCategorieId,
+     
+      proCategoryId,
       professionalId,
-      //  currency,
+      
       paymentMethod,
-      sender,
-      reciever,
-      type,
+      
     } = req.body;
 
-    const findProCategory = await findOne("proCategory", {
-      proId: professionalId,
+    // const findProCategory = await findOne("proCategory", {
+    //   proId: professionalId,
+    //   status:'Pending'
+    // });
+ const findProCategory = await findOne("proCategory", {
+      _id: proCategoryId,
       status:'Pending'
     });
-
+    
     const platform = await findOne("adminFees");
 
     if (paymentMethod == "paypal") {
@@ -184,6 +183,7 @@ const createPaypalOrder = async (req, res) => {
     } 
     else if (paymentMethod == "stripe") {
       const pro = await findOne("payment", { professionalId,status:'Pending' });
+console.log(findProCategory,"findProCategory");
 
       if (pro?.stripeAccountId) {
         throw new Error("Stripe onboarding incomplete. Please onboard first.");
@@ -243,8 +243,8 @@ const createPaypalOrder = async (req, res) => {
           },
         ],
         mode: "payment",
-        success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-        //success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+       success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+    //    success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
         cancel_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripecancel?session_id={CHECKOUT_SESSION_ID}`,
         metadata: {
           professionalId: req.body.professionalId,

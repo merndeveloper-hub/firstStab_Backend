@@ -20,6 +20,7 @@ const getProfessionalService = async (req, res) => {
         $match: {
           categoryId: new mongoose.Types.ObjectId(categoryId),
           status: "Active",
+        serviceStatus :"success"
         },
       },
       {

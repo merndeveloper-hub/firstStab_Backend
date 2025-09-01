@@ -19,12 +19,27 @@ const activeProService = async (req, res) => {
       });
     }
     const getPro = await findOne("user", { _id: getService?.proId });
+let activeService;
+    if(getPro?.totalPro < 5000){
+      console.log("if");
+      
+     activeService = await updateDocument(
+        "proCategory",
+        { _id: id },
+        { status: getService?.status == "Active"? "InActive":"Active",
+          serviceStatus:getService?.serviceStatus == "success"? "pending":"success"
+         }
+      );
 
-    const activeService = await updateDocument(
-      "proCategory",
-      { _id: id },
-      { status: getService?.status == "InActive" ? "Active" : "InActive" }
-    );
+    } else if(getPro?.totalPro > 5000){
+ activeService = await updateDocument(
+        "proCategory",
+        { _id: id },
+        { status: getService?.status == "Active"? "Pending":"Active",
+          serviceStatus:getService?.serviceStatus == "success"? "pending":"success"
+         }
+      );
+    }
     await send_email(
       "signuptemplate",
       {
@@ -37,7 +52,7 @@ const activeProService = async (req, res) => {
 
     return res.status(200).send({
       status: 200,
-      message: "Active Pro Service",
+      message: `${activeService?.status} Pro Service`,
       activeService,
     });
   } catch (e) {
