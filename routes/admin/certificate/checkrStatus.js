@@ -53,11 +53,12 @@ const getInvitationStatus = async (req, res) => {
         { _id: getService?._id },
         {
           serviceStatus: "pending",
-          checkrReportStatus: reportRes.data.status,
+          checkrReportStatus: reportRes?.data?.status,
+         checkrResult: reportRes?.data?.result
         }
       );
 
-      return res.status(200).json({ status: 200, data: activeService });
+      return res.status(200).json({ status: 200, data:  reportRes?.data });
     }
 
     const getService = await findOne("proCategory", {
