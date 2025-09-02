@@ -4,6 +4,7 @@ import mongoose from "./config/db/index.js";
 import morgan from "morgan";
 import cors from "cors";
 import https from "https";
+import cookieParser from "cookie-parser";
 import { pinoHttpMiddleware, changed,pinoInstance } from "./utils/logger/logger.js";
 //import { pinoInstance } from '../logger.js';
 const log = pinoInstance.child({ context: 'userService' });
@@ -73,6 +74,9 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+//*Cookie **//
+app.use(cookieParser());
 
 // * Api routes
 app.use("/api/v1", routes);

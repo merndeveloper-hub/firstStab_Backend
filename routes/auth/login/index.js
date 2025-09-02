@@ -192,10 +192,28 @@ const loginUser = async (req, res) => {
       
       const inserttoken = await insertNewDocument("token", {
         user_id: user._id,
-        token: refresh_token,
+        accessToken:token,
+        refreshToken: refresh_token,
         type: "refresh"
       });
       req.userId = user._id;
+
+      // Set Access Token in Cookie
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // sirf prod me https
+  sameSite: "strict",
+  maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+});
+
+// Set Refresh Token in Cookie (optional)
+res.cookie("refreshToken", refresh_token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
+});
+
       
       let fcmTokens = await find("token", {  user_id: user._id })
       //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });

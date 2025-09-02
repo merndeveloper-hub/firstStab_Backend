@@ -8,7 +8,12 @@ const tokenSchema = new mongoose.Schema(
       ref: "user",
    //  required: true,
     },
-    token: {
+    accessToken: {
+      type: SchemaType.TypeString,
+      //required: true,
+     // unique: true
+    },
+     refreshToken: {
       type: SchemaType.TypeString,
       //required: true,
      // unique: true

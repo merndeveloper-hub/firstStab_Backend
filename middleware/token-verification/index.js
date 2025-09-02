@@ -2,18 +2,27 @@ import jwt from "jsonwebtoken";
 import  {SECRET}  from "../../config/index.js";
 import  {findOne} from "../../helpers/index.js";
 
+
 const tokenVerification = (req, res, next) => {
   try {
-    let token = req.headers["token"];
-    console.log(token,"token");
+
+    console.log(req,"req");
+   let token = req?.cookies?.token;  // ✅ sirf JWT milega
+
+//let token = req.headers['cookie']
+//    let token = req.headers["token"];
+    //console.log(token,"token");
     
     if (!token) {
       return res
         .status(404)
         .send({ status: 404, message: "No token provided!" });
     }
+
+    console.log(SECRET,"SCERT");
+    
     jwt.verify(token, SECRET, async (err, decoded) => {
-      console.log(decoded,"decoded");
+      //console.log(decoded,"decoded");
       
       if (err) {
         console.log(err);
