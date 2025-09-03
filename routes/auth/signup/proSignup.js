@@ -7,7 +7,7 @@ import {
   getAggregate,
   deleteDocument,
 } from "../../../helpers/index.js";
-import { JWT_EXPIRES_IN, SECRET } from "../../../config/index.js";
+import { JWT_EXPIRES_IN, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -131,8 +131,8 @@ const proSignup = async (req, res) => {
     } = req.body;
 
 
-    console.log(req.body,"body");
-    
+    console.log(req.body, "body");
+
     const deleteEmailExist = await findOneAndSelect("user", {
       email,
       status: "InActive",
@@ -146,7 +146,7 @@ const proSignup = async (req, res) => {
         .status(400)
         .send({ status: 400, message: "User already exists with this email" });
     }
-    const mobileExist = await findOneAndSelect("user", { mobile,status: "Active" });
+    const mobileExist = await findOneAndSelect("user", { mobile, status: "Active" });
     if (mobileExist) {
       return res
         .status(400)
@@ -216,35 +216,35 @@ const proSignup = async (req, res) => {
       ...req.body,
       password: req.body.password,
       status: "InActive",
-      badge:"default",
-      totalJobCompleted:0,
-      totalJobCancelled:0,
-      totalJob:0,
-      responseRate:"0 %",
-      responseTime:"0 %",
-      availability:"offline",
-      bgCheck:"true",
-      totalRating:0,
-         bookingRequestTime:process.env.bookingRequestTime,
+      badge: "default",
+      totalJobCompleted: 0,
+      totalJobCancelled: 0,
+      totalJob: 0,
+      responseRate: "0 %",
+      responseTime: "0 %",
+      availability: "offline",
+      bgCheck: "true",
+      totalRating: 0,
+      bookingRequestTime: process.env.bookingRequestTime,
       totalPro: userCount[0] ? userCount[0]?.activeProUsers + 1 : 1,
     });
 
-const US_COUNTRIES = [
-  "United States",
-  "American Samoa",
-  "Guam",
-  "Northern Mariana Islands",
-  "Puerto Rico",
-  "U.S. Virgin Islands",
-  "United States Minor Outlying Islands",
-];
+    const US_COUNTRIES = [
+      "United States",
+      "American Samoa",
+      "Guam",
+      "Northern Mariana Islands",
+      "Puerto Rico",
+      "U.S. Virgin Islands",
+      "United States Minor Outlying Islands",
+    ];
 
-const isUS = US_COUNTRIES.includes(user?.country);
-const region = isUS ? "US" : "Non-US";
+    const isUS = US_COUNTRIES.includes(user?.country);
+    const region = isUS ? "US" : "Non-US";
 
 
 
-    const token = jwt.sign({ id: user._id }, SECRET, {
+    const token = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
     req.userId = user._id;
@@ -256,9 +256,9 @@ const region = isUS ? "US" : "Non-US";
       message: "OTP sent to your email. Check inbox to proceed.",
       data: {
         userId: user?._id,
-        totalPro:user?.totalPro,
-        region:region
-        
+        totalPro: user?.totalPro,
+        region: region
+
       },
     });
     // return res.status(200).send({ status: 200, data:{user, token} });
@@ -266,8 +266,8 @@ const region = isUS ? "US" : "Non-US";
     await session.abortTransaction();
     session.endSession();
     if (error.code === 11000) {
-      console.log(error,"error--------");
-      
+      console.log(error, "error--------");
+
       // Duplicate key error
       return res.status(400).send({
         status: 400,

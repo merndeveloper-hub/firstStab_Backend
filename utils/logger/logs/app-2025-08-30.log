@@ -20,3 +20,5 @@
 {"level":"info","time":"2025-08-30T19:13:19.904Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
 {"level":"info","time":"2025-08-30T19:15:35.452Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
 {"level":"info","time":"2025-08-30T19:15:35.452Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-09-02T19:25:21.069Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-09-02T19:25:21.070Z","hostname":"PKKHICS01L5128","context":"userService","message":"HTTPS server started on "}

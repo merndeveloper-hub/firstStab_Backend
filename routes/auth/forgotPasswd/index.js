@@ -5,7 +5,7 @@ import {
   findOneAndSelect,
   updateDocument
 } from "../../../helpers/index.js";
-import { SECRET } from "../../../config/index.js";
+import { ACCESS_TOKEN_SECRET } from "../../../config/index.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -13,21 +13,21 @@ import mongoose from "mongoose";
 import userType from "../../../models/userType/index.js";
 
 const schema = Joi.object({
- userType:Joi.string(),
+  userType: Joi.string(),
   email: Joi.string()
-  .email({ tlds: { allow: true } }) // Ensures a valid domain with TLD (e.g., .com, .org)
-  .pattern(
-    new RegExp(
-      "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-    )
-  ) // Enforces common email rules
-  .required()
-  .messages({
-    "string.email": "Invalid email format.",
-    "any.required": "Email is required.",
-    "string.pattern.base": "Invalid email structure.",
-  }),
- 
+    .email({ tlds: { allow: true } }) // Ensures a valid domain with TLD (e.g., .com, .org)
+    .pattern(
+      new RegExp(
+        "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+      )
+    ) // Enforces common email rules
+    .required()
+    .messages({
+      "string.email": "Invalid email format.",
+      "any.required": "Email is required.",
+      "string.pattern.base": "Invalid email structure.",
+    }),
+
   password: Joi.string()
     .pattern(
       new RegExp(
@@ -58,7 +58,7 @@ const forgotPaasswd = async (req, res) => {
     //     .json({ success: false, message: error.details[0].message });
     // }
 
-    const { password, email,userType } = req.body;
+    const { password, email, userType } = req.body;
 
     const emailExist = await findOneAndSelect("user", { email });
     if (!emailExist) {
@@ -66,21 +66,21 @@ const forgotPaasswd = async (req, res) => {
         .status(401)
         .send({ status: 401, message: "No user found with this email address" });
     }
-   
-    
+
+
 
     req.body.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-   console.log(req.body.password,"req.body.password");
-   
+    console.log(req.body.password, "req.body.password");
+
 
     const user_passwd_updated = await updateDocument(
       "user",
-      {email},
-      { password:req.body.password }
-    
+      { email },
+      { password: req.body.password }
+
     );
-console.log(user_passwd_updated,"user_passwd_updated");
+    console.log(user_passwd_updated, "user_passwd_updated");
 
     await session.commitTransaction();
     session.endSession();

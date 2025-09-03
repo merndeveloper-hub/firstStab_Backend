@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { JWT_EXPIRES_IN, JWT_EXPIRES_IN_REFRESH_TOKEN, REFRESH_TOKEN_SECRET, SECRET } from "../../../config/index.js";
+import { JWT_EXPIRES_IN, JWT_EXPIRES_IN_REFRESH_TOKEN, REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
 import {
   findOneAndSelect,
   findOne,
@@ -24,7 +24,7 @@ const loginUser = async (req, res) => {
 
     const user = await findOneAndSelect(
       "user",
-      { email, userType,status: "Active" }
+      { email, userType, status: "Active" }
     );
 
 
@@ -168,7 +168,7 @@ const loginUser = async (req, res) => {
         }
       );
 
-      var token = jwt.sign({ id: user._id, role: user.userType }, SECRET, {
+      var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
         expiresIn: JWT_EXPIRES_IN,
       });
       var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
@@ -189,33 +189,33 @@ const loginUser = async (req, res) => {
       const isUS = US_COUNTRIES.includes(user?.country);
       const region = isUS ? "US" : "Non-US";
 
-      
+
       const inserttoken = await insertNewDocument("token", {
         user_id: user._id,
-        accessToken:token,
+        accessToken: token,
         refreshToken: refresh_token,
         type: "refresh"
       });
       req.userId = user._id;
 
       // Set Access Token in Cookie
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // sirf prod me https
-  sameSite: "strict",
-  maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
-});
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+      });
 
-// Set Refresh Token in Cookie (optional)
-res.cookie("refreshToken", refresh_token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-  maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
-});
+      // Set Refresh Token in Cookie (optional)
+      res.cookie("refreshToken", refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
+      });
 
-      
-      let fcmTokens = await find("token", {  user_id: user._id })
+
+      let fcmTokens = await find("token", { user_id: user._id })
       //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });
 
 

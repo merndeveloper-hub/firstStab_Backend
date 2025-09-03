@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import  SECRET  from "../../config/index.js";
-import  findOne  from "../../helpers/index.js";
+import ACCESS_TOKEN_SECRET from "../../config/index.js";
+import findOne from "../../helpers/index.js";
 
 const adminVerification = async (req, res, next) => {
   try {
@@ -10,7 +10,7 @@ const adminVerification = async (req, res, next) => {
         .status(404)
         .send({ status: 404, message: "No token provided!" });
     }
-    jwt.verify(token, SECRET, async (err, decoded) => {
+    jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, decoded) => {
       if (err) {
         console.log(err);
         return res
@@ -57,4 +57,4 @@ const adminVerification = async (req, res, next) => {
   }
 };
 
-export default adminVerification ;
+export default adminVerification;

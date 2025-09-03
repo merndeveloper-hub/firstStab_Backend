@@ -1,120 +1,84 @@
-// const jwt = require("jsonwebtoken");
-// const Joi = require("joi");
-// const { SECRET } = require("../../config");
-// const { findOneAndSelect, findOneAndPopulate } = require("../../helpers");
-// const saveActivity = require('../../middleware/activity/save-activity');
-
-// const schema = Joi.object({
-//   token: Joi.string().required(),
-// });
-
-// const verifyToken = async (req, res, next) => {
-//   try {
-//     await schema.validateAsync(req.query);
-//     const { token } = req.query;
-    
-//     jwt.verify(token, SECRET, async (err, decoded) => {
-//       if (err) {
-//         return res
-//           .status(401)
-//           .send({ status: 401, message: "Token Unauthorized!" });
-//       }
-
-
-//       const inserttoken = await insertNewDocument("token", {
-//               user_id: user._id,
-//               token:refresh_token,
-//               type:"refresh"
-//             });
-
-//       const isUserExist = await findOneAndPopulate(
-//         "user",
-//         { _id: decoded.id },
-//         "type"
-//       );
-//       if (!isUserExist) {
-//         return res.status(404).send({
-//           status: 404,
-//           message: "No longer User exists with your token",
-//         });
-//       }
-//       isUserExist.password = undefined;
-//       // isUserExist.type = undefined;
-//      // saveActivity(req, res, `User ${isUserExist._id} verified token successfully`);
-//       return res
-//         .status(200)
-//         .send({ status: 200, message: "Authorized", user: isUserExist });
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).send({ status: 500, message: e.message });
-//   }
-// };
-
-// module.exports = verifyToken;
-
-
-// app.post("/refresh", async (req, res) => {
-//   const refreshToken = req.cookies.refreshToken;
-//   if (!refreshToken) return res.sendStatus(401);
-
-//   const user = await User.findOne({ refreshToken });
-//   if (!user) return res.sendStatus(403);
-
-//   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-//     if (err) return res.sendStatus(403);
-
-//     const newAccessToken = generateAccessToken(user);
-//     res.json({ accessToken: newAccessToken });
-//   });
-// });
-
-
 import jwt from "jsonwebtoken";
-import  {JWT_EXPIRES_IN_REFRESH_TOKEN, REFRESH_TOKEN_SECRET}  from "../../config/index.js";
-import  {findOne, insertNewDocument} from "../../helpers/index.js";
+import {
+  JWT_EXPIRES_IN,
+  JWT_EXPIRES_IN_REFRESH_TOKEN,
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET,
+} from "../../config/index.js";
+import { findOne, insertNewDocument,deleteManyDocument } from "../../helpers/index.js";
 
-const checkToken = async(req, res) => {
+const refreshAccessToken = async (req, res) => {
   try {
-    let {token,id} = req.body;
-    if (!token) {
+    let { refreshToken, id } = req.body;
+
+    if (!refreshToken) {
       return res
         .status(404)
-        .send({ status: 404, message: "No token provided!" });
+        .send({ status: 404, message: "No refresh token provided!" });
     }
 
-    const istokenExist = await findOne("token", { token });
+    // Step 1: Check if refresh token exists in DB
+    const isTokenExist = await findOne("token", { refreshToken });
+    if (!isTokenExist) {
+      return res
+        .status(401)
+        .send({ status: 401, message: "Refresh token not found in DB!" });
+    }
 
-    jwt.verify(token, REFRESH_TOKEN_SECRET, async (err, decoded) => {
-      console.log(decoded,"decoded");
-      
+    // Step 2: Verify refresh token
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
       if (err) {
-        console.log(err);
         return res
-          .status(400)
-          .send({ status: 400, message: "Token Unauthorized!" });
+          .status(403)
+          .send({ status: 403, message: "Invalid or expired refresh token!" });
       }
-      // if (!decoded.user) {
-      // 	return res.status(400).send({ status: 400, message: "Upgrade your token" });
-      // }
+
+      // Step 3: Verify user exist
       const isUserExist = await findOne("user", { _id: id });
+      if (!isUserExist) {
+        return res
+          .status(404)
+          .send({ status: 404, message: "User not found!" });
+      }
 
-         var refresh_token = jwt.sign({ id: isUserExist._id }, REFRESH_TOKEN_SECRET, {
-              expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
-            });
+      // Step 4: Create new access token
+      const newAccessToken = jwt.sign(
+        { id: isUserExist._id, role: isUserExist.role },
+        ACCESS_TOKEN_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
+      );
 
+      // Optional: Rotate refresh token (security best practice)
+      const newRefreshToken = jwt.sign(
+        { id: isUserExist._id, role: isUserExist.role },
+        REFRESH_TOKEN_SECRET,
+        { expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN }
+      );
 
-      const inserttoken = await insertNewDocument("token", {
-                      user_id: isUserExist._id,
-                      token:refresh_token,
-                      type:"refresh"
-                    });
-                    return res.status(200).send({ status: 200, data:{refresh_token} });
+      // ✅ Step 5: Delete all old tokens of this user
+      await deleteManyDocument("token", { user_id: isUserExist._id });
+
+      // ✅ Step 6: Insert fresh token record
+      await insertNewDocument("token", {
+        user_id: isUserExist._id,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        type: "refresh",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      return res.status(200).send({
+        status: 200,
+        data: {
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        },
+      });
     });
   } catch (e) {
-    console.log("Token verification Error", e.message);
-    return res.status(400).send({ status: 400, message: e.message });
+    console.log("Token Refresh Error:", e.message);
+    return res.status(500).send({ status: 500, message: e.message });
   }
 };
 
-export default checkToken ;
+export default refreshAccessToken;

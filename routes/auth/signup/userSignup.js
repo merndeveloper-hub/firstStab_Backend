@@ -6,7 +6,7 @@ import {
   getAggregate,
   deleteDocument,
 } from "../../../helpers/index.js";
-import { JWT_EXPIRES_IN, SECRET } from "../../../config/index.js";
+import { JWT_EXPIRES_IN, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
@@ -25,7 +25,7 @@ const schema = Joi.object({
       "string.pattern.base": "Invalid email structure",
     }),
   mobile: Joi.string()
-    
+
     .required()
     .messages({
       "string.pattern.base":
@@ -48,8 +48,8 @@ const schema = Joi.object({
   userType: Joi.string().required(),
   country: Joi.string().required(),
   state: Joi.string().required(),
-city: Joi.string().required(),
-zipCode: Joi.string().required()
+  city: Joi.string().required(),
+  zipCode: Joi.string().required()
 });
 
 const userSignup = async (req, res) => {
@@ -58,7 +58,7 @@ const userSignup = async (req, res) => {
 
   try {
 
-await schema.validateAsync(req.body)
+    await schema.validateAsync(req.body)
     // const { error, value } = schema.validate(req.body, { abortEarly: false });
 
     // if (error) {
@@ -70,7 +70,7 @@ await schema.validateAsync(req.body)
 
     const {
       country,
-      password,  
+      password,
       email,
       mobile,
       status,
@@ -79,18 +79,18 @@ await schema.validateAsync(req.body)
       last_Name,
     } = req.body;
 
-    const deleteEmailExist = await findOneAndSelect("user", { email,status:"InActive" });
+    const deleteEmailExist = await findOneAndSelect("user", { email, status: "InActive" });
     if (deleteEmailExist) {
       await deleteDocument("user", { email });
     }
 
-    const emailExist = await findOneAndSelect("user", { email,status: "Active" });
+    const emailExist = await findOneAndSelect("user", { email, status: "Active" });
     if (emailExist) {
       return res
         .status(400)
         .send({ status: 400, message: "User already exists with this email" });
     }
-    const mobileExist = await findOneAndSelect("user", { mobile,status: "Active" });
+    const mobileExist = await findOneAndSelect("user", { mobile, status: "Active" });
     if (mobileExist) {
       return res
         .status(400)
@@ -122,33 +122,33 @@ await schema.validateAsync(req.body)
       password: req.body.password,
       email,
       mobile,
-      status:"InActive",
+      status: "InActive",
       userType,
       first_Name,
       last_Name,
-      avgReviewsPro:0,
-      totalReviewsPro:0
-     // totalPro: userCount[0]? userCount[0]?.activeProUsers + 1: 1
-     // type: user_type._id,
+      avgReviewsPro: 0,
+      totalReviewsPro: 0
+      // totalPro: userCount[0]? userCount[0]?.activeProUsers + 1: 1
+      // type: user_type._id,
     });
 
     console.log(user, "user");
 
-    const token = jwt.sign({ id: user._id }, SECRET, {
+    const token = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
     req.userId = user._id;
-    await sendOTPSignup({email,userType})
+    await sendOTPSignup({ email, userType })
     await session.commitTransaction();
     session.endSession();
- return res.json({
+    return res.json({
       status: 200,
       message: "OTP sent to your email. Check inbox to proceed.",
       data: {
         userId: user._id,
       },
     });
- //   return res.status(200).send({ status: 200, data:{user, token} });
+    //   return res.status(200).send({ status: 200, data:{user, token} });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -162,7 +162,7 @@ await schema.validateAsync(req.body)
     // Handle other errors
     console.error("Error saving user:", error);
     return res.status(400).send({ status: 400, message: "An unexpected error occurred." });
-  //  return res.status(400).send({ status: 400, message: e.message });
+    //  return res.status(400).send({ status: 400, message: e.message });
   }
 };
 

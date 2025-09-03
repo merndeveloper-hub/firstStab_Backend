@@ -48,6 +48,7 @@ app.use(
   cors({
     origin: "*",
     credentialsL: "*",
+    credentials: true
   })
 );
 

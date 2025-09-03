@@ -1,29 +1,29 @@
 import jwt from "jsonwebtoken";
-import  {SECRET}  from "../../config/index.js";
-import  {findOne} from "../../helpers/index.js";
+import { ACCESS_TOKEN_SECRET } from "../../config/index.js";
+import { findOne } from "../../helpers/index.js";
 
 
 const tokenVerification = (req, res, next) => {
   try {
 
-    console.log(req,"req");
-   let token = req?.cookies?.token;  // ✅ sirf JWT milega
+    console.log(req, "req");
+    let token = req?.cookies?.token;  // ✅ sirf JWT milega
 
-//let token = req.headers['cookie']
-//    let token = req.headers["token"];
+    //let token = req.headers['cookie']
+    //    let token = req.headers["token"];
     //console.log(token,"token");
-    
+
     if (!token) {
       return res
         .status(404)
         .send({ status: 404, message: "No token provided!" });
     }
 
-    console.log(SECRET,"SCERT");
-    
-    jwt.verify(token, SECRET, async (err, decoded) => {
+    console.log(ACCESS_TOKEN_SECRET, "SCERT");
+
+    jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, decoded) => {
       //console.log(decoded,"decoded");
-      
+
       if (err) {
         console.log(err);
         return res
@@ -34,8 +34,8 @@ const tokenVerification = (req, res, next) => {
       // 	return res.status(400).send({ status: 400, message: "Upgrade your token" });
       // }
       const isUserExist = await findOne("user", { _id: decoded.id });
-      console.log(isUserExist,"isuer");
-      
+      console.log(isUserExist, "isuer");
+
       if (!isUserExist) {
         return res.status(404).send({
           status: 404,
@@ -52,4 +52,4 @@ const tokenVerification = (req, res, next) => {
   }
 };
 
-export default tokenVerification ;
+export default tokenVerification;
