@@ -1,6 +1,7 @@
 import express from "express";
 
 import getPayments from "./get.js";
+import tokenVerification from "../../../../middleware/token-verification/index.js";
 
 
 
@@ -11,7 +12,7 @@ import getPayments from "./get.js";
 const router = express.Router();
 
 
-router.get("/:id/:month/:year", getPayments);
+router.get("/:id/:month/:year",tokenVerification, getPayments);
  //router.post("/",reviewService);
 
 

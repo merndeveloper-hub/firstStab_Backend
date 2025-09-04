@@ -9,6 +9,7 @@ import completedBookedService from "./bookedServiceCompleted.js";
 
 import sendChat from "./firestore/chat.js";
 import getChat from "./firestore/get.js";
+import tokenVerification from "../../../middleware/token-verification/index.js";
 
 const router = express.Router();
 
@@ -17,20 +18,20 @@ const router = express.Router();
 
 
 ///--------On going cancelbooking Remove get (created,requested,accepted services)------///
-router.put("/:id", cancelledBooking);
+router.put("/:id",tokenVerification, cancelledBooking);
 
 ///--------On going cancelbooking Remove get (created,requested,accepted services)------///
-router.put("/completed/:id", completedBookedService);
+router.put("/completed/:id",tokenVerification, completedBookedService);
 
 
 
 
 
 //---------pro chat to user----------//
-router.post("/chat", sendChat);
+router.post("/chat",tokenVerification, sendChat);
 
 // get pro chat
-router.get("/conversation/:chatId", getChat);
+router.get("/conversation/:chatId",tokenVerification, getChat);
 
 
 

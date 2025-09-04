@@ -16,6 +16,7 @@ import removeServiceSubCategory from "./removeServiceSubCategory.js";
 
 import multipart from "connect-multiparty";
 import removeServiceCategory from "./removeServiceCategory.js";
+import tokenVerification from "../../../middleware/token-verification/index.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
@@ -23,38 +24,38 @@ const router = express.Router();
 //router.get("/list", getAllCategories);
 
 //--------Get All Admin Categories With subcategories---//
-router.get("/subcategory",getAllCategoriesWithSubcate)
+router.get("/subcategory",tokenVerification,getAllCategoriesWithSubcate)
 
 //--------Get All Admin Categories on pro screen-------//
-router.get("/:id",getCategories)
+router.get("/:id",tokenVerification,getCategories)
 
 
 //--------Get Single Admin Category With subcategories Pagination---//
-router.get("/subcategory/:id", getSubCateWithPagination);
+router.get("/subcategory/:id",tokenVerification, getSubCateWithPagination);
 
 
 //--------Count Pro Service ---//
-router.get("/servicecount/:id",getServiceCategoryCount);
+router.get("/servicecount/:id",tokenVerification,getServiceCategoryCount);
 
 
 //--------Create Service With Categories and subcategories---//
-router.post("/", createService);
+router.post("/",tokenVerification, createService);
 
 //--------update Service With Categories and subcategories and businessname---//
- router.put("/",updateService);
+ router.put("/",tokenVerification,updateService);
 
 //-----Delete pro created sub category service----//
-router.delete("/subcategory/:id", removeServiceSubCategory);
+router.delete("/subcategory/:id",tokenVerification, removeServiceSubCategory);
 
 //-----Delete pro created sub category service----//
-router.delete("/category/:id", removeServiceCategory);
+router.delete("/category/:id",tokenVerification, removeServiceCategory);
 
 //--------update Service Type With Categories and subcategories and businessname---//
- router.put("/:id",updateServiceType);
+ router.put("/:id",tokenVerification,updateServiceType);
 
 
 //--------get seleted Service With Categories and subcategories and businessname---//
- router.get("/selected/:id",getSelectedServiceCategory);
+ router.get("/selected/:id",tokenVerification,getSelectedServiceCategory);
 
 
 export default router;

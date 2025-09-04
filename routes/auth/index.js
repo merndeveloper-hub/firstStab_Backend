@@ -1,8 +1,8 @@
 import express from "express";
-//const { tokenVerification } = require("../../middleware");
+import tokenVerification from "../../middleware/token-verification/index.js";
 import adminLogin from "./admin-auth/login.js";
 import adminSignup from "./admin-auth/signup.js";
- import loginUser from "./login/index.js";
+import loginUser from "./login/index.js";
 import forgotPaasswd from "./forgotPasswd/index.js";
 import resendOTPVerificationCode from "./otpVerification/resendOTPVerificationCode.js";
 import verifyOTP from "./otpVerification/verifyOTP.js";
@@ -15,16 +15,16 @@ import logout from "./logout/index.js";
 const router = express.Router();
 
 //----------User and Pro Forgot Password--------------------//
-router.post("/forgetpassword", forgotPaasswd);
+router.post("/forgetpassword", tokenVerification, forgotPaasswd);
 
 //----------User and Pro Verify OTP --------------------//
-router.post("/verifyotp", verifyOTP);
+router.post("/verifyotp", tokenVerification, verifyOTP);
 
 //----------User and Pro forgot Password Send OTP--------------------//
-router.post("/sendotp", sendOTPForgotPasswd);
+router.post("/sendotp", tokenVerification, sendOTPForgotPasswd);
 
 //----------User and Pro ReSend OTP--------------------//
-router.post("/resendotp", resendOTPVerificationCode);
+router.post("/resendotp", tokenVerification, resendOTPVerificationCode);
 
 //----------User Register--------------------//
 router.post("/register/user", userSignup);
@@ -35,10 +35,8 @@ router.post("/register/pro", proSignup);
 //----------User and Pro Login --------------------//
 router.post("/userlogin", loginUser);
 
-
 //----------User and Pro Logout --------------------//
-router.delete("/logout/:id",logout)
-
+router.delete("/logout/:id", tokenVerification, logout);
 
 // router.get("/register/metamask/:username", tokenVerification, addWalletAddress);
 

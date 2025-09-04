@@ -8,18 +8,19 @@ import getSingleProfile from "./get.js";
 ///Add Video and profile pic media--///
 import multipart from "connect-multiparty";
 import updateAvailability from "./updateAvailability.js";
+import tokenVerification from "../../../middleware/token-verification/index.js";
 const multipartMiddleware = multipart();
 
 const router = express.Router();
 
 //-------User and Pro Update Profile and Addresses------///
 router.put(
-  "/update/:id",multipartMiddleware,
+  "/update/:id",tokenVerification,multipartMiddleware,
   updateProfile
 );
 
-router.put("/availabilityUpdate/:id",updateAvailability)
+router.put("/availabilityUpdate/:id",tokenVerification,updateAvailability)
 
-router.get("/:id", getSingleProfile);
+router.get("/:id",tokenVerification, getSingleProfile);
 
 export default router;

@@ -13,6 +13,7 @@ import stripeCancel from "./stripeCancel.js";
 import getbgLink from "./bgLink.js";
 import startStripeOnboarding from "./stripeOnbording.js";
 import afterLoginBgLink from "./afterLoginBgLink.js";
+import tokenVerification from "../../../middleware/token-verification/index.js";
 //import sendPayout from "./adminToProAccount.js";
 //import capturePayment from "./capturePayment.js";
 
@@ -24,14 +25,14 @@ const router = express.Router();
 // );
 
 ////-------after Login BgLink get--------------//
-router.get("/afterbglink/:id",afterLoginBgLink)
+router.get("/afterbglink/:id",tokenVerification,afterLoginBgLink)
 
 
 ///---------------Auth token----------------//
 router.get("/", getAccessToken);
 
 ///---------------User Payment to Admin account ----------------//
-router.post("/checkout", createPaypalOrder);
+router.post("/checkout",tokenVerification, createPaypalOrder);
 
 // router.post("/admintopro", sendPayout);
 
@@ -52,7 +53,7 @@ router.get("/stripecancel", stripeCancel);
 
 
 //------------bg link get from proCategories-----//
-router.get("/bglink/:id/:register", getbgLink);
+router.get("/bglink/:id/:register",tokenVerification, getbgLink);
 
 //------------stripe pro onboarding-----//
 router.get("/stripeonboarding", startStripeOnboarding);

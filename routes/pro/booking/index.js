@@ -21,6 +21,7 @@ import resheduleAcceptBooking from "./resheduleAccept.js";
 import cancelledRescheduleBooking from "./resheduleReject.js";
 import resheduleDeliveredBooking from "./resheduleDeliveredService.js";
 import priceQuoteBooking from "./priceQuoteBooking.js";
+import tokenVerification from "../../../middleware/token-verification/index.js";
 
 const multipartMiddleware = multipart();
 
@@ -31,24 +32,24 @@ const router = express.Router();
 //router.post("/add",multipartMiddleware, addCategory);
 
 //-----pro accept user request booking----//
- router.put("/newrequest/:id",updateNewRequestBooking);
+ router.put("/newrequest/:id",tokenVerification,updateNewRequestBooking);
  
  //pro quote the user booking before booking accept
- router.put("/quote/:id",priceQuoteBooking)
+ router.put("/quote/:id",tokenVerification,priceQuoteBooking)
 
  //----- Pro delivered service--------//
- router.put("/delivered/:id", multipartMiddleware, deliveredBooking);
+ router.put("/delivered/:id",tokenVerification, multipartMiddleware, deliveredBooking);
 
 
  //-----Pro cancelled pro request booking----//
- router.put("/cancelled/:id", cancelledBooking);
+ router.put("/cancelled/:id",tokenVerification, cancelledBooking);
 
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
-router.get("/newrequest/:id", newRequestBooking);
+router.get("/newrequest/:id",tokenVerification, newRequestBooking);
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
-router.get("/bookservices/:id", getOnGoingBooking);
+router.get("/bookservices/:id",tokenVerification, getOnGoingBooking);
 
 
 //create twilio video token
@@ -59,17 +60,17 @@ router.post("/twilio/token", twilioToken);
 router.post("/twilio/chattoken", twilioChatToken);
 
 //-----Reshedule Request -----//
-router.put("/reshedule", userResheduleRequest);
+router.put("/reshedule",tokenVerification, userResheduleRequest);
 
 //-----Reshedule Request accept -----//
-router.put("/resheduleaccept", resheduleAcceptBooking);
+router.put("/resheduleaccept",tokenVerification, resheduleAcceptBooking);
 
 
 //-----Reshedule Request cancel -----//
-router.put("/reshedulecancel/:id", cancelledRescheduleBooking);
+router.put("/reshedulecancel/:id",tokenVerification, cancelledRescheduleBooking);
 
 
  //----- Pro delivered reshedule service--------//
- router.put("/deliveredreshedule/:id", multipartMiddleware, resheduleDeliveredBooking);
+ router.put("/deliveredreshedule/:id",tokenVerification, multipartMiddleware, resheduleDeliveredBooking);
 
 export default router;

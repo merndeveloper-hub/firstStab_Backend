@@ -11,16 +11,17 @@ import sendPayout from "./adminToProAccount.js";
 //import capturePayment from "./capturePayment.js";
 import stripeSuccess from "./stripeSuccess.js";
 import stripeCancel from "./stripeCancel.js";
+import tokenVerification from "../../../../middleware/token-verification/index.js";
 
 
 const router = express.Router();
 
 
 ///---------------Auth token----------------//
-router.get("/", getAccessToken);
+router.get("/",tokenVerification, getAccessToken);
 
 ///---------------User Payment to Admin account ----------------//
-router.post("/pay", createPaypalOrder);
+router.post("/pay",tokenVerification, createPaypalOrder);
 
 router.post("/admintopro", sendPayout);
 

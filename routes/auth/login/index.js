@@ -1,19 +1,25 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { JWT_EXPIRES_IN, JWT_EXPIRES_IN_REFRESH_TOKEN, REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
+import {
+  JWT_EXPIRES_IN,
+  JWT_EXPIRES_IN_REFRESH_TOKEN,
+  REFRESH_TOKEN_SECRET,
+  ACCESS_TOKEN_SECRET,
+} from "../../../config/index.js";
 import {
   findOneAndSelect,
   findOne,
   insertNewDocument,
   updateDocument,
-  find
+  find,
+  deleteManyDocument,
 } from "../../../helpers/index.js";
 import Joi from "joi";
 
 const schema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
-  userType: Joi.string().required()
+  userType: Joi.string().required(),
 });
 
 const loginUser = async (req, res) => {
@@ -22,11 +28,11 @@ const loginUser = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
 
-    const user = await findOneAndSelect(
-      "user",
-      { email, userType, status: "Active" }
-    );
-
+    const user = await findOneAndSelect("user", {
+      email,
+      userType,
+      status: "Active",
+    });
 
     if (user) {
       if (!user?.password) {
@@ -168,13 +174,20 @@ const loginUser = async (req, res) => {
         }
       );
 
-      var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
-        expiresIn: JWT_EXPIRES_IN,
-      });
-      var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
-        expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
-      });
-
+      var token = jwt.sign(
+        { id: user._id, role: user.userType },
+        ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: JWT_EXPIRES_IN,
+        }
+      );
+      var refresh_token = jwt.sign(
+        { id: user._id, role: user.userType },
+        REFRESH_TOKEN_SECRET,
+        {
+          expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
+        }
+      );
 
       const US_COUNTRIES = [
         "United States",
@@ -189,12 +202,12 @@ const loginUser = async (req, res) => {
       const isUS = US_COUNTRIES.includes(user?.country);
       const region = isUS ? "US" : "Non-US";
 
-
+      let restToken = await deleteManyDocument("token", { user_id: user._id });
       const inserttoken = await insertNewDocument("token", {
         user_id: user._id,
         accessToken: token,
         refreshToken: refresh_token,
-        type: "refresh"
+        type: "refresh",
       });
       req.userId = user._id;
 
@@ -203,7 +216,7 @@ const loginUser = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
         sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+        maxAge: 1000 * 60 * 60 * 24, // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
       });
 
       // Set Refresh Token in Cookie (optional)
@@ -211,17 +224,18 @@ const loginUser = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false,
         sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 din
       });
 
-
-      let fcmTokens = await find("token", { user_id: user._id })
+      let fcmTokens = await find("token", { user_id: user._id });
       //res.cookie("refreshToken", refresh_token, { httpOnly: true, secure: true, sameSite: "Strict" });
 
-
-      return res.status(200).send({ status: 200, data: { user, region: region, token, refresh_token, fcmTokens } });
-
-
+      return res
+        .status(200)
+        .send({
+          status: 200,
+          data: { user, region: region, token, refresh_token, fcmTokens },
+        });
     } else {
       return res
         .status(400)
