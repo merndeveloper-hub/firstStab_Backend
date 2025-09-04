@@ -1,13 +1,12 @@
 import express from "express";
 
-import bookService from "./bookService.js"
+import bookService from "./bookService.js";
 
 import getProfessionalService from "./getProfessionalService.js";
 import getAllCategoriesWithSubcate from "../../pro/home/getAdminMainSubCategory.js";
 import getCategories from "./getAdminCategorie.js";
 import getSubCateWithPagination from "../../pro/home/getSubCategoriePagination.js";
 import mostPopularCategory from "./mostPopularCategory.js";
-
 
 import multipart from "connect-multiparty";
 import tokenVerification from "../../../middleware/token-verification/index.js";
@@ -16,33 +15,32 @@ const multipartMiddleware = multipart();
 
 const router = express.Router();
 
-
 //----------Get Pro whose give service in this category and subcategory----//
-router.get("/getproservice",tokenVerification,getProfessionalService);
+router.get("/getproservice", tokenVerification, getProfessionalService);
 
- //router.put("/:id",multipartMiddleware, updateCategory);
- //router.delete("/:id", deleteCategory);
+//router.put("/:id",multipartMiddleware, updateCategory);
+//router.delete("/:id", deleteCategory);
 // Get Single Blog
 //router.get("/single/:id", getSingleCategory);
 
-
 //Create Service by User
-router.post("/bookservice",multipartMiddleware, bookService)
-
+router.post(
+  "/bookservice",
+  tokenVerification,
+  multipartMiddleware,
+  bookService
+);
 
 //--------Get All Admin Categories With subcategories---//
-router.get("/subcategory",tokenVerification,tokenVerification,getAllCategoriesWithSubcate)
+router.get("/subcategory", tokenVerification, getAllCategoriesWithSubcate);
 
 //--------Get All Admin Categories-------//
-router.get("/",tokenVerification,getCategories)
+router.get("/", tokenVerification, getCategories);
 
 //--------Get Single Admin Category With subcategories Pagination---//
-router.get("/subcategory/:id", getSubCateWithPagination);
-
-
-
+router.get("/subcategory/:id", tokenVerification, getSubCateWithPagination);
 
 //--------Get Single Admin Category With subcategories Pagination---//
-router.get("/mostpopular", mostPopularCategory);
+router.get("/mostpopular", tokenVerification, mostPopularCategory);
 
 export default router;

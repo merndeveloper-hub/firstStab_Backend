@@ -7,7 +7,10 @@ import {
   getAggregate,
   deleteDocument,
 } from "../../../helpers/index.js";
-import { JWT_EXPIRES_IN, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
+
+import { JWT_EXPIRES_IN, JWT_EXPIRES_IN_REFRESH_TOKEN, REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
+
+
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -244,9 +247,32 @@ const proSignup = async (req, res) => {
 
 
 
-    const token = jwt.sign({ id: user._id }, ACCESS_TOKEN_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
+      var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
+            expiresIn: JWT_EXPIRES_IN,
+          });
+          var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
+            expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
+          });
+
+
+
+            // Set Access Token in Cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+      });
+
+      // Set Refresh Token in Cookie (optional)
+      res.cookie("refreshToken", refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
+      });
+
+
     req.userId = user._id;
     await sendOTPSignup({ email, userType });
     await session.commitTransaction();
@@ -257,7 +283,8 @@ const proSignup = async (req, res) => {
       data: {
         userId: user?._id,
         totalPro: user?.totalPro,
-        region: region
+        region: region,
+        token, refresh_token
 
       },
     });

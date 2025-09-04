@@ -11,13 +11,13 @@ const multipartMiddleware = multipart();
 
 const router = express.Router();
 
-router.get("/list", getAllCategories);
-router.get("/count/:id",tokenVerification, getSingleCategoryCount);
+router.get("/list", tokenVerification, getAllCategories);
+router.get("/count/:id", tokenVerification, getSingleCategoryCount);
 
-router.post("/add", addCategory);
+router.post("/add", tokenVerification, addCategory);
 // router.put("/:id",multipartMiddleware, updateCategory);
- router.delete("/:id",tokenVerification, deleteCategory);
+router.delete("/:id", tokenVerification, tokenVerification, deleteCategory);
 // Get Single Blog
-router.get("/single/:id", getSingleCategory);
+router.get("/single/:id", tokenVerification, getSingleCategory);
 
 export default router;

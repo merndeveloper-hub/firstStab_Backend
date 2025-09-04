@@ -1,10 +1,4 @@
 import express from "express";
-//import addCategory from "./add-category.js";
-//import getAllCategories from "./get-AllCategories.js";
-//import getSingleCategory from "./get-single-blog.js";
-//import deleteCategory from "./delete-blog.js";
-//import updateCategory from "./update-blog.js";
-
 
 import booking from "./getBooking.js";
 import cancelledBooking from "./cancleBooking.js";
@@ -17,19 +11,12 @@ import userResheduleRequest from "./reshedule.js";
 import resheduleAcceptBooking from "./resheduleAccept.js";
 import cancelledRescheduleBooking from "./resheduleReject.js";
 import timerCancelBooking from "./timerCancelBooking.js";
-//import tokenVerification from "../../../middleware/token-verification/index.js";
-//import mostPopularCategory from "../home/mostPopularCategory.js";
-// import releasePayment from "./releasePayment.js";
-// import refundPayment from "./refundPayment.js";
-//import historyBooking from "./historyBooking.js";
-
+import tokenVerification from "../../../middleware/token-verification/index.js";
 
 const router = express.Router();
 
-
 ///--------User get all created,requested,accepted services------///
-router.get("/:id", booking);
-
+router.get("/:id", tokenVerification, booking);
 
 //router.post("/add",multipartMiddleware, addCategory);
 
@@ -37,38 +24,37 @@ router.get("/:id", booking);
 //router.put("/holdamount/:id", userAcceptProServiceRequest);
 
 //create twilio chat token
- router.post("/twilio/chattoken", twilioChatToken);
+router.post("/twilio/chattoken", tokenVerification, twilioChatToken);
 
 //create twilio video token
-router.post("/twilio/token", twilioToken);
-
+router.post("/twilio/token", tokenVerification, twilioToken);
 
 ///--------Remove get (created,requested,accepted services)------///
-router.put("/cancelled/:id", cancelledBooking);
+router.put("/cancelled/:id", tokenVerification, cancelledBooking);
 
 ///-----------Request timer cancel-----////
-router.put("/timercancel/:id",timerCancelBooking)
-
+router.put("/timercancel/:id", tokenVerification, timerCancelBooking);
 
 //----User accepted Pro Accepted services----//
-router.put("/useraccept/:id", userAcceptProServiceRequest);
-
+router.put("/useraccept/:id", tokenVerification, userAcceptProServiceRequest);
 
 //----Get Pro Accepted services----//
-router.get("/proaccept/:id", proServiceRequest);
+router.get("/proaccept/:id", tokenVerification, proServiceRequest);
 
- //----- User completed service--------//
- router.put("/completed/:id", completedBooking);
+//----- User completed service--------//
+router.put("/completed/:id", tokenVerification, completedBooking);
 
 //-----Reshedule Request -----//
-router.put("/reshedule", userResheduleRequest);
-
+router.put("/reshedule", tokenVerification, userResheduleRequest);
 
 //-----Reshedule Request accept -----//
-router.put("/resheduleaccept", resheduleAcceptBooking);
-
+router.put("/resheduleaccept", tokenVerification, resheduleAcceptBooking);
 
 //-----Reshedule Request cancel -----//
-router.put("/reshedulecancel/:id", cancelledRescheduleBooking);
+router.put(
+  "/reshedulecancel/:id",
+  tokenVerification,
+  cancelledRescheduleBooking
+);
 
 export default router;
