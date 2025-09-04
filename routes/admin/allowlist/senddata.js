@@ -5,8 +5,8 @@ const senddata = async (req, res) => {
     const { address } = req.body;
     if (address === "")
       return res
-        .status(404)
-        .json({ status: 404, message: "Address is required" });
+        .status(401)
+        .json({ status: 401, message: "Address is required" });
 
     const findaddress = await findOne("allowlist", { address });
     console.log(findaddress);
@@ -20,8 +20,8 @@ const senddata = async (req, res) => {
     const nameData = await insertNewDocument("allowlist", { address });
     // // if (!nameData)
     // //   return res
-    // //     .status(404)
-    // //     .json({ status: 404, message: "User not found" });
+    // //     .status(401)
+    // //     .json({ status: 401, message: "User not found" });
 
     //const namedata = await allowlist.create({address});
 

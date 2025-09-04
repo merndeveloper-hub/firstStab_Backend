@@ -5,8 +5,8 @@ const getpandoradata = async (req, res) => {
     const data = await find("allowlist", {});
     if (!data || data.length < 0) {
       return res
-        .status(404)
-        .json({ status: 404, message: "Oops! No data found " });
+        .status(401)
+        .json({ status: 401, message: "Oops! No data found " });
     }
     return res.status(200).json({ status: 200, message: data });
   } catch (error) {

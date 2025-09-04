@@ -15,8 +15,8 @@ const tokenVerification = (req, res, next) => {
 
     if (!token) {
       return res
-        .status(404)
-        .send({ status: 404, message: "No token provided!" });
+        .status(401)
+        .send({ status: 401, message: "No token provided!" });
     }
 
     console.log(ACCESS_TOKEN_SECRET, "SCERT");
@@ -37,8 +37,8 @@ const tokenVerification = (req, res, next) => {
       console.log(isUserExist, "isuer");
 
       if (!isUserExist) {
-        return res.status(404).send({
-          status: 404,
+        return res.status(401).send({
+          status: 401,
           message: "User does not exist with your token",
         });
       }

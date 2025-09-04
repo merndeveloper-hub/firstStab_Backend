@@ -4,6 +4,7 @@ import getSingleProCertificate from "./get.js";
 import activeProService from "./serviceActive.js";
 import getInvitationStatus from "./checkrStatus.js";
 import rejectProService from "./rejectService.js";
+import getCertnStatus from "./certnStatus.js";
 
 const router = express.Router();
 
@@ -12,7 +13,9 @@ router.get("/:id", getSingleProCertificate);
 
 
 
+//--------------Get Certn report status ---//
 
+router.get("/certnstatus/:id",getCertnStatus)
 
 // //-------------Get checkr invitation status --------------//
 router.get("/checkrstatus/:id", getInvitationStatus);

@@ -83,6 +83,12 @@ checkrReportStatus:{
 checkrResult:{
   type:schemaType.TypeString
 },
+certnReportStatus:{
+  type:schemaType.TypeString
+},
+certnResult:{
+  type:schemaType.TypeString
+},
     candidateId: { type: schemaType.TypeString }, // From Checkr response
     invitationUrl: { type: schemaType.TypeString }, // From Checkr response
     invitationId: { type: schemaType.TypeString },

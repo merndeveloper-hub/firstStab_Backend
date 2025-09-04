@@ -20,8 +20,8 @@ const sendpandoraData = async (req, res) => {
     const nameData = await insertNewDocument("allowlist", { address });
     // if (!nameData)
     //   return res
-    //     .status(404)
-    //     .json({ status: 404, message: "User not found" });
+    //     .status(401)
+    //     .json({ status: 401, message: "User not found" });
 
     return res.status(200).json({ status: 200, message: nameData });
   } catch (e) {

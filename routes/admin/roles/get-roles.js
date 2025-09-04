@@ -14,8 +14,8 @@ const getRoles = async (req, res) => {
     const { type } = req.query;
     const findType = await findOne("userType", { type });
     if (!findType) {
-      return res.status(404).send({
-        status: 404,
+      return res.status(401).send({
+        status: 401,
         message: "User type not found",
       });
     }

@@ -39,7 +39,7 @@ const updateProfile = async (req, res) => {
     const { id } = req.params;
     const findCategory = await findOne("user", { _id: id, userType: "user" });
     if (!findCategory) {
-      return res.status(404).send({ status: 404, message: "No User found" });
+      return res.status(401).send({ status: 401, message: "No User found" });
     }
     if (req.files.profile) {
       const profile_Image = await cloudinary.uploader.upload(

@@ -11,8 +11,8 @@ const getMetaData = async (req, res) => {
     const nftMetaData = await findOne("nftMetaData", { _id: req.params.id });
     if (!nftMetaData)
       return res
-        .status(404)
-        .json({ status: 404, message: "nft metadata not found" });
+        .status(401)
+        .json({ status: 401, message: "nft metadata not found" });
     // return res.status(200).json({
     // status: 200,
     //   message: "nft metadata fetched successfully",

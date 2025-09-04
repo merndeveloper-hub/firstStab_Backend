@@ -5,8 +5,8 @@ const deleteRoles = async (req, res) => {
     const { id } = req.params;
     const user = await findOne("user", { _id: id });
     if (!user) {
-      return res.status(404).send({
-        status: 404,
+      return res.status(401).send({
+        status: 401,
         message: "User not found",
       });
     }

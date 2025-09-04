@@ -18,8 +18,8 @@ const editRoles = async (req, res) => {
     const { password } = req.body;
     const user = await findOne("user", { _id: id });
     if (!user) {
-      return res.status(404).send({
-        status: 404,
+      return res.status(401).send({
+        status: 401,
         message: "User not found",
       });
     }

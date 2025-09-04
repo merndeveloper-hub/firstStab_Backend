@@ -5,7 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import https from "https";
 import cookieParser from "cookie-parser";
-import { pinoHttpMiddleware, changed,pinoInstance } from "./utils/logger/logger.js";
+import { pinoHttpMiddleware, changed, pinoInstance } from "./utils/logger/logger.js";
 //import { pinoInstance } from '../logger.js';
 const log = pinoInstance.child({ context: 'userService' });
 import { apiLogger } from './middleware/apiLogger/index.js';
@@ -90,7 +90,7 @@ app.get("/", async (req, res) => {
   // console.log('Client IP:', ip);
   //   logger.info("get API")
   //   logger.info(`Incoming Request: ${req.method} ${req.url}`);
-   req.log.info("Ping request received");
+  req.log.info("Ping request received");
   return res.status(200).json({ status: 200, message: "FirstStab" });
 });
 
@@ -127,7 +127,7 @@ handleSocket(socketNamespace);
 // });
 
 app.use("*", (req, res) => {
-  res.status(404).send("Route not found");
+  res.status(401).send("Route not found");
 });
 
 console.log(PORT, "process.env.PORT ");
@@ -153,12 +153,12 @@ server.listen(port, () => {
   //logger.info("Server is running on port 3000");
   console.log(`Server is running on PORT http://localhost:${port}`);
   //   console.log("HTTPS server started on ", port);
- log.info("HTTPS server started on ", port);
+  log.info("HTTPS server started on ", port);
   //  serverlogger.info("HTTPS server started on ", port);
 });
 
 const closeServer = () => {
- // serverlogger.info("closing app");
+  // serverlogger.info("closing app");
 };
 
 process.on("SIGTERM", closeServer);
@@ -172,5 +172,5 @@ process.on("uncaughtException", (err) => {
 
 process.on("exit", (err) => {
   console.log(err, "exit");
- log.error(err.stack);
+  log.error(err.stack);
 });

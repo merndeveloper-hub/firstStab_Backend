@@ -5,7 +5,7 @@ import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "../../config/index.js";
-import { findOne, insertNewDocument,deleteManyDocument } from "../../helpers/index.js";
+import { findOne, insertNewDocument, deleteManyDocument } from "../../helpers/index.js";
 
 const refreshAccessToken = async (req, res) => {
   try {
@@ -13,8 +13,8 @@ const refreshAccessToken = async (req, res) => {
 
     if (!refreshToken) {
       return res
-        .status(404)
-        .send({ status: 404, message: "No refresh token provided!" });
+        .status(401)
+        .send({ status: 401, message: "No refresh token provided!" });
     }
 
     // Step 1: Check if refresh token exists in DB
@@ -37,8 +37,8 @@ const refreshAccessToken = async (req, res) => {
       const isUserExist = await findOne("user", { _id: id });
       if (!isUserExist) {
         return res
-          .status(404)
-          .send({ status: 404, message: "User not found!" });
+          .status(401)
+          .send({ status: 401, message: "User not found!" });
       }
 
       // Step 4: Create new access token

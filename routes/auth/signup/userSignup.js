@@ -100,8 +100,8 @@ const userSignup = async (req, res) => {
 
     // if (!user_type) {
     //   return res
-    //     .status(404)
-    //     .send({ status: 404, message: "No User Type Found" });
+    //     .status(401)
+    //     .send({ status: 401, message: "No User Type Found" });
     // }
 
     req.body.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));

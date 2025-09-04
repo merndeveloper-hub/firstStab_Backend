@@ -4,7 +4,7 @@ const findUser = async (req, res) => {
   try {
     const findUser = await findOne("user", { _id: req.params.id });
     if (!findUser) {
-      return res.status(404).send({ status: 404, message: "No User found" });
+      return res.status(401).send({ status: 401, message: "No User found" });
     }
     return res.status(200).send({ status: 200, data: { findUser } });
   } catch (e) {

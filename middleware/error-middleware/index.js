@@ -10,7 +10,7 @@ const errorMiddleware = (err, req, res, next) => {
     if (err.name === 'CastError') {
       const message = 'Resource not found';
       error = new Error(message);
-      error.statusCode = 404;
+      error.statusCode = 401;
     }
 
     // Mongoose duplicate key

@@ -7,8 +7,8 @@ const adminVerification = async (req, res, next) => {
     let token = req.headers["token"];
     if (!token) {
       return res
-        .status(404)
-        .send({ status: 404, message: "No token provided!" });
+        .status(401)
+        .send({ status: 401, message: "No token provided!" });
     }
     jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, decoded) => {
       if (err) {
@@ -24,8 +24,8 @@ const adminVerification = async (req, res, next) => {
       // }
       const isUserExist = await findOne("user", { _id: decoded.id });
       if (!isUserExist) {
-        return res.status(404).send({
-          status: 404,
+        return res.status(401).send({
+          status: 401,
           message: "User does not exist with your token",
         });
       }

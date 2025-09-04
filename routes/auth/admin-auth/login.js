@@ -70,7 +70,7 @@ const adminLogin = async (req, res) => {
 
       if (!user?.password) {
         return res
-          .status(404)
+          .status(401)
           .send({ status: 400, message: "No Password found" });
       }
       const passwordIsValid = bcrypt.compareSync(password, user?.password);
@@ -93,8 +93,8 @@ const adminLogin = async (req, res) => {
       res.status(200).send({ status: 200, user: user, token });
     } else {
       return res
-        .status(404)
-        .send({ status: 404, message: "User does not exist!" });
+        .status(401)
+        .send({ status: 401, message: "User does not exist!" });
     }
   } catch (e) {
     res.status(400).send({ status: 400, message: e.message });

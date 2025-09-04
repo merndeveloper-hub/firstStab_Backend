@@ -3,7 +3,7 @@ import { updateDocument, findOne } from "../../../helpers/index.js";
 
 const schema = Joi.object({
   availability: Joi.string().required(),
-  
+
 });
 
 const schemaForId = Joi.object({
@@ -15,12 +15,12 @@ const updateAvailability = async (req, res) => {
     await schemaForId.validateAsync(req.params);
     await schema.validateAsync(req.body);
     const { id } = req.params;
-    const{availability} = req.body
+    const { availability } = req.body
     const findPro = await findOne("user", { _id: id });
     if (!findPro) {
-      return res.status(404).send({ status: 404, message: "No Professional found" });
+      return res.status(401).send({ status: 401, message: "No Professional found" });
     }
-   
+
 
     const profile = await updateDocument(
       "user",
