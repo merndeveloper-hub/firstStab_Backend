@@ -14,7 +14,7 @@ let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const schema = Joi.object({
 
   professionalId: Joi.string().required(),
-  proCategoryId: Joi.string().required(),
+//  proCategoryId: Joi.string().required(),
   paymentMethod: Joi.string(),
 
 });
@@ -24,21 +24,25 @@ const createPaypalOrder = async (req, res) => {
     await schema.validateAsync(req.body);
     const {
      
-      proCategoryId,
+    //  proCategoryId,
       professionalId,
       
       paymentMethod,
       
     } = req.body;
 
-    // const findProCategory = await findOne("proCategory", {
-    //   proId: professionalId,
-    //   status:'Pending'
-    // });
- const findProCategory = await findOne("proCategory", {
-      _id: proCategoryId,
-      status:'Pending'
+    const findProCategory = await findOne("proCategory", {
+      proId: professionalId,
+    status: { $in: ["Pending", "InActive"] }
     });
+
+
+    console.log(findProCategory,"findProCategory");
+    
+//  const findProCategory = await findOne("proCategory", {
+//       _id: proCategoryId,
+//       status:'Pending'
+//     });
     
     const platform = await findOne("adminFees");
 
@@ -122,8 +126,8 @@ const createPaypalOrder = async (req, res) => {
           },
         ],
         application_context: {
-          return_url: `http://3.110.42.187:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-          // return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+       //   return_url: `http://3.110.42.187:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+           return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
 
           cancel_url:
             "http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel",

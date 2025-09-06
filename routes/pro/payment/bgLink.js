@@ -17,11 +17,13 @@ console.log(req.params,"params");
     //     message: "Pay your register payment",
     //   });
     // }
+
+    // jb register tru hoga toh pro ke id jye ge,jb login kr ke a rha hoga tb proCategory id jye
 if(register == 'true'){
 console.log("true---------------");
 
 
-    const getURL = await findOne("proCategory", { _id: id });
+    const getURL = await findOne("proCategory", { proId: id });
     console.log(getURL, "url-----");
 
 
