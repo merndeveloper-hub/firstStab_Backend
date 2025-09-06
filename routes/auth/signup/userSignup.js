@@ -141,7 +141,12 @@ const userSignup = async (req, res) => {
              expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
            });
  
- 
+  const inserttoken = await insertNewDocument("token", {
+         user_id: user._id,
+         accessToken: token,
+         refreshToken: refresh_token,
+         type: "refresh",
+       });
  
              // Set Access Token in Cookie
        res.cookie("token", token, {

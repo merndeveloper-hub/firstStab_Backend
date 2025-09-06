@@ -24,13 +24,14 @@ const refreshAccessToken = async (req, res) => {
         .status(401)
         .send({ status: 401, message: "Refresh token not found in DB!" });
     }
+console.log(isTokenExist,"istoken");
 
     // Step 2: Verify refresh token
     jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
       if (err) {
         return res
-          .status(403)
-          .send({ status: 403, message: "Invalid or expired refresh token!" });
+          .status(401)
+          .send({ status: 401, message: "Invalid or expired refresh token!" });
       }
 
       // Step 3: Verify user exist
@@ -67,6 +68,24 @@ const refreshAccessToken = async (req, res) => {
         createdAt: new Date(),
         updatedAt: new Date(),
       });
+
+
+       // Set Access Token in Cookie
+      res.cookie("token", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24, // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+      });
+
+      // Set Refresh Token in Cookie (optional)
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 din
+      });
+
       return res.status(200).send({
         status: 200,
         data: {

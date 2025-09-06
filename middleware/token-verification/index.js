@@ -27,8 +27,8 @@ const tokenVerification = (req, res, next) => {
       if (err) {
         console.log(err);
         return res
-          .status(400)
-          .send({ status: 400, message: "Token Unauthorized!" });
+          .status(401)
+          .send({ status: 401, message: "Token Unauthorized!" });
       }
       // if (!decoded.user) {
       // 	return res.status(400).send({ status: 400, message: "Upgrade your token" });

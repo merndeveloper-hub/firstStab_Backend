@@ -32,7 +32,7 @@ const verifyOTP = async (req, res) => {
       
       if (!UserOTPVerificationRecords || UserOTPVerificationRecords.length == 0) {
         // no record found
-        return res.status(401).send({ status: 401, message: "No OTP verification record found for this email. Please sign up again" });
+        return res.status(400).send({ status: 400, message: "No OTP verification record found for this email. Please sign up again" });
       
       } else {
         // user otp record exists
