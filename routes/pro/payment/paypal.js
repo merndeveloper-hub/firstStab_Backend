@@ -126,8 +126,8 @@ const createPaypalOrder = async (req, res) => {
           },
         ],
         application_context: {
-       //   return_url: `http://3.110.42.187:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-           return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+         return_url: `http://3.110.42.187:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+       //    return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
 
           cancel_url:
             "http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel",
