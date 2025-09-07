@@ -10,6 +10,8 @@ const getInvitationStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const url = `${process.env.CHECKR_CANDIDATE_INVITAION_DEVELOPMENT_URL}/${id}`;
+//const url = `https://api.checkr-staging.com//v1/invitations/${id}`
+   console.log(url,"url");
 
     const config = {
       headers: {
@@ -17,12 +19,13 @@ const getInvitationStatus = async (req, res) => {
         Authorization:
           "Basic ZjQ5YzZhMGExODBiODk5ZmJlNTY2ZGQ1NDEyNThiZWE1MGQ4NDRhMjo=", // 👈 Base64 encoded key:secret
       },
-      data: {},
+     // data: {},
     };
+console.log(config,"config");
 
     const response = await axios.get(url, config);
 
-    console.log("Invitation Detail ✅", response.data);
+    console.log("Invitation Detail ✅", response);
 
     if (response?.data?.report_id) {
       console.log("report");

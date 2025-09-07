@@ -1,5 +1,6 @@
 import Joi from "joi";
-import { find, findOne } from "../../../helpers/index.js";
+import { find, findOne,getAggregate } from "../../../helpers/index.js";
+import mongoose from "mongoose";
 
 
 const schema = Joi.object().keys({
@@ -20,7 +21,46 @@ const getSingleProCertificate = async (req, res) => {
       });
     }
 
-const getCertificate = await find("proCategory",{proId:id})
+  const getCertificate = await getAggregate("proCategory", [
+        // Step 1: Match documents based on userId and status
+        {
+               $match: { proId:  new mongoose.Types.ObjectId(id) } // Match categoryId
+             },
+
+      {
+  $unwind: "$subCategories"
+},
+{
+  $lookup: {
+    from: "subcategories",
+    let: { subCategoryId: { $toObjectId: "$subCategories.id" } },
+    pipeline: [
+      {
+        $match: {
+          $expr: { $eq: ["$_id", "$$subCategoryId"] }
+        }
+      },
+      {
+        $project: {
+          categoryName: 1,
+          name: 1,
+          image: 1,
+          icon: 1,
+          _id: 0
+        }
+      }
+    ],
+    as: "procategories"
+  }
+},
+
+     
+       
+      { $sort: { createdAt: -1 } },
+  
+      ]);
+    
+//const getCertificate = await find("proCategory",{proId:id})
 
     return res.status(200).json({ status: 200, data: { singlePro,getCertificate } });
   } catch (e) {

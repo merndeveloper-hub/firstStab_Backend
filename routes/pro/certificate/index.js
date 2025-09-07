@@ -11,8 +11,8 @@ import getSingleProCertificate from "./getSingle.js";
 import multipart from "connect-multiparty";
 import temporaryCertificate from "./temporaryCertificate.js";
 import tokenVerification from "../../../middleware/token-verification/index.js";
-const multipartMiddleware = multipart();
 
+const multipartMiddleware = multipart();
 const router = express.Router();
 
 
