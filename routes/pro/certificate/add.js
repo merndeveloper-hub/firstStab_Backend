@@ -158,20 +158,22 @@ const addCertificate = async (req, res) => {
     await Promise.all(uploadTasks);
 
     // Conditional validations
-    if (preCondition === "true" && !req.body.selfieVideo) {
+    if (preCondition === "true" && !req.files?.selfieVideo) {
       return res.status(400).json({ status: 400, message: "Selfie video is required" });
     }
+console.log(req.body,"body");
+console.log(req.files,"files");
 
-    if (isUSBased === "true" && !req.body.formW9) {
-      return res.status(400).json({ status: 400, message: "TIN is required for US-based Pros" });
+    if (isUSBased === "true" && !req.files?.formW9) {
+      return res.status(400).json({ status: 400, message: "formW9 is required for US-based Pro" });
     }
 
-    if (isUSBased === "false" && isCompany === "false" && !req.body.w8BenUrl) {
-      return res.status(400).json({ status: 400, message: "W-8BEN is required for Non-US Pros" });
+    if (isUSBased === "false" && isCompany === "false" && !req.files?.w8BenUrl) {
+      return res.status(400).json({ status: 400, message: "W-8BEN is required for Non-US Pro" });
     }
 
     if (isUSBased === "false" && isCompany === "true" &&
-        (!req.body.w8BenEUrl || !req.body.companyRegistrationUrl)) {
+        (!req.files?.w8BenEUrl || !req.files?.companyRegistrationUrl)) {
       return res.status(400).json({
         status: 400,
         message: "W-8BEN-E and Company Registration are required for Non-US Companies",

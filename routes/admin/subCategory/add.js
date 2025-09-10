@@ -116,6 +116,28 @@ if (bgServiceName == "checkr") {
   }
 
 }
+
+
+if (bgServiceName == "Both") {
+
+  const validations = req.body.bgValidation;
+
+  const hasCriminal = validations.includes("criminal");
+  const hasLicense = validations.includes("licnce"); // assuming the typo is intentional
+  const hasIdVerification = validations.includes("IdVerification"); // certn bg
+  
+
+  if (hasCriminal && hasLicense) {
+    bgPackageName = "basic_criminal_and_plv";
+  } else if (hasLicense) {
+    bgPackageName = "plv";
+  } else if (hasCriminal) {
+    bgPackageName = "basic_plus";
+  } else if(hasIdVerification && hasCriminal && hasLicense){
+     bgPackageName = "both";
+  }
+
+}
  
 
 

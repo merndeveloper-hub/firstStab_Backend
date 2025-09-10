@@ -19,8 +19,12 @@ router.put(
   updateProfile
 );
 
+
+// pro availability badge update
 router.put("/availabilityUpdate/:id",tokenVerification,updateAvailability)
 
+
+// get pro profile
 router.get("/:id",tokenVerification, getSingleProfile);
 
 export default router;

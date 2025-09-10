@@ -1,7 +1,7 @@
 
 import bcrypt from "bcryptjs";
 import send_email from "../../../lib/node-mailer/index.js";
-import { insertNewDocument } from "../../../helpers/index.js";
+import { insertNewDocument,findOne } from "../../../helpers/index.js";
 
 
 const sendOTP = async (req, res) => {
@@ -12,7 +12,7 @@ const sendOTP = async (req, res) => {
 
     const { email,userType } = req;
   
-    // const user = await findOne("user", { email,userType });
+    const user = await findOne("user", { email,userType });
 
     // console.log(user, "user");
 
@@ -44,12 +44,13 @@ const sendOTP = async (req, res) => {
   console.log(otpRes,"otpRes");
   
     await send_email(
-      "signuptemplate",
+      "otpTemplate",
       {
         otp: otp,
+       user:user?.first_Name
       },
       "owaisy028@gmail.com",
-      "Verify Your Email",
+      "Your FirstStab OTP Code",
       email
     );
 console.log("finalres");

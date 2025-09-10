@@ -16,7 +16,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import sendOTPSignup from "../otpVerification/sendOTPSignup.js";
-import { User } from "@twilio/conversations";
+
 
 const schema = Joi.object({
   first_Name: Joi.string().min(3).required(),

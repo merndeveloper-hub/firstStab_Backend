@@ -19,37 +19,42 @@ const activeProService = async (req, res) => {
       });
     }
     const getPro = await findOne("user", { _id: getService?.proId });
-let activeService;
-    if(getPro?.totalPro < 5000){
+    let activeService;
+    if (getPro?.totalPro < 5000) {
       console.log("if");
-      
-     activeService = await updateDocument(
-        "proCategory",
-        { _id: id },
-        { status: getService?.status == "Active"? "InActive":"Active",
-          serviceStatus:getService?.serviceStatus == "success"? "pending":"success"
-         }
-      );
 
-    } else if(getPro?.totalPro > 5000){
- activeService = await updateDocument(
+      activeService = await updateDocument(
         "proCategory",
         { _id: id },
-        { status: getService?.status == "Active"? "Pending":"Active",
-          serviceStatus:getService?.serviceStatus == "success"? "pending":"success"
-         }
+        {
+          status: getService?.status == "Active" ? "InActive" : "Active",
+          serviceStatus:
+            getService?.serviceStatus == "success" ? "pending" : "success",
+        }
+      );
+    } else if (getPro?.totalPro > 5000) {
+      activeService = await updateDocument(
+        "proCategory",
+        { _id: id },
+        {
+          status: getService?.status == "Active" ? "Pending" : "Active",
+          serviceStatus:
+            getService?.serviceStatus == "success" ? "pending" : "success",
+        }
       );
     }
-    await send_email(
-      "signuptemplate",
-      {
-        otp: "123",
-      },
-      "owaisy028@gmail.com",
-      "Verify Your Email",
-      getPro?.email
-    );
 
+    if (activeService?.status == "Active"){
+      await send_email(
+        "adminApproved",
+        {
+          user: getPro?.first_Name,
+        },
+        "owaisy028@gmail.com",
+        "Congratulations! You’re Now an Active Pro on FirstStab",
+        getPro?.email
+      );
+    }
     return res.status(200).send({
       status: 200,
       message: `${activeService?.status} Pro Service`,

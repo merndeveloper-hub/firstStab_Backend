@@ -88,3 +88,15 @@ http://13.126.40.123:5000/
 2) jb pro register hojye tb email
 3) jb user register hojye tb email
 4) otp verify hoga tb email ajyegi for pro and user.
+
+email:
+otp email = done
+jb pro register hojye tb email ("/api/v1/pro/profile/update") =done
+jb pro ki payment success hojye, ya fail hojye registration k time,(paypal,stripe dono sy).
+Repeated multiple invalid login attempts. It blocked user for 30mins. = done
+
+
+
+
+//////stripe video ////
+https://www.youtube.com/watch?v=SY9ekpkcgTI

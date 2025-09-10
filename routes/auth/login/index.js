@@ -15,6 +15,7 @@ import {
   deleteManyDocument,
 } from "../../../helpers/index.js";
 import Joi from "joi";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const schema = Joi.object({
   email: Joi.string().email().required(),
@@ -96,6 +97,18 @@ const loginUser = async (req, res) => {
               no_of_attempt: updateAttempt.no_of_attempt + 1,
             }
           );
+
+           // 📧 Send email for 30-minute block
+  await send_email(
+    "tempAccBlock",
+    {
+      user: user?.first_Name || user?.email,
+      blockTime: "30 minutes",
+    },
+     "owaisy028@gmail.com",
+    "Account Blocked Due to Multiple Failed Login Attempts",
+    user?.email
+  );
           return res.status(400).send({
             status: 400,
             message: "Now You are blocked for 30 minutes",
@@ -113,6 +126,17 @@ const loginUser = async (req, res) => {
               no_of_attempt: updateAttempt.no_of_attempt + 1,
             }
           );
+          // 📧 Send email for 24-hour block
+  await send_email(
+    "userBlocked",
+    {
+      user: user?.first_Name || user?.email,
+      blockTime: "24 hours",
+    },
+      "owaisy028@gmail.com",
+    "Account Blocked Due to Multiple Failed Login Attempts",
+    user?.email
+  );
           return res
             .status(400)
             .send({ status: 400, message: "Now You are blocked for 24 hours" });

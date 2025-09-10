@@ -42,12 +42,12 @@ const rejectProService = async (req, res) => {
       );
     }
     await send_email(
-      "signuptemplate",
+      "adminRejeceted",
       {
-        otp: "123",
+        user: getPro?.first_Name,
       },
       "owaisy028@gmail.com",
-      "Verify Your Email",
+      "Pro Registration Review Result – Rejected",
       getPro?.email
     );
 

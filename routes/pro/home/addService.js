@@ -353,6 +353,8 @@ const createService = async (req, res) => {
       status: 200,
       message: "Category created successfully",
       data: category,
+       user: "not free",
+        bg: "not apply",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });

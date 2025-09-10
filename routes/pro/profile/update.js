@@ -1,9 +1,9 @@
-
 // export default updateProfile;
 import Joi from "joi";
 import fs from "fs/promises"; // Use async methods
 import { updateDocument, findOne } from "../../../helpers/index.js";
 import { v2 as cloudinary } from "cloudinary";
+import send_email from "../../../lib/node-mailer/index.js";
 
 cloudinary.config({
   cloud_name: "dwebxmktr",
@@ -25,9 +25,12 @@ const bodySchema = Joi.object({
   zipCode: Joi.string(),
   longitude: Joi.string(),
   latitude: Joi.string(),
-  mobile: Joi.string().pattern(/^[0-9]+$/).messages({
-    "string.pattern.base": "Mobile number must be digits",
-  }),
+  registeration: Joi.boolean(),
+  mobile: Joi.string()
+    .pattern(/^[0-9]+$/)
+    .messages({
+      "string.pattern.base": "Mobile number must be digits",
+    }),
 });
 
 const idSchema = Joi.object({
@@ -59,45 +62,98 @@ const updateProfile = async (req, res) => {
     ]);
 
     const { id } = req.params;
-    const user = await findOne("user", { _id: id });
+    const { registeration } = req.body;
+    if (registeration) {
+      const user = await findOne("user", { _id: id });
 
-    if (!user) {
-      return res.status(400).json({ status: 400, message: "No User found" });
-    }
+      if (!user) {
+        return res.status(400).json({ status: 400, message: "No User found" });
+      }
 
-    const uploadTasks = [];
+      const uploadTasks = [];
 
-    if (req?.files?.profile?.path) {
-      uploadTasks.push(
-        uploadImage(req.files.profile.path).then((img) => {
-          req.body.profile = img.url;
-        })
+      if (req?.files?.profile?.path) {
+        uploadTasks.push(
+          uploadImage(req.files.profile.path).then((img) => {
+            req.body.profile = img.url;
+          })
+        );
+      }
+
+      if (req?.files?.video?.path) {
+        const videoPath = req.files.video.path;
+
+        // Optional: Check file size
+        const stats = await fs.stat(videoPath);
+
+        uploadTasks.push(
+          uploadVideo(videoPath).then(async (vid) => {
+            req.body.video = vid.url;
+            await fs.unlink(videoPath); // Delete video after upload
+          })
+        );
+      }
+
+      await Promise.all(uploadTasks); // Wait for uploads to complete
+
+      const updatedUser = await updateDocument("user", { _id: id }, req.body);
+      let email = updatedUser?.email;
+      await send_email(
+        "proRegisterTemplate",
+        {
+          user: updatedUser?.first_Name,
+        },
+        "owaisy028@gmail.com",
+        "Your Pro Signup is Successful – Pending Review",
+        email
       );
+
+      return res.status(200).json({
+        status: 200,
+        message: "Profile updated successfully",
+        data: { profile: updatedUser },
+      });
+    } else {
+      const user = await findOne("user", { _id: id });
+
+      if (!user) {
+        return res.status(400).json({ status: 400, message: "No User found" });
+      }
+
+      const uploadTasks = [];
+
+      if (req?.files?.profile?.path) {
+        uploadTasks.push(
+          uploadImage(req.files.profile.path).then((img) => {
+            req.body.profile = img.url;
+          })
+        );
+      }
+
+      if (req?.files?.video?.path) {
+        const videoPath = req.files.video.path;
+
+        // Optional: Check file size
+        const stats = await fs.stat(videoPath);
+
+        uploadTasks.push(
+          uploadVideo(videoPath).then(async (vid) => {
+            req.body.video = vid.url;
+            await fs.unlink(videoPath); // Delete video after upload
+          })
+        );
+      }
+
+      await Promise.all(uploadTasks); // Wait for uploads to complete
+
+      const updatedUser = await updateDocument("user", { _id: id }, req.body);
+
+      return res.status(200).json({
+        status: 200,
+        message: "Profile updated successfully",
+        data: { profile: updatedUser },
+      });
     }
-
-    if (req?.files?.video?.path) {
-      const videoPath = req.files.video.path;
-
-      // Optional: Check file size
-      const stats = await fs.stat(videoPath);
-
-      uploadTasks.push(
-        uploadVideo(videoPath).then(async (vid) => {
-          req.body.video = vid.url;
-          await fs.unlink(videoPath); // Delete video after upload
-        })
-      );
-    }
-
-    await Promise.all(uploadTasks); // Wait for uploads to complete
-
-    const updatedUser = await updateDocument("user", { _id: id }, req.body);
-
-    return res.status(200).json({
-      status: 200,
-      message: "Profile updated successfully",
-      data: { profile: updatedUser },
-    });
   } catch (e) {
     console.error("Error in updateProfile:", e);
     return res.status(400).json({ status: 400, message: e.message });
