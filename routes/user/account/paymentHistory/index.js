@@ -12,7 +12,7 @@ import tokenVerification from "../../../../middleware/token-verification/index.j
 const router = express.Router();
 
 
-router.get("/:id/:month/:year",tokenVerification, getPayments);
+router.get("/:id/:month/:year/:proPayment", getPayments);
  //router.post("/",reviewService);
 
 

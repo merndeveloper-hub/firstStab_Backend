@@ -247,8 +247,8 @@ console.log(findProCategory,"findProCategory");
           },
         ],
         mode: "payment",
-       success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-    //    success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+    //   success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+        success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
         cancel_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripecancel?session_id={CHECKOUT_SESSION_ID}`,
         metadata: {
           professionalId: req.body.professionalId,

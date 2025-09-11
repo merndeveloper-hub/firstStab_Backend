@@ -6,6 +6,7 @@ const schema = Joi.object().keys({
   id: Joi.string().required(),
    month: Joi.number().required(),
    year: Joi.number().required(),
+   proPayment: Joi.boolean(),
 });
 
 // const schemaBody = Joi.object().keys({
@@ -19,12 +20,129 @@ const getPayments = async (req, res) => {
     await schema.validateAsync(req.params);
 //await schemaBody.validateAsync(req.body);
 
-    const { id,month,year } = req.params;
+    const { id,month,year,proPayment } = req.params;
     console.log(req.params,"params");
     const monthNum = Number(month);
 const yearNum = Number(year);
 //const {month,year} = req.body
-    const getUserPayment = await getAggregate("userPayment", [
+if(proPayment){
+  console.log("in");
+  
+const getUserPayment = await getAggregate("payment", [
+  // Add month/year fields from createdAt
+  {
+    $addFields: {
+      monthNum: { $month: "$createdAt" },
+      yearNum: { $year: "$createdAt" },
+    },
+  },
+
+  // Filter by month/year and userId/professionalId match
+  {
+    $match: {
+      $and: [
+        { monthNum: monthNum }, // ← Pass as variable
+        { yearNum: yearNum },
+        {
+          $or: [
+            { userId: new mongoose.Types.ObjectId(id) },
+            { professionalId: new mongoose.Types.ObjectId(id) },
+          ],
+        },
+      ],
+    },
+  },
+
+  // Lookup for professional user info
+  {
+    $lookup: {
+      from: "users",
+      localField: "professionalId",
+      foreignField: "_id",
+      as: "professionalInfo",
+    },
+  },
+  {
+    $unwind: {
+      path: "$professionalInfo",
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+
+  // Project everything from payment + selected professional info
+  {
+    $project: {
+      // Bring all payment document fields
+      _id: 1,
+      userId: 1,
+      professsionalId: 1,
+      bookServiceId: 1,
+      amount: 1,
+      paymentMethod: 1,
+      sender: 1,
+      reciever: 1,
+      type: 1,
+      holdingName: 1,
+      currency: 1,
+      stripeSessionId: 1,
+      presentmentAmount: 1,
+      presentmentCurrency: 1,
+      stripeSessionUrl: 1,
+      paymentIntentId: 1,
+      transactionId: 1,
+      customerEmail: 1,
+      paypalOrderId: 1,
+      authorizationId: 1,
+      payerId: 1,
+      payerEmail: 1,
+      "cardDetails.cardBrand": 1,
+      "cardDetails.cardLast4": 1,
+      "cardDetails.cardExpMonth": 1,
+      "cardDetails.cardExpYear": 1,
+      "cardDetails.cardFunding": 1,
+      "cardDetails.cardCountry": 1,
+      status: 1,
+      "payer.payerId": 1,
+      "payer.payerEmail": 1,
+      "payer.payerFirstName": 1,
+      "payer.payerLastName": 1,
+      "payer.payerCountryCode": 1,
+      "paymentSource.paypalAccountId": 1,
+      "paymentSource.paypalEmail": 1,
+      "paymentSource.paypalAccountStatus": 1,
+      purchaseUnitReference: 1,
+      paypalLink: 1,
+      tax_fee: 1,
+      baseAmount: 1,
+      finalAmount: 1,
+      createdAt: 1,
+      updatedAt: 1,
+      __v: 1,
+
+      // Include selected professional user details
+      "professionalInfo._id": 1,
+      "professionalInfo.first_Name": 1,
+      "professionalInfo.last_Name": 1,
+      "professionalInfo.email": 1,
+      "professionalInfo.mobile": 1,
+      "professionalInfo.profile": 1,
+      "professionalInfo.userType": 1,
+      "professionalInfo.status": 1,
+    },
+  },
+]);
+
+
+
+    console.log(getUserPayment, "getUserReview");
+
+if(!getUserPayment || getUserPayment.length == 0){
+  return res.status(200).json({ status: 200, message: "Payment not found!" });
+}
+
+    return res.status(200).json({ status: 200, getUserPayment });
+}else{
+const getUserPayment = await getAggregate("userPayment", [
   
      {
     $addFields: {
@@ -58,6 +176,21 @@ const yearNum = Number(year);
   {
     $unwind: {
       path: "$userInfo",
+      preserveNullAndEmptyArrays: true
+    }
+  },
+   // 👤 Lookup for Pro payment Send Info
+  {
+    $lookup: {
+      from: "payments",
+      localField: "professsionalId",
+      foreignField: "professionalId",
+      as: "proRegisterPayment"
+    }
+  },
+  {
+    $unwind: {
+      path: "$proRegisterPayment",
       preserveNullAndEmptyArrays: true
     }
   },
@@ -261,7 +394,56 @@ const yearNum = Number(year);
   bookServiceTaxFee: "$bookServiceInfo.tax_fee",
   bookServiceTotalAmount: "$bookServiceInfo.total_amount",
   bookServiceTotalAmountCusPay: "$bookServiceInfo.total_amount_cus_pay",
-  bookServiceChatChannelName: "$bookServiceInfo.chatChannelName"
+  bookServiceChatChannelName: "$bookServiceInfo.chatChannelName",
+
+
+
+  _id: "$proRegisterPayment._id",
+  professionalId: "$proRegisterPayment.professionalId",
+  paymentMethod: "$proRegisterPayment.paymentMethod",
+  sender: "$proRegisterPayment.sender",
+  reciever: "$proRegisterPayment.reciever",
+  type: "$proRegisterPayment.type",
+  currency: "$proRegisterPayment.currency",
+
+  // Stripe Fields
+  stripeFixedFee: "$proRegisterPayment.stripeFixedFee",
+  stripeFeePercentage: "$proRegisterPayment.stripeFeePercentage",
+  stripeSessionId: "$proRegisterPayment.stripeSessionId",
+  stripeSessionUrl: "$proRegisterPayment.stripeSessionUrl",
+
+  // PayPal Fields
+  paypalFixedFee: "$proRegisterPayment.paypalFixedFee",
+  paypalFeePercentage: "$proRegisterPayment.paypalFeePercentage",
+  paypalOrderId: "$proRegisterPayment.paypalOrderId",
+  authorizationId: "$proRegisterPayment.authorizationId",
+  paypalLink: "$proRegisterPayment.paypalLink",
+  purchaseUnitReference: "$proRegisterPayment.purchaseUnitReference",
+
+  // PayPal Payer Object
+  "payer.payerId": "$proRegisterPayment.payer.payerId",
+  "payer.payerEmail": "$proRegisterPayment.payer.payerEmail",
+  "payer.payerFirstName": "$proRegisterPayment.payer.payerFirstName",
+  "payer.payerLastName": "$proRegisterPayment.payer.payerLastName",
+  "payer.payerCountryCode": "$proRegisterPayment.payer.payerCountryCode",
+
+  // PayPal Payment Source Object
+  "paymentSource.paypalAccountId": "$proRegisterPayment.paymentSource.paypalAccountId",
+  "paymentSource.paypalEmail": "$proRegisterPayment.paymentSource.paypalEmail",
+  "paymentSource.paypalAccountStatus": "$proRegisterPayment.paymentSource.paypalAccountStatus",
+
+  // Common Fields
+  tax_fee: "$proRegisterPayment.tax_fee",
+  status: "$proRegisterPayment.status",
+  baseAmount: "$proRegisterPayment.baseAmount",
+  finalAmount: "$proRegisterPayment.finalAmount",
+  createdAt: "$proRegisterPayment.createdAt",
+  updatedAt: "$proRegisterPayment.updatedAt",
+  __v: "$proRegisterPayment.__v"
+
+
+
+
     }
   }
     ]);
@@ -272,6 +454,7 @@ if(!getUserPayment || getUserPayment.length == 0){
 }
 
     return res.status(200).json({ status: 200, getUserPayment });
+}
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });
