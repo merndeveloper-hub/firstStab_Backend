@@ -7,8 +7,9 @@ const reviewSchema = new mongoose.Schema(
     professsionalId: { type: schemaType.TypeObjectId, ref: "user" },
     bookServiceId: { type: schemaType.TypeObjectId, ref: "userBookServ" },
     proBookId: { type: schemaType.TypeObjectId, ref: "proCategory" },
-    commit: { type: schemaType.TypeString },
+    comment: { type: schemaType.TypeString },
     reviewStar: { type: schemaType.TypeNumber },
+     status: { type: schemaType.TypeString },
     role: {
               type: schemaType.TypeString,
               enum: ['user', 'pro']

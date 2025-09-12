@@ -24,7 +24,14 @@ const booking = async (req, res) => {
           $match: {
             userId: new mongoose.Types.ObjectId(id), // Match userId
             status: {
-              $in: ["Accepted", "Pending", "Requested", "OnGoing", "Delivered","Confirmed"],
+              $in: [
+                "Accepted",
+                "Pending",
+                "Requested",
+                "OnGoing",
+                "Delivered",
+                "Confirmed",
+              ],
             }, // Match status
           },
         },
@@ -78,7 +85,7 @@ const booking = async (req, res) => {
             as: "proDetails",
           },
         },
-         {
+        {
           $lookup: {
             from: "tokens", // Join with "users" collection
             let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
@@ -90,15 +97,15 @@ const booking = async (req, res) => {
               },
               {
                 $project: {
-                  user_id: 1,  fcmToken:1
-               
+                  user_id: 1,
+                  fcmToken: 1,
                 }, // Return only required fields
               },
             ],
             as: "proFcmToken",
           },
         },
-         {
+        {
           $lookup: {
             from: "tokens", // Join with "users" collection
             let: { userId: { $toObjectId: "$userId" } }, // Extract professsionalId
@@ -111,7 +118,7 @@ const booking = async (req, res) => {
               {
                 $project: {
                   user_id: 1,
-               fcmToken:1
+                  fcmToken: 1,
                 }, // Return only required fields
               },
             ],
@@ -130,7 +137,7 @@ const booking = async (req, res) => {
               },
               {
                 $project: {
-                  _id:1,
+                  _id: 1,
                   service_fee: 1,
                   tax_fee: 1,
                   total_amount: 1,
@@ -160,6 +167,35 @@ const booking = async (req, res) => {
               },
             ],
             as: "userAddress",
+          },
+        },
+        {
+          $lookup: {
+            from: "reviews", // Join with "users" collection
+            let: { id: { $toObjectId: "$_id" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$bookServiceId", "$$id"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  professsionalId: 1,
+                  bookServiceId: 1,
+                  commit: 1,
+                  reviewStar: 1,
+                  status: 1,
+                  role: 1,
+                  created_date: 1,
+                  createdAt: 1,
+                  updatedAt: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "userReviews",
           },
         },
       ]);
@@ -201,7 +237,8 @@ const booking = async (req, res) => {
             ],
             as: "procategories",
           },
-        },  {
+        },
+        {
           $lookup: {
             from: "tokens", // Join with "users" collection
             let: { professionalId: { $toObjectId: "$professionalId" } }, // Extract professsionalId
@@ -213,15 +250,15 @@ const booking = async (req, res) => {
               },
               {
                 $project: {
-                  user_id: 1,  fcmToken:1
-               
+                  user_id: 1,
+                  fcmToken: 1,
                 }, // Return only required fields
               },
             ],
             as: "proFcmToken",
           },
         },
-         {
+        {
           $lookup: {
             from: "tokens", // Join with "users" collection
             let: { userId: { $toObjectId: "$userId" } }, // Extract professsionalId
@@ -234,7 +271,7 @@ const booking = async (req, res) => {
               {
                 $project: {
                   user_id: 1,
-               fcmToken:1
+                  fcmToken: 1,
                 }, // Return only required fields
               },
             ],
@@ -281,7 +318,7 @@ const booking = async (req, res) => {
               },
               {
                 $project: {
-                  _id:1,
+                  _id: 1,
                   service_fee: 1,
                   tax_fee: 1,
                   total_amount: 1,
@@ -311,6 +348,35 @@ const booking = async (req, res) => {
               },
             ],
             as: "userAddress",
+          },
+        },
+         {
+          $lookup: {
+            from: "reviews", // Join with "users" collection
+            let: { id: { $toObjectId: "$_id" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$bookServiceId", "$$id"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  professsionalId: 1,
+                  bookServiceId: 1,
+                  commit: 1,
+                  reviewStar: 1,
+                  status: 1,
+                  role: 1,
+                  created_date: 1,
+                  createdAt: 1,
+                  updatedAt: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "userReviews",
           },
         },
       ]);
