@@ -12,6 +12,7 @@ import resheduleAcceptBooking from "./resheduleAccept.js";
 import cancelledRescheduleBooking from "./resheduleReject.js";
 import timerCancelBooking from "./timerCancelBooking.js";
 import tokenVerification from "../../../middleware/token-verification/index.js";
+import reviewBooking from "./reviewBooking.js";
 
 const router = express.Router();
 
@@ -19,6 +20,10 @@ const router = express.Router();
 router.get("/:id", tokenVerification, booking);
 
 //router.post("/add",multipartMiddleware, addCategory);
+
+///--------Review request by user------///
+router.put("/review/:id", tokenVerification, reviewBooking);
+
 
 //user accept pro request
 //router.put("/holdamount/:id", userAcceptProServiceRequest);

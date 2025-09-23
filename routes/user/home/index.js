@@ -26,7 +26,7 @@ router.get("/getproservice", tokenVerification, getProfessionalService);
 //Create Service by User
 router.post(
   "/bookservice",
-  tokenVerification,
+  
   multipartMiddleware,
   bookService
 );

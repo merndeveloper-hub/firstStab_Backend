@@ -69,6 +69,7 @@ const userBookServSchema = new mongoose.Schema(
     fixed_price: { type: schemaType.TypeString },
     min_price: { type: schemaType.TypeString },
     max_price: { type: schemaType.TypeString },
+    range_price:{ type: schemaType.TypeString },
     CancelSlot: { type: schemaType.TypeNumber, default: 0 },
     refundAmount: { type: schemaType.TypeNumber, default: 0 },
     ExtendedTime: { type: schemaType.TypeString, default: "" },
