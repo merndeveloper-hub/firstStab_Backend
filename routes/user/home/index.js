@@ -16,7 +16,7 @@ const multipartMiddleware = multipart();
 const router = express.Router();
 
 //----------Get Pro whose give service in this category and subcategory----//
-router.get("/getproservice", tokenVerification, getProfessionalService);
+router.get("/getproservice", getProfessionalService);
 
 //router.put("/:id",multipartMiddleware, updateCategory);
 //router.delete("/:id", deleteCategory);
@@ -26,7 +26,7 @@ router.get("/getproservice", tokenVerification, getProfessionalService);
 //Create Service by User
 router.post(
   "/bookservice",
-  
+  tokenVerification,
   multipartMiddleware,
   bookService
 );

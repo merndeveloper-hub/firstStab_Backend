@@ -115,6 +115,35 @@ const getOnGoingBooking = async (req, res) => {
             as: "userFcmToken",
           },
         },
+           {
+          $lookup: {
+            from: "reviews", // Join with "users" collection
+            let: { bookServiceId: { $toObjectId: "$bookServiceId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$bookServiceId", "$$bookServiceId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  professsionalId: 1,
+                  bookServiceId: 1,
+                  comment: 1,
+                  reviewStar: 1,
+                  status: 1,
+                  role: 1,
+                  created_date: 1,
+                  createdAt: 1,
+                  updatedAt: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "proReviews",
+          },
+        },
         {
           $lookup: {
             from: "subcategories", // Join with "users" collection
@@ -249,6 +278,35 @@ const getOnGoingBooking = async (req, res) => {
               },
             ],
             as: "proDetails",
+          },
+        },
+             {
+          $lookup: {
+            from: "reviews", // Join with "users" collection
+            let: { bookServiceId: { $toObjectId: "$bookServiceId" } }, // Extract professsionalId
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$bookServiceId", "$$bookServiceId"] },
+                }, // Compare userId with _id in users collection
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  professsionalId: 1,
+                  bookServiceId: 1,
+                  comment: 1,
+                  reviewStar: 1,
+                  status: 1,
+                  role: 1,
+                  created_date: 1,
+                  createdAt: 1,
+                  updatedAt: 1,
+                }, // Return only required fields
+              },
+            ],
+            as: "proReviews",
           },
         },
         {

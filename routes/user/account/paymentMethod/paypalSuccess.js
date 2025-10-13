@@ -1,6 +1,6 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
-import { updateDocument,findAndSort } from "../../../../helpers/index.js";
+import { updateDocument, findAndSort } from "../../../../helpers/index.js";
 
 const paypalSuccess = async (req, res) => {
   try {
@@ -39,42 +39,80 @@ const paypalSuccess = async (req, res) => {
       paypalEmail: executeResponse.data.payment_source.paypal.email_address,
       paypalAccountStatus:
         executeResponse.data.payment_source.paypal.account_status,
+      captureId: executeResponse.data.purchase_units[0].payments.captures[0].id,
     };
 
     const purchaseUnitReference =
       executeResponse.data.purchase_units[0].reference_id; // purchase_units[0].reference_id
 
     const paypalLink = executeResponse.data.links[0].href; // links[0].href
-    
-// // Pehle se saved totalAmount nikal lo (agar hai)
-// const lastPayment = await findAndSort("userPayment", { paypalOrderId: token,sender:'User' },{ createdAt: -1  });
 
-// // Agar last totalAmount hai to use le lo, warna 0
-// const previousAmount = lastPayment?.totalAmount || 0;
+    // // Pehle se saved totalAmount nikal lo (agar hai)
+    // const lastPayment = await findAndSort("userPayment", { paypalOrderId: token,sender:'User' },{ createdAt: -1  });
 
-// // Ab ka amount (req.body se)
-// const currentAmount = amount || 0;
+    // // Agar last totalAmount hai to use le lo, warna 0
+    // const previousAmount = lastPayment?.totalAmount || 0;
 
-// // Total calculate karo
-// const totalAmount = previousAmount + currentAmount;
-    await updateDocument(
+    // // Ab ka amount (req.body se)
+    // const currentAmount = amount || 0;
+
+    // // Total calculate karo
+    // const totalAmount = previousAmount + currentAmount;
+
+    //pyapal payment cahrges
+    console.log(paymentSource.captureId, "captureId");
+
+    const getPaymentPlatformCharges = await axios.get(
+      `https://api-m.sandbox.paypal.com/v2/payments/captures/${paymentSource.captureId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Payment Captured:", getPaymentPlatformCharges.data);
+
+    const paypalCharges = {
+      gross_amount:
+        getPaymentPlatformCharges?.data.seller_receivable_breakdown
+          ?.gross_amount?.value,
+      paypal_fee:
+        getPaymentPlatformCharges?.data?.seller_receivable_breakdown?.paypal_fee
+          ?.value,
+      net_amount:
+        getPaymentPlatformCharges?.data?.seller_receivable_breakdown?.net_amount
+          ?.value,
+    };
+
+    const userPayToAdmin = await updateDocument(
       "userPayment",
       { paypalOrderId: token },
       {
-       // totalAmount,
+        // totalAmount,
         status: executeResponse.data.status,
         authorizationId: executeResponse.data.id,
         payer,
+        paypalCharges,
         paymentSource,
+        payPalRefundLinkAdminToUser: getPaymentPlatformCharges?.data.links[1].href,
         purchaseUnitReference,
         paypalLink,
       }
     );
 
+    const updateProBookService = await updateDocument(
+      "proBookingService",
+      { _id: userPayToAdmin?.bookServiceId },
+      {
+        userPayToAdmin: "Completed",
+        adminPayToPro: "Pending",
+        userToAdminPaypalCharges:paypalCharges
+      }
+    );
+
     console.log("Payment Success:", executeResponse.data);
     return res.send("<html><body style='background:#fff;'></body></html>");
-
-   
   } catch (error) {
     console.error(
       "Error executing PayPal payment:",

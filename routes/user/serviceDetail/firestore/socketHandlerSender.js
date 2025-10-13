@@ -1,21 +1,19 @@
-
 import {
   insertNewDocument,
   updateDocument,
-  find
+  find,
 } from "../../../../helpers/index.js";
 
 // const onlineUsers = new Map();
-// console.log(onlineUsers, "online");
 
 const handleSocket = (io) => {
   io.on("connection", (socket) => {
     console.log("[Socket] New connection on /api/socket:", socket.id);
 
     socket.on("join", (userId) => {
-       socket.join(userId);
-    //  onlineUsers.set(userId, socket.id);
-      console.log(`User ${userId} joined socket`);
+      socket.join(userId);
+      // onlineUsers.set(userId, socket.id);
+    
     });
 
     socket.on(
@@ -32,38 +30,54 @@ const handleSocket = (io) => {
       }) => {
         try {
           if (isBooking) {
-            const findUserChat = await find("chatMessage", {
-              role: "user",
-              chatId,
-              userBooking,
-              proBooking,
-            });
-            if (findUserChat.length > 7) {
-              socket.emit("chat_error", {
-                status: "error",
-                message: "User chat limit exceeded",
+            if (role === "user") {
+              const findUserChat = await find("chatMessage", {
+                role: "user",
+                chatId,
+                userBooking,
+                proBooking,
               });
-              return;
+
+              if (findUserChat.length === 4) {
+                socket.emit("chat_warning", {
+                  status: "warning",
+                  message:
+                    "Reminder: You’ve used 4 messages out of your 7-message limit. Extend your chat now to continue beyond 7.",
+                });
+              }
+              if (findUserChat.length >= 7) {
+                socket.emit("chat_error", {
+                  status: "error",
+                  message: "User chat limit exceeded",
+                });
+                return;
+              }
             }
-            const findProChat = await find("chatMessage", {
-              role: "pro",
-              chatId,
-              userBooking,
-              proBooking,
-            });
-            if (findProChat.length > 7) {
-              socket.emit("chat_error", {
-                status: "error",
-                message: "Pro chat limit exceeded",
+
+            if (role === "pro") {
+              const findProChat = await find("chatMessage", {
+                role: "pro",
+                chatId,
+                userBooking,
+                proBooking,
               });
-              return;
+
+              if (findProChat.length === 4) {
+                socket.emit("chat_warning", {
+                  status: "warning",
+                  message:
+                    "Reminder: You’ve used 4 messages out of your 7-message limit. Extend your chat now to continue beyond 7.",
+                });
+              }
+              if (findProChat.length >= 7) {
+                socket.emit("chat_error", {
+                  status: "error",
+                  message: "Pro chat limit exceeded",
+                });
+                return;
+              }
             }
           }
-
-          // const findChatRoom = await findOne("proBookingService", {
-          //   chatChannelName: chatId,
-          // });
-          // let startTime = findChatRoom.orderStartTime;
 
           console.log(
             chatId,
@@ -83,16 +97,15 @@ const handleSocket = (io) => {
             proBooking,
             isBooking,
           });
+
           console.log(newMessage, "messagenew");
-console.log(senderId,"send");
-console.log(receiverId,"reciever");
+          console.log(senderId, "send");
+          console.log(receiverId, "reciever");
 
-
-         // socket.emit("message_sent", newMessage);
+          // emit message to chat room
           io.to("chatRoom").emit("message_sent", newMessage);
           io.to("chatRoom").emit("receive_message", newMessage);
-         //  socket.emit("receive_message", newMessage);
-      } catch (err) {
+        } catch (err) {
           socket.emit("chat_error", {
             status: "error",
             message: "An unexpected error occurred",
@@ -101,17 +114,18 @@ console.log(receiverId,"reciever");
         }
       }
     );
+
     console.log("final");
 
-  //   socket.on("disconnect", () => {
-  //     for (let [userId, socketId] of onlineUsers.entries()) {
-  //       if (socketId === socket.id) {
-  //         onlineUsers.delete(userId);
-  //         break;
-  //       }
-  //     }
-  //     console.log("[Socket] Disconnected:", socket.id);
-  //   });
+    // socket.on("disconnect", () => {
+    //   for (let [userId, socketId] of onlineUsers.entries()) {
+    //     if (socketId === socket.id) {
+    //       onlineUsers.delete(userId);
+    //       break;
+    //     }
+    //   }
+    //   console.log("[Socket] Disconnected:", socket.id);
+    // });
   });
 };
 

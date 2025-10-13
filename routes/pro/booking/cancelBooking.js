@@ -29,6 +29,8 @@ const cancelledBooking = async (req, res) => {
         .json({ status: 400, message: "No Booking Found!" });
     }
 
+
+
     const orderDate = moment(goingbooking.orderStartDate, "YYYY-MM-DD");
     const cancelDate = moment(CancelDate, "YYYY-MM-DD");
 
@@ -51,6 +53,10 @@ const cancelledBooking = async (req, res) => {
     const diffInHours = startTime.diff(cancelTime, "hours", true);
     console.log("diffInHours", diffInHours);
 
+     const findPaymentMethod = await findOne("userPayment", { bookServiceId: id });
+
+let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFixedFee + paypalFeePercentage : stripeFeePercentage + stripeFixedFee
+    // * Agr user meeting mein nhi aye *// 
     if (
       reasonCancel == "User No Show" ||
       "User Cancelled" ||
@@ -100,7 +106,7 @@ const cancelledBooking = async (req, res) => {
         message: "Cancelled Booking By Professional",
         cancelbooking,
       });
-    } // pro cancel less than 3 hour
+    } //  ** pro cancel less than 3 hour  **//
     else if (diffInHours < 3) {
       //refund isInPerson charges Pro
       if (goingbooking.serviceType == "isInPerson") {
@@ -128,17 +134,21 @@ const cancelledBooking = async (req, res) => {
         console.log("diffInHours", diffInHours);
         // Charges base (In-Person ke liye service_fee + platformFees)
         const baseServiceFee =
-          Number(goingbooking?.service_fee || 0) +
-          Number(goingbooking?.platformFees || 0);
+          Number(goingbooking?.service_fee || 0)  +
+          Number(goingbooking?.platformFees || 0) + 
+          Number(findPaymentCharges || 0) ;
         console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
 
-        // Rule for In-Person Services (less than 3 hour to startBooking)
+        //** Rule for In-Person Services (less than 3 hour to startBooking)
+         // charges include = service fees + platform commission **//
         if (goingbooking.serviceType == "isInPerson") {
           let cancelbooking;
           // baseServiceFee not more than $100
           if (diffInHours < 3) {
-            cancelCharges = baseServiceFee * 0.5;
+            //cancelCharges = baseServiceFee * 0.5;
+            // ** agar result 100 se zyada hua to 100 le lega, warna actual value.
+            const cancelCharges = Math.min(baseServiceFee * 0.5, 100);
             console.log("cancelCharges", cancelCharges);
             //proBooking update
             cancelbooking = await updateDocument(
@@ -150,7 +160,7 @@ const cancelledBooking = async (req, res) => {
                 cancelledReason: "Cancelled By Professional",
                 CancelDate,
                 CancelTime,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn:baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -171,7 +181,7 @@ const cancelledBooking = async (req, res) => {
                 CancelDate,
                 CancelTime,
                 CancelCharges: cancelCharges,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -184,7 +194,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.professsionalId },
               {
-                $inc: { chargesAmount: cancelCharges },
+                $inc: { totalCharges: cancelCharges },
               }
             );
             // admin add to user to return payment
@@ -192,68 +202,68 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.userId },
               {
-                $inc: { pendingAmount: goingbooking?.total_amount },
+                $inc: { currentBalance: baseServiceFee },
               }
             );
-            if (cancelCharges > 100) {
-              // baseServiceFee  more than $100
-              console.log("100", cancelCharges);
-              cancelCharges = 100;
-              cancelbooking = await updateDocument(
-                "proBookingService",
-                { _id: id },
-                {
-                  CancelCharges: cancelCharges,
-                  status: "Cancelled",
-                  cancelledReason: "Cancelled By Professional",
-                  CancelDate,
-                  CancelTime,
-                  priceToReturn: goingbooking?.total_amount,
-                  reasonDescription,
-                  reasonCancel,
-                  CancellationChargesApplyTo: "pro",
-                  amountReturn: "user",
-                  ProfessionalPayableAmount: cancelCharges,
-                }
-              );
+            // if (cancelCharges > 100) {
+            //   // baseServiceFee  more than $100
+            //   console.log("100", cancelCharges);
+            //   cancelCharges = 100;
+            //   cancelbooking = await updateDocument(
+            //     "proBookingService",
+            //     { _id: id },
+            //     {
+            //       CancelCharges: cancelCharges,
+            //       status: "Cancelled",
+            //       cancelledReason: "Cancelled By Professional",
+            //       CancelDate,
+            //       CancelTime,
+            //       priceToReturn: goingbooking?.total_amount,
+            //       reasonDescription,
+            //       reasonCancel,
+            //       CancellationChargesApplyTo: "pro",
+            //       amountReturn: "user",
+            //       ProfessionalPayableAmount: cancelCharges,
+            //     }
+            //   );
 
-              const cancelRandomProBooking = await updateDocument(
-                "userBookServ",
-                {
-                  _id: cancelbooking?.bookServiceId,
-                  status: { $in: ["Accepted", "Pending"] },
-                },
-                {
-                  status: "Cancelled",
-                  cancelledReason: "Cancelled By Professional",
-                  CancelDate,
-                  CancelTime,
-                  CancelCharges: cancelCharges,
-                  priceToReturn: goingbooking?.total_amount,
-                  reasonDescription,
-                  reasonCancel,
-                  CancellationChargesApplyTo: "pro",
-                  amountReturn: "user",
-                  ProfessionalPayableAmount: cancelCharges,
-                }
-              );
-              // pro TotalCharges update
-              const proTotalCharges = await updateDocument(
-                "user",
-                { _id: goingbooking.professsionalId },
-                {
-                  $inc: { chargesAmount: cancelCharges },
-                }
-              );
-              // admin add to user to return payment
-              const adminReturnToUserAmt = await updateDocument(
-                "user",
-                { _id: goingbooking.userId },
-                {
-                  $inc: { pendingAmount: goingbooking?.total_amount },
-                }
-              );
-            }
+            //   const cancelRandomProBooking = await updateDocument(
+            //     "userBookServ",
+            //     {
+            //       _id: cancelbooking?.bookServiceId,
+            //       status: { $in: ["Accepted", "Pending"] },
+            //     },
+            //     {
+            //       status: "Cancelled",
+            //       cancelledReason: "Cancelled By Professional",
+            //       CancelDate,
+            //       CancelTime,
+            //       CancelCharges: cancelCharges,
+            //       priceToReturn: goingbooking?.total_amount,
+            //       reasonDescription,
+            //       reasonCancel,
+            //       CancellationChargesApplyTo: "pro",
+            //       amountReturn: "user",
+            //       ProfessionalPayableAmount: cancelCharges,
+            //     }
+            //   );
+            //   // pro TotalCharges update
+            //   const proTotalCharges = await updateDocument(
+            //     "user",
+            //     { _id: goingbooking.professsionalId },
+            //     {
+            //       $inc: { chargesAmount: cancelCharges },
+            //     }
+            //   );
+            //   // admin add to user to return payment
+            //   const adminReturnToUserAmt = await updateDocument(
+            //     "user",
+            //     { _id: goingbooking.userId },
+            //     {
+            //       $inc: { pendingAmount: goingbooking?.total_amount },
+            //     }
+            //   );
+            // }
           }
           return res.status(200).json({
             status: 200,
@@ -262,7 +272,8 @@ const cancelledBooking = async (req, res) => {
           });
         }
       }
-      //refund isVirtual charges Pro
+
+      // ** ----------------  refund isVirtual charges Pro   ------------------- **//
       else if (goingbooking.serviceType == "isVirtual") {
         console.log("isVirtual");
         const orderDate = moment(goingbooking.orderStartDate, "YYYY-MM-DD");
@@ -288,8 +299,9 @@ const cancelledBooking = async (req, res) => {
         console.log("diffInHours", diffInHours);
         // Charges base (isVirtual ke liye service_fee + platformFees)
         const baseServiceFee =
-          Number(goingbooking?.service_fee || 0) +
-          Number(goingbooking?.platformFees || 0);
+           Number(goingbooking?.service_fee || 0)  +
+          Number(goingbooking?.platformFees || 0) + 
+          Number(findPaymentCharges || 0) ;
         console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
 
@@ -310,7 +322,7 @@ const cancelledBooking = async (req, res) => {
                 cancelledReason: "Cancelled By Professional",
                 CancelDate,
                 CancelTime,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -331,7 +343,7 @@ const cancelledBooking = async (req, res) => {
                 CancelDate,
                 CancelTime,
                 CancelCharges: cancelCharges,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -344,7 +356,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.professsionalId },
               {
-                $inc: { chargesAmount: cancelCharges },
+                $inc: { totalCharges: cancelCharges },
               }
             );
             // admin add to user to return payment
@@ -352,7 +364,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.userId },
               {
-                $inc: { pendingAmount: goingbooking?.total_amount },
+                $inc: { currentBalance: baseServiceFee },
               }
             );
           }
@@ -363,7 +375,8 @@ const cancelledBooking = async (req, res) => {
           });
         }
       }
-      //refund isChat charges Pro
+
+      // ** ------ refund isChat charges Pro ---   ** //
       else if (goingbooking.serviceType == "isChat") {
         console.log("isChat");
         const orderDate = moment(goingbooking.orderStartDate, "YYYY-MM-DD");
@@ -388,10 +401,11 @@ const cancelledBooking = async (req, res) => {
         const diffInHours = startTime.diff(cancelTime, "hours", true);
         console.log("diffInHours", diffInHours);
         // Charges base (isChat ke liye service_fee + platformFees)
-        // const baseServiceFee =
-        //   Number(goingbooking?.service_fee || 0) +
-        //   Number(goingbooking?.platformFees || 0);
-        // console.log("baseServiceFee", baseServiceFee);
+        const baseServiceFee =
+          Number(goingbooking?.service_fee || 0)  +
+          Number(goingbooking?.platformFees || 0) + 
+          Number(findPaymentCharges || 0) ;
+        console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
 
         // Rule for isVirtual Services (less than 3 hour to startBooking)
@@ -399,7 +413,8 @@ const cancelledBooking = async (req, res) => {
           let cancelbooking;
           // baseServiceFee not more than $100
           if (diffInHours < 3) {
-            cancelCharges = 10;
+            // ** add 10 + payment charges
+            cancelCharges = 10 +  Number(findPaymentCharges || 0);
             console.log("cancelCharges", cancelCharges);
             //proBooking update
             cancelbooking = await updateDocument(
@@ -411,7 +426,7 @@ const cancelledBooking = async (req, res) => {
                 cancelledReason: "Cancelled By Professional",
                 CancelDate,
                 CancelTime,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -432,7 +447,7 @@ const cancelledBooking = async (req, res) => {
                 CancelDate,
                 CancelTime,
                 CancelCharges: cancelCharges,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn:baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -445,7 +460,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.professsionalId },
               {
-                $inc: { chargesAmount: cancelCharges },
+                $inc: { totalCharges: cancelCharges },
               }
             );
             // admin add to user to return payment
@@ -453,7 +468,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.userId },
               {
-                $inc: { pendingAmount: goingbooking?.total_amount },
+                $inc: { currentBalance: baseServiceFee },
               }
             );
           }
@@ -464,7 +479,8 @@ const cancelledBooking = async (req, res) => {
           });
         }
       }
-      //refund isRemote charges Pro
+
+      // ** ------------------ refund isRemote charges Pro ------ **//
       else if (goingbooking.serviceType == "isRemote") {
         console.log("isRemote");
         const orderDate = moment(goingbooking.orderStartDate, "YYYY-MM-DD");
@@ -489,7 +505,10 @@ const cancelledBooking = async (req, res) => {
         const diffInHours = startTime.diff(cancelTime, "hours", true);
         console.log("diffInHours", diffInHours);
         // Charges base (isRemote ke liye service_fee + platformFees)
-        const baseServiceFee = Number(goingbooking?.service_fee || 0);
+        const baseServiceFee =  Number(goingbooking?.service_fee || 0)  +
+          Number(goingbooking?.platformFees || 0) + 
+          Number(findPaymentCharges || 0) ;
+        console.log("baseServiceFee", baseServiceFee);
 
         console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
@@ -497,9 +516,10 @@ const cancelledBooking = async (req, res) => {
         // Rule for isVirtual Services (less than 3 hour to startBooking)
         if (goingbooking.serviceType == "isRemote") {
           let cancelbooking;
-          // baseServiceFee not more than $100
+          // baseServiceFee service fees ka $20 %
           if (diffInHours < 3) {
-            cancelCharges = baseServiceFee * 0.2;
+            // ** service fees 20 % + platform fees
+            cancelCharges = (goingbooking?.service_fee * 0.2) +  Number(findPaymentCharges || 0) ;
             console.log("cancelCharges", cancelCharges);
             //proBooking update
             cancelbooking = await updateDocument(
@@ -511,7 +531,7 @@ const cancelledBooking = async (req, res) => {
                 cancelledReason: "Cancelled By Professional",
                 CancelDate,
                 CancelTime,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -532,7 +552,7 @@ const cancelledBooking = async (req, res) => {
                 CancelDate,
                 CancelTime,
                 CancelCharges: cancelCharges,
-                priceToReturn: goingbooking?.total_amount,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -545,7 +565,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.professsionalId },
               {
-                $inc: { chargesAmount: cancelCharges },
+                $inc: { totalCharges: cancelCharges },
               }
             );
             // admin add to user to return payment
@@ -553,7 +573,7 @@ const cancelledBooking = async (req, res) => {
               "user",
               { _id: goingbooking.userId },
               {
-                $inc: { pendingAmount: goingbooking?.total_amount },
+                $inc: { currentBalance: baseServiceFee },
               }
             );
           }

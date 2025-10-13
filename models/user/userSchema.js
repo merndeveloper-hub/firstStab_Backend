@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: schemaType.TypeString,
-     // unique: true,
+      // unique: true,
     },
     password: {
       type: schemaType.TypeString,
@@ -112,9 +112,17 @@ const userSchema = new mongoose.Schema(
       type: schemaType.TypeNumber,
       default: 0,
     },
-    availableAmount: { type: schemaType.TypeNumber, default: 0 }, // paisa/cents
-    pendingAmount: { type: schemaType.TypeNumber, default: 0 },
-  chargesAmount: { type: schemaType.TypeNumber, default: 0 },
+    paypalEmail: {
+      type: schemaType.TypeString,
+    }, // payout destination (must be verified PayPal email)
+
+    verifiedForPayaplPayout: {
+      type: schemaType.TypeBoolean,
+      default: false,
+    },
+ //   availableAmount: { type: schemaType.TypeNumber, default: 0 }, // paisa/cents
+  //  pendingAmount: { type: schemaType.TypeNumber, default: 0 },
+   // chargesAmount: { type: schemaType.TypeNumber, default: 0 },
     created_date: {
       type: schemaType.TypeDate,
       default: Date.now,
@@ -125,7 +133,12 @@ const userSchema = new mongoose.Schema(
       default: "Active",
     },
     bookingRequestTime: { type: schemaType.TypeString },
-     userType: { type: schemaType.TypeString,enum:['user','pro','admin'] },
+    userType: { type: schemaType.TypeString, enum: ["user", "pro", "admin"] },
+     // running numbers for quick display
+  totalEarnings: {  type: schemaType.TypeNumber, default: 0  },  // total jobs completed (gross)
+  totalCharges:  {  type: schemaType.TypeNumber, default: 0  },  // plante charges remaining amount
+  netEarnings:   {  type: schemaType.TypeNumber, default: 0  },  // totalEarnings - totalCharges
+  currentBalance: {  type: schemaType.TypeNumber, default: 0  }, // what admin still owes the Pro
   },
   { timestamps: true }
 );

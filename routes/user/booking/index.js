@@ -17,7 +17,7 @@ import reviewBooking from "./reviewBooking.js";
 const router = express.Router();
 
 ///--------User get all created,requested,accepted services------///
-router.get("/:id", tokenVerification, booking);
+router.get("/:id",tokenVerification, booking);
 
 //router.post("/add",multipartMiddleware, addCategory);
 
@@ -47,7 +47,7 @@ router.put("/useraccept/:id", tokenVerification, userAcceptProServiceRequest);
 router.get("/proaccept/:id", tokenVerification, proServiceRequest);
 
 //----- User completed service--------//
-router.put("/completed/:id", tokenVerification, completedBooking);
+router.put("/completed/:id", completedBooking);
 
 //-----Reshedule Request -----//
 router.put("/reshedule", tokenVerification, userResheduleRequest);

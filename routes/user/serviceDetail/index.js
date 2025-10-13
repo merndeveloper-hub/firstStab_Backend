@@ -19,7 +19,7 @@ router.put("/:id/:fcmToken", tokenVerification, updateFcmToken);
 // get pro chat
 router.get(
   "/conversation/:receiverId/:senderId/:proBooking",
-  tokenVerification,
+  
   getChat
 );
 

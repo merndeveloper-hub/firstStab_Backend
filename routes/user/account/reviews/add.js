@@ -31,6 +31,10 @@ const reviewService = async (req, res) => {
       role,
     } = req.body;
 
+
+    
+
+    
     const findUser = await findOne("user", { _id: userId });
     if (!findUser || findUser.length == 0) {
       return res.status(400).json({
@@ -74,6 +78,18 @@ const reviewService = async (req, res) => {
     const findReview = await findOne("review", {
       bookServiceId: bookServiceId,
       status: "Completed",
+      role: 'pro'
+    });
+    if (findReview) {
+      return res.status(400).json({
+        status: 400,
+        message: "You have already submitted a review!",
+      });
+    }
+     const findReviewUser = await findOne("review", {
+      bookServiceId: bookServiceId,
+      status: "Completed",
+      role: 'user'
     });
     if (findReview) {
       return res.status(400).json({
@@ -86,26 +102,33 @@ const reviewService = async (req, res) => {
       status: "Completed",
     });
 
-    const changeUserBookReviewStatus = await updateDocument(
-      "userBookServ",
-      {
-        _id: bookServiceId,
-      },
-      { orderRatingPending: "No" }
-    );
+    if(role == 'user'){
+      const changeUserBookReviewStatus = await updateDocument(
+        "userBookServ",
+        {
+          _id: bookServiceId,
+        },
+        { orderRatingPending: "No" }
+      );
 
-    const changeProBookReviewStatus = await updateDocument(
-      "proBookingService",
-      {
-        bookServiceId: bookServiceId,
-      },
-      { orderRatingPending: "No" }
-    );
+    }else {
+
+      const changeProBookReviewStatus = await updateDocument(
+        "proBookingService",
+        {
+          bookServiceId: bookServiceId,
+        },
+        { orderRatingPending: "No" }
+      );
+    }
+
+
     return res.status(200).json({
       status: 200,
       message: "User gives reviews to professional",
       data: { review },
     });
+  
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

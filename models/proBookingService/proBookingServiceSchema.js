@@ -74,7 +74,7 @@ const proBookingServiceSchema = new mongoose.Schema(
     tax_fee: { type: schemaType.TypeNumber },
     total_amount: { type: schemaType.TypeNumber },
     total_amount_cus_pay: { type: schemaType.TypeNumber },
-     total_amount_cus_pay_with_charges: { type: schemaType.TypeNumber },
+    total_amount_cus_pay_with_charges: { type: schemaType.TypeNumber },
     quoteInfo: { type: schemaType.TypeString, maxlength: 2000 },
     quoteDetail: { type: schemaType.TypeString }, // Text in MongoDB is stored as a long string
 
@@ -229,11 +229,11 @@ const proBookingServiceSchema = new mongoose.Schema(
     userPayableAmount: { type: schemaType.TypeNumber },
     CancellationChargesApplyTo: {
       type: schemaType.TypeString,
-     // enum: ["pro", "user"],
+      // enum: ["pro", "user"],
     },
     RefundableAmount: { type: schemaType.TypeNumber, default: 0.0 },
-     amountToReturn:{ type: schemaType.TypeString,  },
-       priceToReturn:{ type: schemaType.TypeNumber },
+    amountToReturn: { type: schemaType.TypeString },
+    priceToReturn: { type: schemaType.TypeNumber },
     complexity_tier: {
       type: schemaType.TypeString,
       enum: ["moderate", "complex", "simple"],
@@ -247,8 +247,18 @@ const proBookingServiceSchema = new mongoose.Schema(
     fixed_price: { type: schemaType.TypeString },
     min_price: { type: schemaType.TypeString },
     max_price: { type: schemaType.TypeString },
+
     range_price:{ type: schemaType.TypeString },
      review: { type: schemaType.TypeString },
+  paymentMethod:{type:schemaType.TypeString},
+    userPayToAdmin: { type: schemaType.TypeString, default: "Pending" },
+    adminPayToPro: { type: schemaType.TypeString },
+    userToAdminPaypalCharges: {
+      gross_amount: { type: schemaType.TypeString },
+      paypal_fee: { type: schemaType.TypeString },
+      net_amount: { type: schemaType.TypeString },
+    },
+
   },
   { timestamps: true }
 );

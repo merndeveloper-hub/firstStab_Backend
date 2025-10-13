@@ -44,26 +44,45 @@ const updateNewRequestBooking = async (req, res) => {
 
     //Payment Cal
 
-    const platform = await findOne("adminFees");
-    //1) Platform fees
-    const paltformCharges = parseFloat(platform?.platformFees);
-    console.log("paltformCharges", paltformCharges);
-
-    // const paypalFeePercentage = parseFloat(platform?.paypalFeePercentage);
-    // console.log("paltformCharges", paypalFeePercentage);
-
-    // const paypalFixedFee = parseFloat(platform?.paypalFixedFee);
+    // const platform = await findOne("adminFees");
+    // //1) Platform fees
+    // const paltformCharges = parseFloat(platform?.platformFees);
     // console.log("paltformCharges", paltformCharges);
 
-    //2) pro quote amount
+    // // const paypalFeePercentage = parseFloat(platform?.paypalFeePercentage);
+    // // console.log("paltformCharges", paypalFeePercentage);
+
+    // // const paypalFixedFee = parseFloat(platform?.paypalFixedFee);
+    // // console.log("paltformCharges", paltformCharges);
+
+    // //2) pro quote amount
+    // const serviceAmount = parseFloat(
+    //   proBookService?.quoteAmount || proBookService?.fixed_price || quoteAmount
+    // );
+    // console.log(serviceAmount, "serviceAmount");
+
+    // let totalTaxJarAmt = paltformCharges + serviceAmount;
+
+    // console.log("totalTaxJatamt", totalTaxJarAmt);
+
+    const platform = await findOne("adminFees");
+    const dbPlatformFee = parseFloat(platform?.platformFees); // e.g., 15
+
     const serviceAmount = parseFloat(
       proBookService?.quoteAmount || proBookService?.fixed_price || quoteAmount
     );
-    console.log(serviceAmount, "serviceAmount");
 
-    let totalTaxJarAmt = paltformCharges + serviceAmount;
+    const platformFeePercent = dbPlatformFee || 20; // default 20% if not set in DB
+    const platformCharges = (serviceAmount * platformFeePercent) / 100;
 
-    console.log("totalTaxJatamt", totalTaxJarAmt);
+    const totalTaxJarAmt = serviceAmount + platformCharges;
+
+    console.log({
+      serviceAmount,
+      platformFeePercent,
+      platformCharges,
+      totalTaxJarAmt,
+    });
 
     // // PayPal fee calculation
     // const feePercentage = 3.49 / 100;
@@ -106,7 +125,8 @@ const updateNewRequestBooking = async (req, res) => {
 
     // Emit data to React Native frontend via Socket.io
     //  req.io.emit("updateBookingService", findUserBookService);
-let totalAmount = Number(serviceAmount) + Number(paltformCharges) + Number(getTaxVal)
+    let totalAmount =
+      Number(serviceAmount) + Number(platformCharges) + Number(getTaxVal);
     if (proBookService?.quoteAmount) {
       const updateProBookService = await updateDocument(
         "proBookingService",
@@ -114,11 +134,11 @@ let totalAmount = Number(serviceAmount) + Number(paltformCharges) + Number(getTa
         {
           status: "Accepted",
           service_fee: serviceAmount,
-          platformFees: paltformCharges,
-        //  paypalFixedFee: paypalFixedFee,
-        //  paypalFeePercentage: paypalFeePercentage,
+          platformFees: platformCharges,
+          //  paypalFixedFee: paypalFixedFee,
+          //  paypalFeePercentage: paypalFeePercentage,
           tax_fee: getTaxVal,
-         total_amount: Number(totalAmount),
+          total_amount: Number(totalAmount),
           total_amount_cus_pay: Number(totalAmount),
         }
       );
@@ -134,9 +154,9 @@ let totalAmount = Number(serviceAmount) + Number(paltformCharges) + Number(getTa
         {
           status: "Accepted",
           service_fee: serviceAmount,
-          platformFees: paltformCharges,
-         // paypalFixedFee: paypalFixedFee,
-         // paypalFeePercentage: paypalFeePercentage,
+          platformFees: platformCharges,
+          // paypalFixedFee: paypalFixedFee,
+          // paypalFeePercentage: paypalFeePercentage,
           tax_fee: getTaxVal,
           total_amount: Number(totalAmount),
           total_amount_cus_pay: Number(totalAmount),
@@ -154,9 +174,9 @@ let totalAmount = Number(serviceAmount) + Number(paltformCharges) + Number(getTa
         {
           status: "Accepted",
           service_fee: serviceAmount,
-          platformFees: paltformCharges,
-         // paypalFixedFee: paypalFixedFee,
-         // paypalFeePercentage: paypalFeePercentage,
+          platformFees: platformCharges,
+          // paypalFixedFee: paypalFixedFee,
+          // paypalFeePercentage: paypalFeePercentage,
           tax_fee: getTaxVal,
           total_amount: Number(totalAmount),
           total_amount_cus_pay: Number(totalAmount),

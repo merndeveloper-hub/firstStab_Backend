@@ -33,7 +33,7 @@ const reviewBooking = async (req, res) => {
 
     const reviewRandomProBooking = await updateDocument(
       "proBookingService",
-      { bookServiceId: id, status: { $in: ["Accepted", "Pending"] } },
+      { bookServiceId: id, status: { $in: ["Accepted", "Pending","Delivered"] } },
       { status: "Confirmed", review: "Yes" }
     );
 

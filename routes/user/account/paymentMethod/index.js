@@ -21,7 +21,7 @@ const router = express.Router();
 router.get("/",tokenVerification, getAccessToken);
 
 ///---------------User Payment to Admin account ----------------//
-router.post("/pay",tokenVerification, createPaypalOrder);
+router.post("/pay", createPaypalOrder);
 
 router.post("/admintopro", sendPayout);
 

@@ -28,9 +28,9 @@ const createPaypalOrder = async (req, res) => {
     await schema.validateAsync(req.body);
     const {
       amount,
-
+      userId,
       bookServiceId, // proBookservice id
-
+      professsionalId,
       paymentMethod,
     } = req.body;
     if (paymentMethod == "paypal") {
@@ -114,8 +114,8 @@ const createPaypalOrder = async (req, res) => {
         ],
         application_context: {
           return_url:
-           // "http://localhost:5000/api/v1/user/account/payment/paypalsuccess",
-           "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
+            "http://localhost:5000/api/v1/user/account/payment/paypalsuccess",
+          // "http://3.110.42.187:5000/api/v1/user/account/payment/paypalsuccess",
 
           cancel_url:
             "http://3.110.42.187:5000/api/v1/user/account/payment/paypalcancel",
@@ -186,6 +186,35 @@ const createPaypalOrder = async (req, res) => {
       return res.status(201).json({ status: 201, data: data });
     } else if (paymentMethod == "stripe") {
       const { userId, amount } = req.body;
+      const proBookService = await findOne("proBookingService", {
+        _id: bookServiceId,
+      });
+
+      if (!proBookService || proBookService.length == 0) {
+        return res
+          .status(400)
+          .json({ status: 400, message: "Does not exist booking service!" });
+      }
+
+      const platform = await findOne("adminFees");
+
+      const stripeFeePercentage = parseFloat(platform?.stripeFeePercentage);
+
+      const stripeFixedFee = parseFloat(platform?.stripeFixedFee);
+
+      //Get tax from TaxJar (assumed to be a number)
+      let serviceAmount = proBookService?.service_fee;
+      let paltformCharges = proBookService?.platformFees;
+      let getTaxVal = proBookService?.tax_fee;
+
+      const totalAmount = calculateTotalAmount(
+        serviceAmount,
+        paltformCharges,
+        Number(getTaxVal),
+        stripeFeePercentage || 0,
+        stripeFixedFee || 0
+      );
+      console.log("Total Amount user should pay:", totalAmount);
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],

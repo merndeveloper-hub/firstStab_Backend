@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { updateDocument, findOne } from "../../../helpers/index.js";
 import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
 import createCandidatesCertn from "../../../lib/bgCheckr/certn/create.js";
+import send_email from "../../../lib/node-mailer/index.js";
 
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -119,6 +120,20 @@ const stripeSuccess = async (req, res) => {
       );
     }
 //console.log(invitationURL,"invitationURL...");
+
+  //^^ send email --------//
+ await send_email(
+    "proRegisterationPaymentSuccess",
+    {
+      user: findPro?.first_Name || findPro?.email,
+      paymentMethod:"Stripe",
+      transactionId:session.payment_intent?.id,
+     
+    },
+     "owaisy028@gmail.com",
+    "Account Blocked Due to Multiple Failed Login Attempts",
+    findPro?.email
+  );
 
  return res.send(`
   <html>

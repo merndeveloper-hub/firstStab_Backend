@@ -81,7 +81,7 @@ const bookService = async (req, res) => {
       return res.status(400).json({ status: 400, message: "User Not Found" });
     }
 
-    const findCategorie = await find("category", { _id: categoryId });
+    const findCategorie = await findOne("category", { _id: categoryId });
     if (!findCategorie || findCategorie.length == 0) {
       return res
         .status(400)
@@ -89,7 +89,7 @@ const bookService = async (req, res) => {
     }
     console.log(findCategorie, "findCategorie");
 
-    const findSubCategorie = await find("subCategory", {
+    const findSubCategorie = await findOne("subCategory", {
       _id: req.body.subCategories.id,
       [req.body.subCategories.serviceType]: true, // Dynamically check serviceType key
     });
@@ -102,27 +102,46 @@ const bookService = async (req, res) => {
         .json({ status: 400, message: "Sub Category Not Found" });
     }
 
-    if (price_model == "range" && findSubCategorie?.price_model == "range") {
-      let getMinPrice = Number(findSubCategorie?.min_price) <= range_price;
-      console.log(getMinPrice, "getminprice");
+      if (price_model == "fixed" && findSubCategorie?.price_model == "fixed") {
+      let getFixedPrice = Number(findSubCategorie?.fixed_price) == fixed_price;
+      if (!getFixedPrice) {
+        return res.status(400).json({
+          status: 400,
+          message: `The fixed price for this service is ${Number(
+            findSubCategorie?.fixed_price
+          )}`,
+        });
+      }
+    }
 
-      let getMaxPrice = Number(findSubCategorie?.max_price) <= range_price;
-      if (!getMinPrice) {
-        return res.status(400).json({
-          status: 400,
-          message: `The price must be at least ${Number(
-            findSubCategorie?.min_price
-          )}`,
-        });
-      }
-      if (!getMaxPrice) {
-        return res.status(400).json({
-          status: 400,
-          message: `The price must not exceed ${Number(
-            getSubcategory?.max_price
-          )}`,
-        });
-      }
+console.log(findSubCategorie?.price_model,"findSubCategorie?.price_model");
+
+    if (price_model == "range" && findSubCategorie?.price_model == "range") {
+      console.log("range");
+      
+    const minPrice = Number(findSubCategorie?.min_price);
+const maxPrice = Number(findSubCategorie?.max_price);
+const price = Number(range_price);
+
+console.log(price, "requested price");
+console.log(minPrice, "subcategory min_price");
+console.log(maxPrice, "subcategory max_price");
+
+// Check lower bound
+if (price < minPrice) {
+  return res.status(400).json({
+    status: 400,
+    message: `The price must be at least ${minPrice}`,
+  });
+}
+
+// Check upper bound
+if (price > maxPrice) {
+  return res.status(400).json({
+    status: 400,
+    message: `The price must not exceed ${maxPrice}`,
+  });
+}
     }
 
     //IsInPerson service Type in require user address
@@ -231,17 +250,20 @@ const bookService = async (req, res) => {
     }
 
     /// Already book A service ///
- const alreadyBook = await find("proBookingService", {
-  userId,
+const timeHHMM = extractedTime.slice(0,5); // "05:06"
+const alreadyBook = await find("proBookingService", {
+  professsionalId:professionalId,
   orderStartDate: extractedDate,
-  orderStartTime: extractedTime,
-  serviceType: { $in: ["isChat", "isVirtual", "isInPerson"] }
+  serviceType: { $in: ["isChat", "isVirtual", "isInPerson"] },
+  orderStartTime: { $regex: `^${timeHHMM}` }   // starts with HH:MM
 });
+
+
 
 if (alreadyBook.length > 0) {
   return res.status(400).json({
     status: 400,
-    message: "You already have a booking at this time."
+    message: "Pro already have a booking at this time."
   });
 }
     //--------Generate RequestID-------------//

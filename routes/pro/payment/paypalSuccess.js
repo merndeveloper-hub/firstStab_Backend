@@ -3,6 +3,7 @@ import getAccessToken from "./accessToken.js";
 import { updateDocument, findOne } from "../../../helpers/index.js";
 import createCandidates from "../../../lib/bgCheckr/checkr/create.js";
 import createCandidatesCertn from "../../../lib/bgCheckr/certn/create.js";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const paypalSuccess = async (req, res) => {
   try {
@@ -123,6 +124,19 @@ const paypalSuccess = async (req, res) => {
     //return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
     //return res.redirect(`myapp://payment-success?invitationUrl=${encodeURIComponent(invitationURL.invitation_url)}`);
 
+    //^^ send email --------//
+ await send_email(
+    "proRegisterationPaymentSuccess",
+    {
+      user: findPro?.first_Name || findPro?.email,
+      paymentMethod:"Paypal",
+      transactionId:token
+     
+    },
+     "owaisy028@gmail.com",
+    "Account Blocked Due to Multiple Failed Login Attempts",
+    findPro?.email
+  );
     return res.send(`
   <html>
     <body style="background:#fff; text-align:center; padding-top:50px;">
