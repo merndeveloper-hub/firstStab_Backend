@@ -29,8 +29,6 @@ const cancelledBooking = async (req, res) => {
         .json({ status: 400, message: "No Booking Found!" });
     }
 
-
-
     const orderDate = moment(goingbooking.orderStartDate, "YYYY-MM-DD");
     const cancelDate = moment(CancelDate, "YYYY-MM-DD");
 
@@ -52,11 +50,17 @@ const cancelledBooking = async (req, res) => {
     console.log("cancelTime", cancelTime);
     const diffInHours = startTime.diff(cancelTime, "hours", true);
     console.log("diffInHours", diffInHours);
+    const adminCharges = await findOne("adminFees");
 
-     const findPaymentMethod = await findOne("userPayment", { bookServiceId: id });
+    const findPaymentMethod = await findOne("userPayment", {
+      bookServiceId: id,
+    });
 
-let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFixedFee + paypalFeePercentage : stripeFeePercentage + stripeFixedFee
-    // * Agr user meeting mein nhi aye *// 
+    let findPaymentCharges =
+      findPaymentMethod?.paymentMethod == "Paypal"
+        ? adminCharges.paypalFixedFee + adminCharges.paypalFeePercentage
+        : adminCharges.stripeFeePercentage + adminCharges.stripeFixedFee;
+    // * Agr user meeting mein nhi aye *//
     if (
       reasonCancel == "User No Show" ||
       "User Cancelled" ||
@@ -134,14 +138,14 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
         console.log("diffInHours", diffInHours);
         // Charges base (In-Person ke liye service_fee + platformFees)
         const baseServiceFee =
-          Number(goingbooking?.service_fee || 0)  +
-          Number(goingbooking?.platformFees || 0) + 
-          Number(findPaymentCharges || 0) ;
+          Number(goingbooking?.service_fee || 0) +
+          Number(goingbooking?.platformFees || 0) +
+          Number(findPaymentCharges || 0);
         console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
 
         //** Rule for In-Person Services (less than 3 hour to startBooking)
-         // charges include = service fees + platform commission **//
+        // charges include = service fees + platform commission **//
         if (goingbooking.serviceType == "isInPerson") {
           let cancelbooking;
           // baseServiceFee not more than $100
@@ -160,7 +164,7 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
                 cancelledReason: "Cancelled By Professional",
                 CancelDate,
                 CancelTime,
-                priceToReturn:baseServiceFee,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -299,9 +303,9 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
         console.log("diffInHours", diffInHours);
         // Charges base (isVirtual ke liye service_fee + platformFees)
         const baseServiceFee =
-           Number(goingbooking?.service_fee || 0)  +
-          Number(goingbooking?.platformFees || 0) + 
-          Number(findPaymentCharges || 0) ;
+          Number(goingbooking?.service_fee || 0) +
+          Number(goingbooking?.platformFees || 0) +
+          Number(findPaymentCharges || 0);
         console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
 
@@ -402,9 +406,9 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
         console.log("diffInHours", diffInHours);
         // Charges base (isChat ke liye service_fee + platformFees)
         const baseServiceFee =
-          Number(goingbooking?.service_fee || 0)  +
-          Number(goingbooking?.platformFees || 0) + 
-          Number(findPaymentCharges || 0) ;
+          Number(goingbooking?.service_fee || 0) +
+          Number(goingbooking?.platformFees || 0) +
+          Number(findPaymentCharges || 0);
         console.log("baseServiceFee", baseServiceFee);
         let cancelCharges = 0;
 
@@ -414,7 +418,7 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
           // baseServiceFee not more than $100
           if (diffInHours < 3) {
             // ** add 10 + payment charges
-            cancelCharges = 10 +  Number(findPaymentCharges || 0);
+            cancelCharges = 10 + Number(findPaymentCharges || 0);
             console.log("cancelCharges", cancelCharges);
             //proBooking update
             cancelbooking = await updateDocument(
@@ -447,7 +451,7 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
                 CancelDate,
                 CancelTime,
                 CancelCharges: cancelCharges,
-                priceToReturn:baseServiceFee,
+                priceToReturn: baseServiceFee,
                 reasonDescription,
                 reasonCancel,
                 CancellationChargesApplyTo: "pro",
@@ -505,9 +509,10 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
         const diffInHours = startTime.diff(cancelTime, "hours", true);
         console.log("diffInHours", diffInHours);
         // Charges base (isRemote ke liye service_fee + platformFees)
-        const baseServiceFee =  Number(goingbooking?.service_fee || 0)  +
-          Number(goingbooking?.platformFees || 0) + 
-          Number(findPaymentCharges || 0) ;
+        const baseServiceFee =
+          Number(goingbooking?.service_fee || 0) +
+          Number(goingbooking?.platformFees || 0) +
+          Number(findPaymentCharges || 0);
         console.log("baseServiceFee", baseServiceFee);
 
         console.log("baseServiceFee", baseServiceFee);
@@ -519,7 +524,8 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
           // baseServiceFee service fees ka $20 %
           if (diffInHours < 3) {
             // ** service fees 20 % + platform fees
-            cancelCharges = (goingbooking?.service_fee * 0.2) +  Number(findPaymentCharges || 0) ;
+            cancelCharges =
+              goingbooking?.service_fee * 0.2 + Number(findPaymentCharges || 0);
             console.log("cancelCharges", cancelCharges);
             //proBooking update
             cancelbooking = await updateDocument(
@@ -584,9 +590,8 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
           });
         }
       }
-    }
-     else {
-        //proBooking update
+    } else {
+      //proBooking update
       let cancelbooking = await updateDocument(
         "proBookingService",
         { _id: id },
@@ -600,7 +605,7 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
           reasonDescription,
           reasonCancel,
           //  CancellationChargesApplyTo: "pro",
-         // amountReturn: "Manually decide",
+          // amountReturn: "Manually decide",
           //  ProfessionalPayableAmount: cancelCharges,
         }
       );
@@ -621,7 +626,7 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
           reasonDescription,
           reasonCancel,
           //  CancellationChargesApplyTo: "pro",
-         // amountReturn: "Manually decide",
+          // amountReturn: "Manually decide",
           //  ProfessionalPayableAmount: cancelCharges,
         }
       );

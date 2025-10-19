@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
+import moment from "moment";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -59,10 +60,13 @@ const cancelledBooking = async (req, res) => {
       bookServiceId: getProbooking?._id,
     });
 
+    const adminCharges = await findOne("adminFees");
+
     let findPaymentCharges =
       findPaymentMethod?.paymentMethod == "Paypal"
-        ? paypalFixedFee + paypalFeePercentage
-        : stripeFeePercentage + stripeFixedFee;
+        ? adminCharges.paypalFixedFee + adminCharges.paypalFeePercentage
+        : adminCharges.stripeFeePercentage + adminCharges.stripeFixedFee;
+
     // * Agr user meeting mein nhi aye *//
     if (
       reasonCancel == "Provider No Show" ||
