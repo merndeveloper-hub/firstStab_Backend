@@ -3,9 +3,9 @@ import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schemaBody = Joi.object().keys({
   CancelCharges: Joi.object({
-    service_fee: Joi.number().required(),
-    platformFees: Joi.number().required(),
-    findPaymentCharges: Joi.number().required(),
+    service_fee_charge: Joi.number().required(),
+    platformFees_charge: Joi.number().required(),
+    findPaymentCharges_charge: Joi.number().required(),
   }).required(),
   bookingFees: Joi.object({
     service_fee: Joi.number().required(),
@@ -57,9 +57,9 @@ const refundBookingAmtDecide = async (req, res) => {
 
     // Calculate total cancel charges from payload
     const totalCancelCharges =
-      Number(getProbooking?.service_fee * CancelCharges.service_fee) +
-      Number(getProbooking?.platformFees * CancelCharges.platformFees) +
-      Number(findPaymentCharges * CancelCharges.findPaymentCharges);
+      Number(getProbooking?.service_fee * CancelCharges.service_fee_charge) +
+      Number(getProbooking?.platformFees * CancelCharges.platformFees_charge) +
+      Number(findPaymentCharges * CancelCharges.findPaymentCharges_charge);
 
     // Calculate base service fee from bookingFees
     const baseServiceFee =
