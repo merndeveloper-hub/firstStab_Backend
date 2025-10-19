@@ -5,7 +5,7 @@ import profile from "./profile/index.js";
 import payment from "./paymentMethod/index.js";
 import paymenthistory from "./paymentHistory/index.js";
 import reviews from "./reviews/index.js";
-
+import reportQuery from "./report/index.js";
 
 const router = express.Router();
 
@@ -15,10 +15,7 @@ router.use("/profile", profile);
 router.use("/payment", payment);
 router.use("/paymenthistory", paymenthistory);
 router.use("/review", reviews);
+router.use("/report", reportQuery);
 
- //router.put("/:id",multipartMiddleware, updateCategory);
- //router.delete("/:id", deleteCategory);
-// Get Single Blog
-//router.get("/single/:id", getSingleCategory);
 
 export default router;

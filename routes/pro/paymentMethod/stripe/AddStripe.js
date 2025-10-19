@@ -89,9 +89,9 @@ const createStripeAccount = async (req, res) => {
     // Generate onboarding link
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `http://localhost:5000/api/v1/pro/paymentMethod/stripe/refreshonboarding?userId=${userId}`,
+      refresh_url: `http://3.110.42.187:5000/api/v1/pro/paymentMethod/stripe/refreshonboarding?userId=${userId}`,
       // return_url: `${process.env.BASE_URL}/api/stripe/return?userId=${userId}`,
-      return_url: `http://localhost:5000/api/v1/pro/paymentMethod/stripe/afteronboarding?userId=${userId}`,
+      return_url: `http://3.110.42.187:5000/api/v1/pro/paymentMethod/stripe/afteronboarding?userId=${userId}`,
       type: "account_onboarding",
     });
 

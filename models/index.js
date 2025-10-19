@@ -28,7 +28,7 @@ import chat from "./chat/index.js";
 import review from "./reviews/index.js";
 import apiLog from "./apiLog/index.js";
 import adminFees from "./adminFees/index.js";
-
+import reportQuery from "./reportQuery/index.js";
 
  const db = {};
 
@@ -39,7 +39,7 @@ import adminFees from "./adminFees/index.js";
  
 // };
 
-
+db.reportQuery=reportQuery
 db.apiLog=apiLog
 db.user = user
 db.serviceDetail=serviceDetail

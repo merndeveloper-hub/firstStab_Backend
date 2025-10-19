@@ -10,6 +10,7 @@ import adminLogs from "./adminLogs/index.js";
 import adminCharges from "./adminFees/index.js";
 import certificate  from "./certificate/index.js";
 import booking  from "./booking/index.js";
+import refund  from "./refund/index.js";
 
 const router = express.Router();
 
@@ -48,5 +49,9 @@ router.use("/logs",adminLogs)
 
 //-----------apps Logs---------------//
 router.use("/charges",adminCharges)
+
+
+//-----------apps Logs---------------//
+router.use("/refund",refund)
 
 export default router;

@@ -79,7 +79,7 @@ const proBookingServiceSchema = new mongoose.Schema(
     quoteDetail: { type: schemaType.TypeString }, // Text in MongoDB is stored as a long string
 
     quoteCreatedDateTime: { type: schemaType.TypeString },
-
+  refundReason: { type: schemaType.TypeString },
     cancelledReason: {
       type: schemaType.TypeString,
       default: "",
@@ -248,9 +248,9 @@ const proBookingServiceSchema = new mongoose.Schema(
     min_price: { type: schemaType.TypeString },
     max_price: { type: schemaType.TypeString },
 
-    range_price:{ type: schemaType.TypeString },
-     review: { type: schemaType.TypeString },
-  paymentMethod:{type:schemaType.TypeString},
+    range_price: { type: schemaType.TypeString },
+    review: { type: schemaType.TypeString },
+    paymentMethod: { type: schemaType.TypeString },
     userPayToAdmin: { type: schemaType.TypeString, default: "Pending" },
     adminPayToPro: { type: schemaType.TypeString },
     userToAdminPaypalCharges: {
@@ -258,7 +258,6 @@ const proBookingServiceSchema = new mongoose.Schema(
       paypal_fee: { type: schemaType.TypeString },
       net_amount: { type: schemaType.TypeString },
     },
-
   },
   { timestamps: true }
 );
