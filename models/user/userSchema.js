@@ -120,9 +120,9 @@ const userSchema = new mongoose.Schema(
       type: schemaType.TypeBoolean,
       default: false,
     },
- //   availableAmount: { type: schemaType.TypeNumber, default: 0 }, // paisa/cents
-  //  pendingAmount: { type: schemaType.TypeNumber, default: 0 },
-   // chargesAmount: { type: schemaType.TypeNumber, default: 0 },
+    //   availableAmount: { type: schemaType.TypeNumber, default: 0 }, // paisa/cents
+    //  pendingAmount: { type: schemaType.TypeNumber, default: 0 },
+    // chargesAmount: { type: schemaType.TypeNumber, default: 0 },
     created_date: {
       type: schemaType.TypeDate,
       default: Date.now,
@@ -132,13 +132,44 @@ const userSchema = new mongoose.Schema(
       enum: ["Active", "InActive", "AdminHideUser", "Disabled"],
       default: "Active",
     },
+    stripeAccountId: {
+      type: schemaType.TypeString,
+    },
+    stripeAccountStatus: {
+      type: schemaType.TypeString,
+    },
+    onboardingCompleteStripe: {
+      type: schemaType.TypeBoolean,
+    },
+    stripeAccountDisconnectedAt: {
+      type: schemaType.TypeString,
+    },
+    paypalEmail: {
+      type: schemaType.TypeString,
+    },
+    paypalFirstName: {
+      type: schemaType.TypeString,
+    },
+    paypalLastName: {
+      type: schemaType.TypeString,
+    },
+    paypalCountry: {
+      type: schemaType.TypeString,
+    },
+    paypalConnected: {
+      type: schemaType.TypeBoolean,
+    },
+    paypalVerified: {
+      type: schemaType.TypeBoolean,
+    },
+
     bookingRequestTime: { type: schemaType.TypeString },
     userType: { type: schemaType.TypeString, enum: ["user", "pro", "admin"] },
-     // running numbers for quick display
-  totalEarnings: {  type: schemaType.TypeNumber, default: 0  },  // total jobs completed (gross)
-  totalCharges:  {  type: schemaType.TypeNumber, default: 0  },  // plante charges remaining amount
-  netEarnings:   {  type: schemaType.TypeNumber, default: 0  },  // totalEarnings - totalCharges
-  currentBalance: {  type: schemaType.TypeNumber, default: 0  }, // what admin still owes the Pro
+    // running numbers for quick display
+    totalEarnings: { type: schemaType.TypeNumber, default: 0 }, // total jobs completed (gross)
+    totalCharges: { type: schemaType.TypeNumber, default: 0 }, // plante charges remaining amount
+    netEarnings: { type: schemaType.TypeNumber, default: 0 }, // totalEarnings - totalCharges
+    currentBalance: { type: schemaType.TypeNumber, default: 0 }, // what admin still owes the Pro
   },
   { timestamps: true }
 );

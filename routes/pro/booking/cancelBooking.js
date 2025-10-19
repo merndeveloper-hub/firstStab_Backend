@@ -585,11 +585,57 @@ let findPaymentCharges = findPaymentMethod?.paymentMethod == "Paypal" ? paypalFi
         }
       }
     }
+     else {
+        //proBooking update
+      let cancelbooking = await updateDocument(
+        "proBookingService",
+        { _id: id },
+        {
+          //  CancelCharges: cancelCharges,
+          status: "Cancelled",
+          cancelledReason: "Cancelled By Professional",
+          CancelDate,
+          CancelTime,
+          // priceToReturn: goingbooking?.total_amount,
+          reasonDescription,
+          reasonCancel,
+          //  CancellationChargesApplyTo: "pro",
+         // amountReturn: "Manually decide",
+          //  ProfessionalPayableAmount: cancelCharges,
+        }
+      );
+      // userBooking update
+      const cancelRandomProBooking = await updateDocument(
+        "userBookServ",
+        {
+          _id: cancelbooking?.bookServiceId,
+          status: { $in: ["Accepted", "Pending"] },
+        },
+        {
+          //  CancelCharges: cancelCharges,
+          status: "Cancelled",
+          cancelledReason: "Cancelled By Professional",
+          CancelDate,
+          CancelTime,
+          // priceToReturn: goingbooking?.total_amount,
+          reasonDescription,
+          reasonCancel,
+          //  CancellationChargesApplyTo: "pro",
+         // amountReturn: "Manually decide",
+          //  ProfessionalPayableAmount: cancelCharges,
+        }
+      );
+      return res.status(200).json({
+        status: 200,
+        message: "Cancelled Booking By Professional",
+        cancelbooking,
+      });
+    }
 
-    return res.status(400).json({
-      status: 400,
-      message: "Booking Not Found!",
-    });
+    // return res.status(400).json({
+    //   status: 400,
+    //   message: "Booking Not Found!",
+    // });
   } catch (e) {
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });

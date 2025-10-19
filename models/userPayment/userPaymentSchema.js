@@ -100,15 +100,14 @@ const userPaymentSchema = new mongoose.Schema(
       payerFirstName: { type: SchemaType.TypeString },
       payerLastName: { type: SchemaType.TypeString },
       payerCountryCode: { type: SchemaType.TypeString },
-   
     },
 
-    paypalCharges:{
-       gross_amount: { type: SchemaType.TypeString},
-      paypal_fee: { type: SchemaType.TypeString},
+    paypalCharges: {
+      gross_amount: { type: SchemaType.TypeString },
+      paypal_fee: { type: SchemaType.TypeString },
       net_amount: { type: SchemaType.TypeString },
     },
-payPalRefundLinkAdminToUser:{ type: SchemaType.TypeString },
+    payPalRefundLinkAdminToUser: { type: SchemaType.TypeString },
     paymentSource: {
       paypalAccountId: { type: SchemaType.TypeString },
       paypalEmail: { type: SchemaType.TypeString },
