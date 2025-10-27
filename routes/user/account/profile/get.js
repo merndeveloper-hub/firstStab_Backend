@@ -1,4 +1,4 @@
-import { insertNewDocument, findOne } from "../../../../helpers/index.js";
+import {  findOne } from "../../../../helpers/index.js";
 
 const findUser = async (req, res) => {
   try {

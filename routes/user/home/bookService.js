@@ -13,10 +13,22 @@ import {
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 //import { getSocket } from '../../../socket.js';
+
+// cloudinary.config({
+//   cloud_name: "dwebxmktr",
+//   api_key: "988681166781262",
+//   api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+// });
+
+// Additional optimization: Configure cloudinary with better defaults
 cloudinary.config({
   cloud_name: "dwebxmktr",
   api_key: "988681166781262",
   api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  // Performance optimizations
+  secure: true,
+  upload_prefix: "https://api.cloudinary.com",
+  chunk_size: 6000000, // 6MB chunks for better upload speed
 });
 
 const schema = Joi.object({
@@ -154,81 +166,170 @@ if (price > maxPrice) {
       }
     }
 
-    // if (req?.files?.media) {
+  
 
-    //   const bookServiceImages = Array.isArray(req.files.media)
+    // let uploadedFiles = [];
+
+    // if (req?.files?.media) {
+    //   const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
+    //   const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
+    //   const maxImageSizeMB = 2;
+    //   const maxVideoSizeMB = 5;
+
+    //   const mediaFiles = Array.isArray(req.files.media)
     //     ? req.files.media
     //     : [req.files.media];
 
-    //   for (const file of bookServiceImages) {
-    //     const cloudObj = await cloudinary.uploader.upload(file.path, { quality: 20 });
+    //   if (mediaFiles.length > 6) {
+    //     return res.status(400).json({ message: "Maximum 6 files allowed." });
+    //   }
+
+    //   for (const file of mediaFiles) {
+    //     console.log("Uploaded file type:------------", file);
+    //     const fileSizeMB = file.size / (1024 * 1024);
+    //     const isImage = allowedImageTypes.includes(file.type);
+    //     const isVideo = allowedVideoTypes.includes(file.type);
+
+    //     if (!isImage && !isVideo) {
+    //       return res
+    //         .status(400)
+    //         .json({ message: "Only image and video files are allowed." });
+    //     }
+
+    //     if (isImage && fileSizeMB > maxImageSizeMB) {
+    //       return res
+    //         .status(400)
+    //         .json({ message: "Image size should not exceed 2MB." });
+    //     }
+
+    //     if (isVideo && fileSizeMB > maxVideoSizeMB) {
+    //       return res
+    //         .status(400)
+    //         .json({ message: "Video size should not exceed 5MB." });
+    //     }
+
+    //     const uploadOptions = {
+    //       resource_type: isVideo ? "video" : "image",
+    //       folder: "booking-media",
+    //       use_filename: true,
+    //       unique_filename: false,
+    //       overwrite: false,
+    //       transformation: isImage
+    //         ? [{ quality: "auto:low", fetch_format: "auto" }]
+    //         : [{ quality: "auto:eco", width: 720, crop: "limit" }],
+    //     };
+
+    //     const cloudObj = await cloudinary.uploader.upload(
+    //       file.path,
+    //       uploadOptions
+    //     );
+
     //     uploadedFiles.push(cloudObj.url);
     //   }
 
-    //   req.body.images = uploadedFiles;
+    //   req.body.images = uploadedFiles; // Keep this as images or change key name if needed
     // }
 
-    let uploadedFiles = [];
+// Optimized media upload section - replace your existing upload code
 
-    if (req?.files?.media) {
-      const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
-      const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
-      const maxImageSizeMB = 2;
-      const maxVideoSizeMB = 5;
+let uploadedFiles = [];
 
-      const mediaFiles = Array.isArray(req.files.media)
-        ? req.files.media
-        : [req.files.media];
+if (req?.files?.media) {
+  const allowedImageTypes = ["image/jpeg", "image/png", "image/webp"];
+  const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
+  const maxImageSizeMB = 5;
+  const maxVideoSizeMB = 10;
 
-      if (mediaFiles.length > 6) {
-        return res.status(400).json({ message: "Maximum 6 files allowed." });
-      }
+  const mediaFiles = Array.isArray(req.files.media)
+    ? req.files.media
+    : [req.files.media];
 
-      for (const file of mediaFiles) {
-        console.log("Uploaded file type:------------", file);
-        const fileSizeMB = file.size / (1024 * 1024);
-        const isImage = allowedImageTypes.includes(file.type);
-        const isVideo = allowedVideoTypes.includes(file.type);
+  if (mediaFiles.length > 6) {
+    return res.status(400).json({ message: "Maximum 6 files allowed." });
+  }
 
-        if (!isImage && !isVideo) {
-          return res
-            .status(400)
-            .json({ message: "Only image and video files are allowed." });
-        }
+  // Pre-validate all files before uploading
+  for (const file of mediaFiles) {
+    const fileSizeMB = file.size / (1024 * 1024);
+    const isImage = allowedImageTypes.includes(file.type);
+    const isVideo = allowedVideoTypes.includes(file.type);
 
-        if (isImage && fileSizeMB > maxImageSizeMB) {
-          return res
-            .status(400)
-            .json({ message: "Image size should not exceed 2MB." });
-        }
-
-        if (isVideo && fileSizeMB > maxVideoSizeMB) {
-          return res
-            .status(400)
-            .json({ message: "Video size should not exceed 5MB." });
-        }
-
-        const uploadOptions = {
-          resource_type: isVideo ? "video" : "image",
-          folder: "booking-media",
-          use_filename: true,
-          unique_filename: false,
-          overwrite: false,
-          transformation: isImage
-            ? [{ quality: "auto:low", fetch_format: "auto" }]
-            : [{ quality: "auto:eco", width: 720, crop: "limit" }],
-        };
-
-        const cloudObj = await cloudinary.uploader.upload(
-          file.path,
-          uploadOptions
-        );
-
-        uploadedFiles.push(cloudObj.url);
-      }
-
-      req.body.images = uploadedFiles; // Keep this as images or change key name if needed
+    if (!isImage && !isVideo) {
+      return res
+        .status(400)
+        .json({ message: "Only image and video files are allowed." });
     }
+
+    if (isImage && fileSizeMB > maxImageSizeMB) {
+      return res
+        .status(400)
+        .json({ message: "Image size should not exceed 2MB." });
+    }
+
+    if (isVideo && fileSizeMB > maxVideoSizeMB) {
+      return res
+        .status(400)
+        .json({ message: "Video size should not exceed 5MB." });
+    }
+  }
+
+  // Parallel upload with Promise.all for faster processing
+  const uploadPromises = mediaFiles.map(async (file) => {
+    const isVideo = allowedVideoTypes.includes(file.type);
+    const isImage = allowedImageTypes.includes(file.type);
+
+    const uploadOptions = {
+      resource_type: isVideo ? "video" : "image",
+      folder: "booking-media",
+      use_filename: true,
+      unique_filename: true, // Changed to true to avoid conflicts
+      overwrite: false,
+      // Optimized transformations
+      transformation: isImage
+        ? [
+            { 
+              quality: "auto:low", 
+              fetch_format: "auto",
+              width: 1200, // Max width limit
+              crop: "limit" 
+            }
+          ]
+        : [
+            { 
+              quality: "auto:eco", 
+              width: 720, 
+              crop: "limit",
+              video_codec: "auto" // Auto codec selection
+            }
+          ],
+      // Additional performance optimizations
+      timeout: 60000, // 60 second timeout
+    };
+
+    try {
+      const cloudObj = await cloudinary.uploader.upload(file.path, uploadOptions);
+      return cloudObj.secure_url; // Use secure_url instead of url
+    } catch (error) {
+      console.error(`Upload failed for file ${file.name}:`, error);
+      throw new Error(`Failed to upload ${file.name}`);
+    }
+  });
+
+  try {
+    // Upload all files in parallel
+    uploadedFiles = await Promise.all(uploadPromises);
+    req.body.images = uploadedFiles;
+  } catch (error) {
+    return res.status(500).json({ 
+      status: 500, 
+      message: "File upload failed. Please try again.",
+      error: error.message 
+    });
+  }
+}
+
+
+
 
     let extractedDate;
     let extractedTime;

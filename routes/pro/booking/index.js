@@ -22,6 +22,7 @@ import cancelledRescheduleBooking from "./resheduleReject.js";
 import resheduleDeliveredBooking from "./resheduleDeliveredService.js";
 import priceQuoteBooking from "./priceQuoteBooking.js";
 import tokenVerification from "../../../middleware/token-verification/index.js";
+import rejectBooking from "./rejectBooking.js";
 
 const multipartMiddleware = multipart();
 
@@ -44,6 +45,9 @@ const router = express.Router();
  //-----Pro cancelled pro request booking----//
  router.put("/cancelled/:id",tokenVerification, cancelledBooking);
 
+
+ //-----Pro cancelled pro request booking----//
+ router.put("/reject/:id",tokenVerification, rejectBooking);
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
 router.get("/newrequest/:id",tokenVerification, newRequestBooking);
