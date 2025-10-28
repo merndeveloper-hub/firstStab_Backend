@@ -1,8 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "./config/db/index.js";
-import rateLimit from "express-rate-limit";
-import morgan from "morgan";
+// import rateLimit from "express-rate-limit";
+// import morgan from "morgan";
 import cors from "cors";
 import https from "https";
 import cookieParser from "cookie-parser";
@@ -62,15 +62,15 @@ app.use(pinoHttpMiddleware);
 //initSocket(server);
 
 //** Rate Limiter */
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  message: "Too many requests from this IP, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100,
+//   message: "Too many requests from this IP, please try again later.",
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
 
-app.use(limiter);
+// app.use(limiter);
 
 //-----logger insert db----/////
 app.use(apiLogger); // ✅ Apply here
@@ -79,7 +79,7 @@ app.use(apiLogger); // ✅ Apply here
 //app.use(arcjetMiddleware);
 
 ///It set false to local run test,when we go prod to set true value for rate limting check//
-app.set("trust proxy", false);
+//app.set("trust proxy", false);
 
 app.use((req, res, next) => {
   console.log(
