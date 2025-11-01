@@ -1,13 +1,21 @@
-import { find } from "../../../../helpers/index.js";
+import { find, findOne } from "../../../../helpers/index.js";
 
 const getChatMessages = async (req, res) => {
   try {
 
 
     const { senderId, receiverId, proBooking } = req.params
-    console.log(req.params);
-let messages;
-    if (proBooking) {
+ 
+    let checkMessageBooking = await findOne(
+      'chatMessage',
+      { proBooking }
+    );
+
+
+    let messages;
+    if (checkMessageBooking) {
+   
+
       messages = await find(
         'chatMessage',
         {
@@ -19,6 +27,7 @@ let messages;
         }
       );
     } else {
+      
       messages = await find(
         'chatMessage',
         {

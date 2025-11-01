@@ -18,8 +18,8 @@ const getBookingChats = async (req, res) => {
       {
         $match: {
          $or: [
-      { senderId: id },
-     // { receiverId: id }
+     // { senderId: id },
+      { receiverId: id }
     ]
         },
       },
@@ -242,8 +242,8 @@ const getBookingChats = async (req, res) => {
       {
         $match: {
          $or: [
-      { senderId: id },
-     // { receiverId: id }
+    //  { senderId: id },
+      { receiverId: id }
     ]
         },
       },

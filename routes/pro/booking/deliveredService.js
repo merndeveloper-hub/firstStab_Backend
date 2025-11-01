@@ -334,7 +334,7 @@ const deliveredBooking = async (req, res) => {
 
     // Prepare update data
     const updateData = {
-      status: "Delivered",
+      status: goingbooking?.status == "Completed" ? "Completed":"Delivered",
       serviceImage: uploadedFiles.length ? uploadedFiles : undefined,
      FinishedTime, 
      FinishedDate 
