@@ -1,271 +1,36 @@
-// import Joi from "joi";
-// import {
-//   findOne,
-//   updateDocument,
-// } from "../../../helpers/index.js";
-// import { v2 as cloudinary } from "cloudinary";
-
-
-// cloudinary.config({
-//   cloud_name: "dwebxmktr",
-//   api_key: "988681166781262",
-//   api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
-// });
-
-// const schema = Joi.object().keys({
-//   id: Joi.string().required(),
-// });
-
-
-// const schemaBody = Joi.object().keys({
-//   serviceImage: Joi.array().allow("").optional(),
-// });
-
-
-// //serviceImage
-// const deliveredBooking = async (req, res) => {
-//   try {
-   
-    
-//     await schema.validateAsync(req.params);
-//     await schemaBody.validateAsync(req.body);
-//     const { id } = req.params;
-//     const goingbooking = await findOne("proBookingService", { _id: id });
-
-//     if (!goingbooking || goingbooking.length == 0) {
-//       return res
-//         .status(400)
-//         .json({ status: 400, message: "No Booking Found!" });
-//     }
-
-// if( goingbooking.orderRescheduleStatus == "NA"){
-
-
-
-//  let uploadedFiles = [];
-
-//     if (req?.files?.serviceImage) {
-//       const allowedImageTypes = ["image/jpeg", "image/png", "image/webp","image/jfif"];
-//       const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
-//       const maxImageSizeMB = 2;
-//       const maxVideoSizeMB = 5;
-    
-//       const mediaFiles = Array.isArray(req.files.serviceImage)
-//         ? req.files.serviceImage
-//         : [req.files.serviceImage];
-    
-//       if (mediaFiles.length > 6) {
-//         return res.status(400).json({ message: "Maximum 6 files allowed." });
-//       }
-    
-//    console.log(mediaFiles,"-----");
-   
-      
-//       for (const file of mediaFiles) {
-//         console.log("Uploaded file type:------------", file);
-//         const fileSizeMB = file.size / (1024 * 1024);
-//         const isImage = allowedImageTypes.includes(file.type);
-//         const isVideo = allowedVideoTypes.includes(file.type);
-    
-//         if (!isImage && !isVideo) {
-//           return res.status(400).json({ message: "Only image and video files are allowed." });
-//         }
-    
-//         // if (isImage && fileSizeMB > maxImageSizeMB) {
-//         //   return res.status(400).json({ message: "Image size should not exceed 2MB." });
-//         // }
-    
-//         // if (isVideo && fileSizeMB > maxVideoSizeMB) {
-//         //   return res.status(400).json({ message: "Video size should not exceed 5MB." });
-//         // }
-    
-//         const uploadOptions = {
-//           resource_type: isVideo ? "video" : "image",
-//           folder: "booking-media",
-//           use_filename: true,
-//           unique_filename: false,
-//           overwrite: false,
-//           transformation: isImage
-//             ? [{ quality: "auto:low", fetch_format: "auto" }]
-//             : [{ quality: "auto:eco", width: 720, crop: "limit" }],
-//         };
-    
-//         const cloudObj = await cloudinary.uploader.upload(file.path, uploadOptions);
-    
-//         uploadedFiles.push(cloudObj.url);
-//       }
-    
-//       req.body.serviceImage = uploadedFiles; // Keep this as images or change key name if needed
-//     }
-
-//     const deliveredBooking = await updateDocument(
-//       "proBookingService",
-//       { _id: id },
-//       { status: "Delivered", serviceImage: uploadedFiles ?  uploadedFiles : undefined, }
-//     );
-
-    
-//     if (!deliveredBooking || deliveredBooking.length == 0) {
-//       return res
-//       .status(400)
-//       .json({ status: 400, message: "No Booking Found!" });
-//     }
-    
-//     console.log(deliveredBooking.bookServiceId,"deliveredBooking.bookServiceId");
-    
-//     const deliveredRandomProBooking = await updateDocument(
-//       "userBookServ",
-//       { _id: deliveredBooking.bookServiceId},
-//       { status: "Delivered", serviceImage: uploadedFiles ?  uploadedFiles : undefined, }
-//     );
-//     console.log(deliveredRandomProBooking,"deliveredRandomProBooking");
-    
-    
-//     return res
-//       .status(200)
-//       .json({
-//         status: 200,
-//         message: "Delivered Service By Professional",
-//         deliveredBooking,
-//       });
-
-//     }
-//     else {
-//       const goingbooking = await findOne("proBookingService", { _id: id });
-
-//       if (!goingbooking || goingbooking.length == 0) {
-//         return res
-//           .status(400)
-//           .json({ status: 400, message: "No Booking Found!" });
-//       }
-  
-  
-  
-//    let uploadedFiles = [];
-  
-//       if (req?.files?.serviceImage) {
-//         const allowedImageTypes = ["image/jpeg", "image/png", "image/webp","image/jfif"];
-//         const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
-//         const maxImageSizeMB = 2;
-//         const maxVideoSizeMB = 5;
-      
-//         const mediaFiles = Array.isArray(req.files.serviceImage)
-//           ? req.files.serviceImage
-//           : [req.files.serviceImage];
-      
-//         if (mediaFiles.length > 6) {
-//           return res.status(400).json({ message: "Maximum 6 files allowed." });
-//         }
-      
-//      console.log(mediaFiles,"-----");
-     
-        
-//         for (const file of mediaFiles) {
-//           console.log("Uploaded file type:------------", file);
-//           const fileSizeMB = file.size / (1024 * 1024);
-//           const isImage = allowedImageTypes.includes(file.type);
-//           const isVideo = allowedVideoTypes.includes(file.type);
-      
-//           // if (!isImage && !isVideo) {
-//           //   return res.status(400).json({ message: "Only image and video files are allowed." });
-//           // }
-      
-//           // if (isImage && fileSizeMB > maxImageSizeMB) {
-//           //   return res.status(400).json({ message: "Image size should not exceed 2MB." });
-//           // }
-      
-//           if (isVideo && fileSizeMB > maxVideoSizeMB) {
-//             return res.status(400).json({ message: "Video size should not exceed 5MB." });
-//           }
-      
-//           const uploadOptions = {
-//             resource_type: isVideo ? "video" : "image",
-//             folder: "booking-media",
-//             use_filename: true,
-//             unique_filename: false,
-//             overwrite: false,
-//             transformation: isImage
-//               ? [{ quality: "auto:low", fetch_format: "auto" }]
-//               : [{ quality: "auto:eco", width: 720, crop: "limit" }],
-//           };
-      
-//           const cloudObj = await cloudinary.uploader.upload(file.path, uploadOptions);
-      
-//           uploadedFiles.push(cloudObj.url);
-//         }
-      
-//         req.body.serviceImage = uploadedFiles; // Keep this as images or change key name if needed
-//       }
-  
-//       const deliveredBooking = await updateDocument(
-//         "proBookingService",
-//         { _id: id },
-//         { status: "Delivered",  orderRescheduleStatus: "Delivered", serviceImage: uploadedFiles ?  uploadedFiles : undefined, }
-//       );
-  
-      
-//       if (!deliveredBooking || deliveredBooking.length == 0) {
-//         return res
-//         .status(400)
-//         .json({ status: 400, message: "No Booking Found!" });
-//       }
-      
-//       console.log(deliveredBooking.bookServiceId,"deliveredBooking.bookServiceId");
-      
-//       const deliveredRandomProBooking = await updateDocument(
-//         "userBookServ",
-//         { _id: deliveredBooking.bookServiceId },
-//         { status: "Delivered",orderRescheduleStatus: "Delivered", serviceImage: uploadedFiles ?  uploadedFiles : undefined, }
-//       );
-  
-      
-      
-//       return res
-//         .status(200)
-//         .json({
-//           status: 200,
-//           message: "Delivered Reshedule Service By Professional",
-//           deliveredBooking,
-//         });
-//     }
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(400).json({ status: 400, message: e.message });
-//   }
-// };
-
-// export default deliveredBooking;
-
-
 import Joi from "joi";
-import {
-  findOne,
-  updateDocument,
-} from "../../../helpers/index.js";
+import { findOne, updateDocument } from "../../../helpers/index.js";
+import { convertToUTC, extractDate, extractTime } from "../../../utils/index.js";
 import { v2 as cloudinary } from "cloudinary";
 
+// Cloudinary configuration
 cloudinary.config({
   cloud_name: "dwebxmktr",
   api_key: "988681166781262",
   api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  secure: true,
+  upload_prefix: "https://api.cloudinary.com",
+  chunk_size: 6000000,
 });
 
 const schema = Joi.object().keys({
-  id: Joi.string().required(),
+  id: Joi.string().hex().length(24).required(),
 });
 
 const schemaBody = Joi.object().keys({
-  serviceImage: Joi.array().allow("").optional(),
-   FinishedTime: Joi.string().required(),
-  FinishedDate: Joi.string().required(),
+  serviceImage: Joi.array().optional().allow(""),
+  FinishedTime: Joi.string().required(), // HH:mm:ss
+  FinishedDate: Joi.string().required(), // YYYY-MM-DD
+  timezone: Joi.string().required(), // ✅ Professional's timezone
+  deliveryNotes: Joi.string().optional().allow(""),
 });
 
-// ✅ Helper function for parallel uploads
+// ✅ Helper function for parallel media uploads
 const uploadMediaFiles = async (files) => {
   const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/jfif"];
   const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm"];
-  const maxImageSizeMB = 2;
-  const maxVideoSizeMB = 5;
+  const maxImageSizeMB = 5;
+  const maxVideoSizeMB = 10;
 
   const mediaFiles = Array.isArray(files) ? files : [files];
 
@@ -273,7 +38,7 @@ const uploadMediaFiles = async (files) => {
     throw new Error("Maximum 6 files allowed.");
   }
 
-  // Validate all files before uploading
+  // Pre-validate all files
   for (const file of mediaFiles) {
     const fileSizeMB = file.size / (1024 * 1024);
     const isImage = allowedImageTypes.includes(file.type);
@@ -282,92 +47,197 @@ const uploadMediaFiles = async (files) => {
     if (!isImage && !isVideo) {
       throw new Error("Only image and video files are allowed.");
     }
-    // Uncomment to enforce image/video size limits
-    // if (isImage && fileSizeMB > maxImageSizeMB) throw new Error("Image size should not exceed 2MB.");
-    // if (isVideo && fileSizeMB > maxVideoSizeMB) throw new Error("Video size should not exceed 5MB.");
+
+    if (isImage && fileSizeMB > maxImageSizeMB) {
+      throw new Error("Image size should not exceed 5MB.");
+    }
+
+    if (isVideo && fileSizeMB > maxVideoSizeMB) {
+      throw new Error("Video size should not exceed 10MB.");
+    }
   }
 
-  // Upload all in parallel
-  const uploadedFiles = await Promise.all(
-    mediaFiles.map((file) => {
-      const isImage = allowedImageTypes.includes(file.type);
-      const isVideo = allowedVideoTypes.includes(file.type);
+  // Upload all files in parallel
+  const uploadPromises = mediaFiles.map(async (file) => {
+    const isImage = allowedImageTypes.includes(file.type);
+    const isVideo = allowedVideoTypes.includes(file.type);
 
-      const uploadOptions = {
-        resource_type: isVideo ? "video" : "image",
-        folder: "booking-media",
-        use_filename: true,
-        unique_filename: false,
-        overwrite: false,
-        transformation: isImage
-          ? [{ quality: "auto:low", fetch_format: "auto" }]
-          : [{ quality: "auto:eco", width: 720, crop: "limit" }],
-      };
+    const uploadOptions = {
+      resource_type: isVideo ? "video" : "image",
+      folder: "booking-media/delivered",
+      use_filename: true,
+      unique_filename: true, // Avoid conflicts
+      overwrite: false,
+      transformation: isImage
+        ? [{ quality: "auto:low", fetch_format: "auto", width: 1200, crop: "limit" }]
+        : [{ quality: "auto:eco", width: 720, crop: "limit", video_codec: "auto" }],
+      timeout: 60000,
+    };
 
-      return cloudinary.uploader.upload(file.path, uploadOptions).then((res) => res.url);
-    })
-  );
+    try {
+      const cloudObj = await cloudinary.uploader.upload(file.path, uploadOptions);
+      return cloudObj.secure_url;
+    } catch (error) {
+      console.error(`Upload failed for file ${file.name}:`, error);
+      throw new Error(`Failed to upload ${file.name}`);
+    }
+  });
 
+  const uploadedFiles = await Promise.all(uploadPromises);
   return uploadedFiles;
 };
 
 const deliveredBooking = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
-  //  await schemaBody.validateAsync(req.body);
-    const { id } = req.params;
+    await schemaBody.validateAsync(req.body);
 
- const { FinishedTime, FinishedDate} = req.body;
- console.log(req.body,"body");
- 
+    const { id } = req.params;
+    const { FinishedTime, FinishedDate, timezone, deliveryNotes } = req.body;
+
+    console.log("📦 Delivered Request:", { id, FinishedDate, FinishedTime, timezone });
+
+    // ========== FIND BOOKING ==========
     const goingbooking = await findOne("proBookingService", { _id: id });
 
     if (!goingbooking) {
       return res.status(400).json({ status: 400, message: "No Booking Found!" });
     }
 
-    let uploadedFiles = [];
-    if (req?.files?.serviceImage) {
-      uploadedFiles = await uploadMediaFiles(req.files.serviceImage);
-      req.body.serviceImage = uploadedFiles;
+    // Check if already delivered
+    if (goingbooking.status === "Delivered") {
+      return res.status(400).json({
+        status: 400,
+        message: "Booking has already been delivered",
+      });
     }
 
-    // Prepare update data
+    // Check if already completed
+    if (goingbooking.status === "Completed") {
+      return res.status(400).json({
+        status: 400,
+        message: "Booking is already completed",
+      });
+    }
+
+    // Check if cancelled
+    if (goingbooking.status === "Cancelled") {
+      return res.status(400).json({
+        status: 400,
+        message: "Cannot deliver a cancelled booking",
+      });
+    }
+
+    // ========== VALIDATE AND CONVERT DELIVERY TIME TO UTC ==========
+    const validatedFinishDate = extractDate(FinishedDate);
+    const validatedFinishTime = extractTime(FinishedTime);
+
+    if (!validatedFinishDate || !validatedFinishTime) {
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid finish date or time format",
+      });
+    }
+
+    // Convert pro's delivery time to UTC
+    const utcDelivery = convertToUTC(validatedFinishDate, validatedFinishTime, timezone);
+    if (!utcDelivery) {
+      return res.status(400).json({
+        status: 400,
+        message: "Failed to convert delivery time to UTC",
+      });
+    }
+
+    console.log("🕒 Delivery Time Conversion:", {
+      proTimezone: timezone,
+      proDateTime: `${validatedFinishDate} ${validatedFinishTime}`,
+      utcDateTime: `${utcDelivery.utcDate} ${utcDelivery.utcTime}`,
+    });
+
+    // ========== UPLOAD SERVICE IMAGES ==========
+    let uploadedFiles = [];
+    if (req?.files?.serviceImage) {
+      try {
+        uploadedFiles = await uploadMediaFiles(req.files.serviceImage);
+        console.log(`✅ Uploaded ${uploadedFiles.length} files`);
+      } catch (error) {
+        return res.status(500).json({
+          status: 500,
+          message: "File upload failed: " + error.message,
+        });
+      }
+    }
+
+    // ========== PREPARE UPDATE DATA ==========
     const updateData = {
-      status: goingbooking?.status == "Completed" ? "Completed":"Delivered",
-      serviceImage: uploadedFiles.length ? uploadedFiles : undefined,
-     FinishedTime, 
-     FinishedDate 
+      status: "Delivered",
+      deliveryStatus: "Delivered",
+      serviceImage: uploadedFiles.length > 0 ? uploadedFiles : undefined,
+      FinishedTime: utcDelivery.utcTime, // ✅ Store in UTC
+      FinishedDate: utcDelivery.utcDate, // ✅ Store in UTC
+      deliveryTimezone: timezone, // ✅ Store pro's timezone
+      deliveryNotes: deliveryNotes || "Service delivered by professional",
+      deliveredAt: new Date().toISOString(),
     };
 
-    if (goingbooking.orderRescheduleStatus !== "NA") {
+    // If booking was rescheduled, mark reschedule as delivered
+    if (goingbooking.orderRescheduleStatus && goingbooking.orderRescheduleStatus !== "NA") {
       updateData.orderRescheduleStatus = "Delivered";
     }
 
-    // Update in proBookingService
-    const updatedBooking = await updateDocument("proBookingService", { _id: id }, updateData);
+    // ========== UPDATE PRO BOOKING ==========
+    const updatedBooking = await updateDocument(
+      "proBookingService",
+      { _id: id },
+      updateData
+    );
 
     if (!updatedBooking) {
-      return res.status(400).json({ status: 400, message: "No Booking Found!" });
+      return res.status(400).json({
+        status: 400,
+        message: "Failed to update pro booking",
+      });
     }
 
-    // Update in userBookServ
+    // ========== UPDATE USER BOOKING ==========
     const updatedUserBooking = await updateDocument(
       "userBookServ",
       { _id: updatedBooking.bookServiceId },
       updateData
     );
 
+    if (!updatedUserBooking) {
+      return res.status(400).json({
+        status: 400,
+        message: "Failed to update user booking",
+      });
+    }
+
+    console.log("✅ Booking Delivered Successfully");
+
+    // ========== SEND NOTIFICATION (Optional) ==========
+    // You can add notification logic here
+    // sendNotification(goingbooking.userId, "Your service has been delivered");
+
     return res.status(200).json({
       status: 200,
       message:
         goingbooking.orderRescheduleStatus === "NA"
-          ? "Delivered Service By Professional"
-          : "Delivered Reschedule Service By Professional",
+          ? "Service delivered successfully by professional"
+          : "Rescheduled service delivered successfully by professional",
+      // data: {
+      //   bookingId: id,
+      //   userBookingId: updatedBooking.bookServiceId,
+      //   deliveryDate: utcDelivery.utcDate,
+      //   deliveryTime: utcDelivery.utcTime,
+      //   timezone: timezone,
+      //   serviceImages: uploadedFiles,
+      //   wasRescheduled: goingbooking.orderRescheduleStatus !== "NA",
+      // },
       deliveredBooking: updatedBooking,
     });
   } catch (e) {
-    console.log(e);
+    console.error("❌ Delivered Booking Error:", e);
     return res.status(400).json({ status: 400, message: e.message });
   }
 };

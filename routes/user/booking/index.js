@@ -17,7 +17,7 @@ import reviewBooking from "./reviewBooking.js";
 const router = express.Router();
 
 ///--------User get all created,requested,accepted services------///
-router.get("/:id",tokenVerification, booking);
+router.get("/:timezone/:id",tokenVerification, booking);
 
 //router.post("/add",multipartMiddleware, addCategory);
 

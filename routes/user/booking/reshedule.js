@@ -1,25 +1,29 @@
 import Joi from "joi";
-import { findOne, updateDocument } from "../../../helpers/index.js";
-
-// const schema = Joi.object().keys({
-//   id: Joi.string().required(),
-// });
+import { findOne, updateDocument, find } from "../../../helpers/index.js";
+import { convertToUTC, extractDate, extractTime, hasTimeConflict } from "../../../utils/index.js";
+import moment from "moment-timezone";
 
 const schemaBody = Joi.object().keys({
-  userId: Joi.string().allow("").optional(),
-  professsionalId: Joi.string().allow("").optional(),
-  bookServiceId: Joi.string(),
-  orderRescheduleStartTime: Joi.string(),
-  serviceType: Joi.string().allow("").optional(),
-  orderRescheduleStartDate: Joi.string(),
-  orderRescheduleEndDate: Joi.string().allow("").optional(),
-  orderRescheduleEndTime: Joi.string().allow("").optional(),
-  orderRescheduleReason: Joi.string().allow("").optional(),
-  orderRescheduleNumber: Joi.string().allow("").optional(),
+  userId: Joi.string().hex().length(24).optional().allow(""),
+  professsionalId: Joi.string().hex().length(24).optional().allow(""),
+  bookServiceId: Joi.string().hex().length(24).required(),
+  serviceType: Joi.string().optional().allow(""),
+  
+  // ✅ Reschedule date/time fields
+  orderRescheduleStartTime: Joi.string().required(), // HH:mm:ss
+  orderRescheduleStartDate: Joi.string().required(), // YYYY-MM-DD
+  orderRescheduleEndDate: Joi.string().optional().allow("", null),
+  orderRescheduleEndTime: Joi.string().optional().allow("", null),
+  
+  // ✅ Timezone field (required)
+  timezone: Joi.string().required(),
+  
+  // Other fields
+  orderRescheduleReason: Joi.string().optional().allow(""),
+  orderRescheduleNumber: Joi.string().optional().allow(""),
 });
 
-//Rejected
-const userResheduleRequest = async (req, res) => {
+const userRescheduleRequest = async (req, res) => {
   try {
     await schemaBody.validateAsync(req.body);
 
@@ -28,23 +32,27 @@ const userResheduleRequest = async (req, res) => {
       userId,
       professsionalId,
       serviceType,
-      orderRescheduleStatus,
       orderRescheduleStartTime,
       orderRescheduleStartDate,
-      orderExtendStatus,
       orderRescheduleEndDate,
-      orderRescheduleRequest,
       orderRescheduleEndTime,
       orderRescheduleReason,
-      orderRescheduleNumber,
+      timezone,
     } = req.body;
 
-    // Booking found
+    console.log("🔄 Reschedule Request:", {
+      bookServiceId,
+      orderRescheduleStartDate,
+      orderRescheduleStartTime,
+      timezone,
+    });
+
+    // ========== FIND BOOKINGS ==========
     const userBooking = await findOne("userBookServ", {
       _id: bookServiceId,
     });
 
-    if (!userBooking || userBooking.length == 0) {
+    if (!userBooking) {
       return res.status(400).json({
         status: 400,
         message: "Booking Not Found",
@@ -54,133 +62,227 @@ const userResheduleRequest = async (req, res) => {
     const proBooking = await findOne("proBookingService", {
       bookServiceId,
     });
-    if (!proBooking || proBooking.length == 0) {
+
+    if (!proBooking) {
       return res.status(400).json({
         status: 400,
-        message: "Booking Not Found",
+        message: "Pro Booking Not Found",
       });
     }
 
-    //already apply reshedule:
-    const userBookingReshedule = await findOne("userBookServ", {
-      _id: bookServiceId,
-      orderRescheduleNumber: "1",
+    // ========== CHECK IF ALREADY RESCHEDULED ==========
+    if (userBooking.orderRescheduleNumber === "1") {
+      return res.status(400).json({
+        status: 400,
+        message: "Booking has already been rescheduled once",
+      });
+    }
+
+    // ========== CHECK IF COMPLETED ==========
+    if (userBooking.status === "Completed" || proBooking.status === "Completed") {
+      return res.status(400).json({
+        status: 400,
+        message: "Cannot reschedule a completed booking",
+      });
+    }
+
+    // ========== CHECK IF CANCELLED ==========
+    if (userBooking.status === "Cancelled" || proBooking.status === "Cancelled") {
+      return res.status(400).json({
+        status: 400,
+        message: "Cannot reschedule a cancelled booking",
+      });
+    }
+
+    // ========== CHECK IF PROFESSIONAL ALREADY REQUESTED ==========
+    if (
+      userBooking.orderRescheduleStatus === "Requested" &&
+      userBooking.orderRescheduleRequest === "professional"
+    ) {
+      return res.status(400).json({
+        status: 400,
+        message: "Professional has already requested reschedule. Please respond to their request first.",
+      });
+    }
+
+    // ========== CHECK IF USER ALREADY REQUESTED ==========
+    if (
+      userBooking.orderRescheduleStatus === "Requested" &&
+      userBooking.orderRescheduleRequest === "user"
+    ) {
+      return res.status(400).json({
+        status: 400,
+        message: "You have already requested reschedule. Please wait for professional's response.",
+      });
+    }
+
+    // ========== VALIDATE BOOKING STATUS ==========
+    if (userBooking.status !== "Confirmed" || proBooking.status !== "Confirmed") {
+      return res.status(400).json({
+        status: 400,
+        message: "Only confirmed bookings can be rescheduled",
+      });
+    }
+
+    // ========== VALIDATE AND CONVERT RESCHEDULE TIME TO UTC ==========
+    const validatedStartDate = extractDate(orderRescheduleStartDate);
+    const validatedStartTime = extractTime(orderRescheduleStartTime);
+
+    if (!validatedStartDate || !validatedStartTime) {
+      return res.status(400).json({
+        status: 400,
+        message: "Invalid reschedule date or time format",
+      });
+    }
+
+    // Convert user's reschedule time to UTC
+    const utcRescheduleStart = convertToUTC(validatedStartDate, validatedStartTime, timezone);
+    if (!utcRescheduleStart) {
+      return res.status(400).json({
+        status: 400,
+        message: "Failed to convert reschedule time to UTC",
+      });
+    }
+
+    // Handle end date/time if provided
+    let utcRescheduleEnd = null;
+    if (orderRescheduleEndDate && orderRescheduleEndTime) {
+      const validatedEndDate = extractDate(orderRescheduleEndDate);
+      const validatedEndTime = extractTime(orderRescheduleEndTime);
+
+      if (validatedEndDate && validatedEndTime) {
+        utcRescheduleEnd = convertToUTC(validatedEndDate, validatedEndTime, timezone);
+      }
+    }
+
+    console.log("🕒 Reschedule Time Conversion:", {
+      userTimezone: timezone,
+      userDateTime: `${validatedStartDate} ${validatedStartTime}`,
+      utcDateTime: `${utcRescheduleStart.utcDate} ${utcRescheduleStart.utcTime}`,
     });
 
-    if (userBookingReshedule) {
+    // ========== CHECK IF RESCHEDULE TIME IS IN THE PAST ==========
+    const rescheduleDateTime = moment.utc(
+      `${utcRescheduleStart.utcDate}T${utcRescheduleStart.utcTime}`,
+      "YYYY-MM-DDTHH:mm:ss"
+    );
+    const currentDateTime = moment.utc();
+
+    if (rescheduleDateTime.isBefore(currentDateTime)) {
       return res.status(400).json({
         status: 400,
-        message: "Booking Already Reshedule",
+        message: "Cannot reschedule to a past date/time",
       });
     }
 
-    const proBookingReshedule = await findOne("proBookingService", {
-      bookServiceId,
-      orderRescheduleNumber: "1",
-    });
-    if (proBookingReshedule) {
+    // ========== CHECK IF PROFESSIONAL HAS CONFLICT ==========
+    if (proBooking.professsionalId) {
+      const timeHHMM = utcRescheduleStart.utcTime.slice(0, 5);
+      
+      const existingBookings = await find("proBookingService", {
+        professsionalId: proBooking.professsionalId,
+        orderStartDate: utcRescheduleStart.utcDate,
+        serviceType: { $in: ["isChat", "isVirtual", "isInPerson"] },
+        status: { $in: ["Pending", "Accepted", "Confirmed"] },
+        _id: { $ne: proBooking._id }, // Exclude current booking
+        orderStartTime: { $regex: `^${timeHHMM}` },
+      });
+
+      if (existingBookings.length > 0) {
+        return res.status(400).json({
+          status: 400,
+          message: "Professional already has a booking at the requested time. Please choose a different time.",
+        });
+      }
+    }
+
+    // ========== CHECK RESCHEDULE WINDOW (Optional: Must be at least 24 hours before original time) ==========
+    const originalDateTime = moment.utc(
+      `${userBooking.subCategories.orderStartDate}T${userBooking.subCategories.orderStartTime}`,
+      "YYYY-MM-DDTHH:mm:ss"
+    );
+    
+    const hoursUntilOriginal = originalDateTime.diff(currentDateTime, "hours", true);
+
+    if (hoursUntilOriginal < 24) {
       return res.status(400).json({
         status: 400,
-        message: "Booking Already Reshedule",
+        message: "Cannot reschedule within 24 hours of the original booking time",
       });
     }
 
-    const findUserBooking = await findOne("userBookServ", {
-      _id: bookServiceId,
-      status: "Completed",
-    });
-
-    if (findUserBooking) {
-      return res.status(400).json({
-        status: 400,
-        message: "Booking already completed",
-      });
-    }
-
-    const findProBooking = await findOne("proBookingService", {
-      bookServiceId,
-      status: "Completed",
-    });
-    if (findProBooking) {
-      return res.status(400).json({
-        status: 400,
-        message: "Booking already completed",
-      });
-    }
-
-    const findResheduleProBooking = await findOne("proBookingService", {
-      bookServiceId,
+    // ========== UPDATE BOOKINGS ==========
+    const rescheduleData = {
       status: "Requested",
       orderRescheduleStatus: "Requested",
-      orderRescheduleRequest: "professional",
-    });
-    const findResheduleUserBooking = await findOne("userBookServ", {
-      _id: bookServiceId,
-      status: "Requested",
-      orderRescheduleStatus: "Requested",
-      orderRescheduleRequest: "professional",
-    });
+      orderRescheduleRequest: "user",
+      orderRescheduleNumber: "1",
+      
+      // Store reschedule times in UTC
+      orderRescheduleStartDate: utcRescheduleStart.utcDate,
+      orderRescheduleStartTime: utcRescheduleStart.utcTime,
+      orderRescheduleEndDate: utcRescheduleEnd ? utcRescheduleEnd.utcDate : null,
+      orderRescheduleEndTime: utcRescheduleEnd ? utcRescheduleEnd.utcTime : null,
+      
+      // Store timezone for reference
+      rescheduleTimezone: timezone,
+      orderRescheduleReason: orderRescheduleReason || "User requested reschedule",
+      rescheduleRequestedAt: new Date().toISOString(),
+    };
 
-    if (findResheduleProBooking && findResheduleUserBooking) {
+    // Update pro booking
+    const getProBookService = await updateDocument(
+      "proBookingService",
+      { bookServiceId, status: "Confirmed" },
+      rescheduleData
+    );
+
+    if (!getProBookService) {
       return res.status(400).json({
         status: 400,
-        message: "Professional already requested reshedule booking",
+        message: "Failed to update pro booking",
       });
     }
 
-    const findBooking = await findOne("userBookServ", {
-      _id: bookServiceId,
-      status: "Confirmed",
-    });
-    const findproBooking = await findOne("proBookingService", {
-      bookServiceId,
-      status: "Confirmed",
-    });
+    // Update user booking
+    const userBookServiceUpdate = await updateDocument(
+      "userBookServ",
+      { _id: bookServiceId, status: "Confirmed" },
+      rescheduleData
+    );
 
-    if (findBooking && findproBooking) {
-      const getProBookService = await updateDocument(
-        "proBookingService",
-        { bookServiceId, status: "Confirmed" },
-        {
-          status: "Requested",
-          orderRescheduleStatus: "Requested",
-          orderRescheduleRequest: "user",
-        
-          orderRescheduleNumber: "1",
-          ...req.body,
-        }
-      );
-
-      const userBookServiceUpdate = await updateDocument(
-        "userBookServ",
-        { _id: bookServiceId, status: "Confirmed" },
-        {
-          status: "Requested",
-          orderRescheduleStatus: "Requested",
-          orderRescheduleRequest: "user",
-          
-          orderRescheduleNumber: "1",
-          ...req.body,
-        }
-      );
-
-      return res.status(200).json({
-        status: 200,
-        data: { getProBookService, userBookServiceUpdate },
-        message: "User requested reshdule booking",
-      });
-    }
-
-    if (!findBooking && !findproBooking) {
+    if (!userBookServiceUpdate) {
       return res.status(400).json({
         status: 400,
-        message: "Booking Not Found",
+        message: "Failed to update user booking",
       });
     }
+
+    console.log("✅ Reschedule Request Created Successfully");
+
+    return res.status(200).json({
+      status: 200,
+      message: "Reschedule request sent successfully. Waiting for professional's approval.",
+      data: {
+        getProBookService, userBookServiceUpdate 
+        // bookingId: bookServiceId,
+        // rescheduleStatus: "Requested",
+        // requestedBy: "user",
+        // originalDateTime: {
+        //   date: userBooking.subCategories.orderStartDate,
+        //   time: userBooking.subCategories.orderStartTime,
+        // },
+        // newDateTime: {
+        //   date: utcRescheduleStart.utcDate,
+        //   time: utcRescheduleStart.utcTime,
+        //   timezone: timezone,
+        // },
+      },
+    });
   } catch (e) {
-    console.log(e);
+    console.error("❌ Reschedule Request Error:", e);
     return res.status(400).json({ status: 400, message: e.message });
   }
 };
 
-export default userResheduleRequest;
+export default userRescheduleRequest;

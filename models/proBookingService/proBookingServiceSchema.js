@@ -120,7 +120,13 @@ const proBookingServiceSchema = new mongoose.Schema(
         "Others",
       ],
     },
-
+// ✅ Timezone fields
+  timezone: {
+    type: schemaType.TypeString,
+    //required: true,
+    default: "UTC",
+    description: "User's timezone when booking was created"
+  },
     reasonDescription: {
       type: schemaType.TypeString,
     },

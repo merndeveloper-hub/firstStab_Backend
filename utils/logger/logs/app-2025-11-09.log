@@ -1,0 +1,41 @@
+{"level":"info","time":"2025-11-11T15:17:19.338Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-11T15:17:19.339Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-11T17:46:21.142Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-11T17:46:21.143Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T08:41:17.821Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T08:41:17.822Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T09:20:57.955Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T09:20:57.956Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T09:23:10.856Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T09:23:10.856Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T10:17:59.820Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T10:17:59.821Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T10:26:17.689Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T10:26:17.690Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"error","time":"2025-11-12T10:27:08.040Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"Error: queryTxt ETIMEOUT cluster0.1wehduf.mongodb.net\n    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)"}
+{"level":"info","time":"2025-11-12T11:44:13.945Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T11:44:13.947Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T12:22:07.389Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T12:22:07.389Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T12:22:58.883Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T12:22:58.883Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T12:45:32.141Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T12:45:32.141Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T13:22:55.446Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T13:22:55.446Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"error","time":"2025-11-12T13:22:55.456Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.1wehduf.mongodb.net\n    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)"}
+{"level":"info","time":"2025-11-12T18:04:02.815Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T18:04:02.815Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T18:16:32.642Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T18:16:32.642Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T18:48:53.264Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-12T18:48:53.264Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T08:37:48.124Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T08:37:48.128Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T13:30:19.131Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T13:30:19.132Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"error","time":"2025-11-14T13:30:19.142Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.1wehduf.mongodb.net\n    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:294:17)"}
+{"level":"info","time":"2025-11-14T15:54:25.404Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T15:54:25.405Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T15:54:32.872Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-11-14T15:54:32.872Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}

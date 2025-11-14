@@ -9,7 +9,7 @@ const schema = Joi.object().keys({
 const getOnGoingBooking = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
-    const { id } = req.params;
+    const { id,timezone } = req.params;
     const { status } = req.query;
     console.log(status, "staus");
     const proBookService = await findOne("user", { _id: id });

@@ -14,7 +14,7 @@ const booking = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
     await schemaForId.validateAsync(req.params);
-    const { id } = req.params;
+    const { id,timezone } = req.params;
     const { status } = req.query;
     console.log(status, "staus");
     if (status == "onGoing") {

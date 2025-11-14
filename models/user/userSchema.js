@@ -162,7 +162,13 @@ const userSchema = new mongoose.Schema(
     paypalVerified: {
       type: schemaType.TypeBoolean,
     },
-
+// ✅ Timezone fields
+  timezone: {
+    type: schemaType.TypeString,
+    //required: true,
+    default: "UTC",
+    description: "User's timezone when booking was created"
+  },
     bookingRequestTime: { type: schemaType.TypeString },
     userType: { type: schemaType.TypeString, enum: ["user", "pro", "admin"] },
     // running numbers for quick display

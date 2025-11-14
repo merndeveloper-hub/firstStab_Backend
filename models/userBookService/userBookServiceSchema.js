@@ -34,6 +34,13 @@ const userBookServSchema = new mongoose.Schema(
       type: schemaType.TypeString,
       default: "Yes",
     },
+    // ✅ Timezone fields
+      timezone: {
+        type: schemaType.TypeString,
+        //required: true,
+        default: "UTC",
+        description: "User's timezone when booking was created"
+      },
     // serviceType: {
     //   type: schemaType.TypeString,
     //   enum: ["isChat", "isVirtual", "isRemote", "inInPerson"],
