@@ -178,9 +178,11 @@ const cancelledBooking = async (req, res) => {
     if (diffInHours > 24) {
       console.log("✅ Cancel >24hrs - Full refund minus payment fees");
 
+
       const baseServiceFee =
-        Number(goingbooking?.service_fee || 0) +
-        Number(goingbooking?.platformFees || 0);
+        Number(getProbooking?.service_fee || 0) +
+        Number(getProbooking?.platformFees || 0);
+
 
       const cancelCharges = Number(findPaymentCharges || 0);
 
@@ -224,6 +226,8 @@ const cancelledBooking = async (req, res) => {
         }
       );
 
+      console.log(goingbooking.userId,"goingbooking.userId");
+      
       // Refund to user
       await updateDocument(
         "user",
@@ -246,8 +250,8 @@ const cancelledBooking = async (req, res) => {
       console.log("⚠️ Cancel 3-24hrs - 50% refund");
 
       const baseServiceFee =
-        Number(goingbooking?.service_fee || 0) +
-        Number(goingbooking?.platformFees || 0);
+        Number(getProbooking?.service_fee || 0) +
+        Number(getProbooking?.platformFees || 0);
 
       let refundAmount = baseServiceFee * 0.5; // 50% refund
       let cancelCharges = baseServiceFee - refundAmount;
@@ -313,11 +317,11 @@ const cancelledBooking = async (req, res) => {
     if (diffInHours <= 3 && diffInHours >= 0) {
       console.log("❌ Cancel <3hrs - No refund, pay to pro");
 
-      const baseServiceFee = Number(goingbooking?.service_fee || 0);
+      const baseServiceFee = Number(getProbooking?.service_fee || 0);
 
       let cancelCharges =
-        Number(goingbooking?.service_fee || 0) +
-        Number(goingbooking?.platformFees || 0);
+        Number(getProbooking?.service_fee || 0) +
+        Number(getProbooking?.platformFees || 0);
 
       await updateDocument(
         "proBookingService",

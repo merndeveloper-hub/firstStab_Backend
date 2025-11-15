@@ -373,13 +373,13 @@ const querySchema = Joi.object().keys({
 });
 
 /**
- * Convert all booking times from UTC to professional's timezone
+ * Convert and UPDATE booking times in the document
  */
 const convertBookingTimes = (booking, targetTimezone) => {
   const converted = { ...booking };
 
   try {
-    // Convert order start time (stored at root level in proBookingService)
+    // ✅ Convert and UPDATE order start time (stored at root level in proBookingService)
     if (booking.orderStartDate && booking.orderStartTime) {
       const localStart = convertFromUTC(
         booking.orderStartDate,
@@ -387,13 +387,18 @@ const convertBookingTimes = (booking, targetTimezone) => {
         targetTimezone
       );
       if (localStart) {
+        // Update the original fields with local time
+        converted.orderStartDate = localStart.localDate;
+        converted.orderStartTime = localStart.localTime;
+        
+        // Also add display fields
         converted.displayStartDate = localStart.localDate;
         converted.displayStartTime = localStart.localTime;
         converted.displayStartDateTime = localStart.localDateTime;
       }
     }
 
-    // Convert order end time
+    // ✅ Convert and UPDATE order end time
     if (booking.orderEndDate && booking.orderEndTime) {
       const localEnd = convertFromUTC(
         booking.orderEndDate,
@@ -401,13 +406,18 @@ const convertBookingTimes = (booking, targetTimezone) => {
         targetTimezone
       );
       if (localEnd) {
+        // Update the original fields with local time
+        converted.orderEndDate = localEnd.localDate;
+        converted.orderEndTime = localEnd.localTime;
+        
+        // Also add display fields
         converted.displayEndDate = localEnd.localDate;
         converted.displayEndTime = localEnd.localTime;
         converted.displayEndDateTime = localEnd.localDateTime;
       }
     }
 
-    // Convert cancel time
+    // ✅ Convert and UPDATE cancel time
     if (booking.CancelDate && booking.CancelTime) {
       const localCancel = convertFromUTC(
         booking.CancelDate,
@@ -415,13 +425,18 @@ const convertBookingTimes = (booking, targetTimezone) => {
         targetTimezone
       );
       if (localCancel) {
+        // Update the original fields
+        converted.CancelDate = localCancel.localDate;
+        converted.CancelTime = localCancel.localTime;
+        
+        // Also add display fields
         converted.displayCancelDate = localCancel.localDate;
         converted.displayCancelTime = localCancel.localTime;
         converted.displayCancelDateTime = localCancel.localDateTime;
       }
     }
 
-    // Convert completion/delivery time
+    // ✅ Convert and UPDATE completion/delivery time
     if (booking.FinishedDate && booking.FinishedTime) {
       const localComplete = convertFromUTC(
         booking.FinishedDate,
@@ -429,13 +444,18 @@ const convertBookingTimes = (booking, targetTimezone) => {
         targetTimezone
       );
       if (localComplete) {
+        // Update the original fields
+        converted.FinishedDate = localComplete.localDate;
+        converted.FinishedTime = localComplete.localTime;
+        
+        // Also add display fields
         converted.displayCompletionDate = localComplete.localDate;
         converted.displayCompletionTime = localComplete.localTime;
         converted.displayCompletionDateTime = localComplete.localDateTime;
       }
     }
 
-    // Convert reschedule request time
+    // ✅ Convert and UPDATE reschedule request time
     if (booking.orderRescheduleStartDate && booking.orderRescheduleStartTime) {
       const localReschedule = convertFromUTC(
         booking.orderRescheduleStartDate,
@@ -443,9 +463,28 @@ const convertBookingTimes = (booking, targetTimezone) => {
         targetTimezone
       );
       if (localReschedule) {
+        // Update the original fields
+        converted.orderRescheduleStartDate = localReschedule.localDate;
+        converted.orderRescheduleStartTime = localReschedule.localTime;
+        
+        // Also add display fields
         converted.displayRescheduleDate = localReschedule.localDate;
         converted.displayRescheduleTime = localReschedule.localTime;
         converted.displayRescheduleDateTime = localReschedule.localDateTime;
+      }
+    }
+
+    // ✅ Convert and UPDATE reschedule end time
+    if (booking.orderRescheduleEndDate && booking.orderRescheduleEndTime) {
+      const localRescheduleEnd = convertFromUTC(
+        booking.orderRescheduleEndDate,
+        booking.orderRescheduleEndTime,
+        targetTimezone
+      );
+      if (localRescheduleEnd) {
+        // Update the original fields
+        converted.orderRescheduleEndDate = localRescheduleEnd.localDate;
+        converted.orderRescheduleEndTime = localRescheduleEnd.localTime;
       }
     }
 
@@ -465,8 +504,8 @@ const getProBookings = async (req, res) => {
     await schema.validateAsync(req.params);
     await querySchema.validateAsync(req.query);
 
-    const { id,timezone } = req.params;
-    const { status } = req.query;
+    const { id } = req.params;
+    const { status, timezone } = req.query;
 
     console.log("📋 Get Pro Bookings:", { proId: id, status, timezone });
 
@@ -688,25 +727,21 @@ const getProBookings = async (req, res) => {
       return res.status(200).json({
         status: 200,
         message: "No Service Request Found!",
-        bookings: [],
-        timezone: timezone,
+        getProBookService: [],
       });
     }
 
-    // ✅ Convert all booking times to professional's timezone
+    // ✅ Convert all booking times to professional's timezone and UPDATE original fields
     const getProBookService = getProBook.map((booking) =>
       convertBookingTimes(booking, timezone)
     );
 
-    console.log(`✅ Found ${getProBookService.length} bookings for professional`);
+    console.log(`✅ Found ${getProBookService.length} bookings for professional in ${timezone}`);
 
     return res.status(200).json({
       status: 200,
       message: "Bookings retrieved successfully",
-    //  count: convertedBookings.length,
-    //  timezone: timezone,
-    //  getProBookService: convertedBookings,
-    getProBookService
+      getProBookService,
     });
   } catch (e) {
     console.error("❌ Get Pro Bookings Error:", e);

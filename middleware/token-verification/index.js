@@ -6,7 +6,7 @@ import { findOne } from "../../helpers/index.js";
 const tokenVerification = (req, res, next) => {
   try {
 
-    console.log(req, "req");
+   // console.log(req, "req");
     let token = req?.cookies?.token;  // ✅ sirf JWT milega
 
     //let token = req.headers['cookie']
@@ -19,7 +19,7 @@ const tokenVerification = (req, res, next) => {
         .send({ status: 401, message: "No token provided!" });
     }
 
-    console.log(ACCESS_TOKEN_SECRET, "SCERT");
+  //  console.log(ACCESS_TOKEN_SECRET, "SCERT");
 
     jwt.verify(token, ACCESS_TOKEN_SECRET, async (err, decoded) => {
       //console.log(decoded,"decoded");
@@ -34,7 +34,7 @@ const tokenVerification = (req, res, next) => {
       // 	return res.status(400).send({ status: 400, message: "Upgrade your token" });
       // }
       const isUserExist = await findOne("user", { _id: decoded.id });
-      console.log(isUserExist, "isuer");
+   
 
       if (!isUserExist) {
         return res.status(401).send({

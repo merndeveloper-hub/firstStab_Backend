@@ -53,7 +53,7 @@ const router = express.Router();
 router.get("/newrequest/:id",tokenVerification, newRequestBooking);
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
-router.get("/bookservices/:timezone/:id",tokenVerification, getOnGoingBooking);
+router.get("/bookservices/:id",tokenVerification, getOnGoingBooking);
 
 
 //create twilio video token
