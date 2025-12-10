@@ -1,0 +1,15 @@
+{"level":"info","time":"2025-12-08T16:09:35.625Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-08T16:09:35.626Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-08T16:19:31.700Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-08T16:19:31.701Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-08T18:02:21.660Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-08T18:02:21.660Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T16:47:23.972Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T16:47:23.972Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"error","time":"2025-12-10T16:47:24.723Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"MongoServerError: bad auth : Authentication failed.\n    at Connection.sendCommand (D:\\theo_Code_backend\\firstStab_Backend\\node_modules\\mongodb\\lib\\cmap\\connection.js:298:27)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Connection.command (D:\\theo_Code_backend\\firstStab_Backend\\node_modules\\mongodb\\lib\\cmap\\connection.js:326:26)\n    at async executeScram (D:\\theo_Code_backend\\firstStab_Backend\\node_modules\\mongodb\\lib\\cmap\\auth\\scram.js:79:22)\n    at async ScramSHA256.auth (D:\\theo_Code_backend\\firstStab_Backend\\node_modules\\mongodb\\lib\\cmap\\auth\\scram.js:39:16)\n    at async performInitialHandshake (D:\\theo_Code_backend\\firstStab_Backend\\node_modules\\mongodb\\lib\\cmap\\connect.js:104:13)\n    at async connect (D:\\theo_Code_backend\\firstStab_Backend\\node_modules\\mongodb\\lib\\cmap\\connect.js:24:9)"}
+{"level":"info","time":"2025-12-10T16:50:29.642Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T16:50:29.642Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T16:51:00.579Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T16:51:00.579Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T17:47:56.059Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}
+{"level":"info","time":"2025-12-10T17:47:56.059Z","hostname":"DESKTOP-G9MMA3M","context":"userService","message":"HTTPS server started on "}

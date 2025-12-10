@@ -285,11 +285,15 @@ const proCancelledBooking = async (req, res) => {
         Number(goingbooking?.service_fee || 0) +
         Number(goingbooking?.platformFees || 0);
 
+const cancelCharges =
+      
+        Number(findPaymentCharges || 0);
+
       const cancelbooking = await updateDocument(
         "proBookingService",
         { _id: id },
         {
-          CancelCharges: 0,
+          CancelCharges: cancelCharges,
           status: "Cancelled",
           cancelledReason: "Cancelled By Professional",
           CancelDate: utcCancel.utcDate,
@@ -300,7 +304,7 @@ const proCancelledBooking = async (req, res) => {
           reasonCancel,
           CancellationChargesApplyTo: "none",
           amountReturn: "user",
-          ProfessionalPayableAmount: 0,
+          ProfessionalPayableAmount: cancelCharges,
           cancelledAt: new Date().toISOString(),
         }
       );
@@ -317,13 +321,13 @@ const proCancelledBooking = async (req, res) => {
           CancelDate: utcCancel.utcDate,
           CancelTime: utcCancel.utcTime,
           cancelTimezone: timezone,
-          CancelCharges: 0,
+          CancelCharges: cancelCharges,
           priceToReturn: baseServiceFee,
           reasonDescription,
           reasonCancel,
           CancellationChargesApplyTo: "none",
           amountReturn: "user",
-          ProfessionalPayableAmount: 0,
+          ProfessionalPayableAmount: cancelCharges,
           cancelledAt: new Date().toISOString(),
         }
       );
@@ -334,6 +338,15 @@ const proCancelledBooking = async (req, res) => {
         { _id: goingbooking.userId },
         {
           $inc: { currentBalance: baseServiceFee },
+        }
+      );
+
+       // Add penalty to pro's charges
+      await updateDocument(
+        "user",
+        { _id: goingbooking.professsionalId },
+        {
+          $inc: { totalCharges: cancelCharges },
         }
       );
 

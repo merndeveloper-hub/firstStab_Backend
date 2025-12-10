@@ -9,7 +9,7 @@ import tokenVerification from "../../../middleware/token-verification/index.js";
 const router = express.Router();
 
 router.post("/single",tokenVerification, getBookingChat);
-router.get("/:id/:user",tokenVerification, getBookingChats);
+router.get("/:id/:user", getBookingChats);
 
 
 export default router;

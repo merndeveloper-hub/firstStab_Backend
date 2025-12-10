@@ -49,7 +49,7 @@ const sendOTP = async (req, res) => {
         otp: otp,
        user:user?.first_Name
       },
-      "owaisy028@gmail.com",
+      "tkornyoh@firststab.com",
       "Your FirstStab OTP Code",
       email
     );

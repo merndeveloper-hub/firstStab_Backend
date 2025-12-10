@@ -59,6 +59,9 @@ const proBookingServiceSchema = new mongoose.Schema(
       deafult: 0,
       //  required: true,
     },
+    amountReturn: {
+      type: schemaType.TypeString,
+    },
     quoteAmount: { type: schemaType.TypeNumber },
     //   paypal_fee: { type: schemaType.TypeNumber },
     platformFees: {
@@ -256,6 +259,7 @@ const proBookingServiceSchema = new mongoose.Schema(
 
     range_price: { type: schemaType.TypeString },
     review: { type: schemaType.TypeString },
+    reviewCount: { type: schemaType.TypeNumber },
     paymentMethod: { type: schemaType.TypeString },
     userPayToAdmin: { type: schemaType.TypeString, default: "Pending" },
     adminPayToPro: { type: schemaType.TypeString },
