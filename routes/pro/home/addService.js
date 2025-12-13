@@ -51,7 +51,7 @@ const createService = async (req, res) => {
       _id: subCategories[0].id,
       price_model,
     });
-    console.log("getSubcategory", getSubcategory);
+    
 
     if (price_model == "fixed" && getSubcategory?.price_model == "fixed") {
       let getFixedPrice = Number(getSubcategory?.fixed_price) == fixed_price;
@@ -68,7 +68,7 @@ const createService = async (req, res) => {
       getSubcategory?.price_model == "range"
     ) {                         
       let getMinPrice = Number(getSubcategory?.min_price) <= min_price;  
-      console.log(getMinPrice,"getminprice");
+   
       
       let getMaxPrice = Number(getSubcategory?.max_price) <= max_price;
       if (!getMinPrice) {
@@ -101,7 +101,7 @@ const createService = async (req, res) => {
         categoryId,
         "subCategories.id": subCategoryId,
       });
-      console.log(findService, "findService");
+    
 
       // Check if a document already exists with the same proId, categoryId, and subCategory id
       if (findService) {
@@ -116,7 +116,7 @@ const createService = async (req, res) => {
         proId,
         status: "Active" || "InActive" || "Pending",
       });
-      console.log(findbg, "findbg");
+    
 
 
       //* less than 5k documents apply  *//
@@ -162,7 +162,7 @@ const createService = async (req, res) => {
       categoryId,
       "subCategories.id": subCategoryId,
     });
-    console.log(findService, "findService");
+  
 
     //* Check if a document already exists with the same proId, categoryId, and subCategory id *//
     if (findService) {
@@ -178,7 +178,7 @@ const createService = async (req, res) => {
       categoryId,
     });
 
-    console.log(findSubCategory, "findSubCategory------");
+  
 
     // ** checkr --> basic_plus , basic_criminal_and_plv ,agr basic_plis lya how hain is mein basic_criminal_and_plv yeh bhe cover ho jta hain **//
     if (
@@ -191,10 +191,10 @@ const createService = async (req, res) => {
         package: findSubCategory?.bgPackageName || "basic_criminal_and_plv",
       });
 
-      console.log(findService, "finservice");
+    
 
       if (findService.length > 0) {
-        console.log("innner");
+    
 
         const category = await insertNewDocument("proCategory", {
           ...req.body,
@@ -217,7 +217,7 @@ const createService = async (req, res) => {
         status: "Pending",
       });
 
-      console.log(category, "baisc plus-----");
+    
 
       return res.status(200).json({
         status: 200,

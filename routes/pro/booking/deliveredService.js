@@ -5,11 +5,11 @@ import { v2 as cloudinary } from "cloudinary";
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
   secure: true,
-  upload_prefix: "https://api.cloudinary.com",
+  //upload_prefix: "https://api.cloudinary.com",
   chunk_size: 6000000,
 });
 

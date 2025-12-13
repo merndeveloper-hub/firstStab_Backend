@@ -1,67 +1,55 @@
 
 import bcrypt from "bcryptjs";
 import send_email from "../../../lib/node-mailer/index.js";
-import { insertNewDocument,findOne } from "../../../helpers/index.js";
+import { insertNewDocument, findOne } from "../../../helpers/index.js";
 
 
 const sendOTP = async (req, res) => {
 
-  
+
   try {
- 
 
-    const { email,userType } = req;
-  
-    const user = await findOne("user", { email,userType });
 
-    // console.log(user, "user");
+    const { email, userType } = req;
 
-    // if (!user) {
-    //   return res.status(400).send({ status: 400, message: "Invalid Email" });
-    // }
+    const user = await findOne("user", { email, userType });
+
+
 
     const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
-    console.log(otp, "otp");
 
- 
+
+
 
     // hash the otp
     const saltRounds = 10;
 
     const hashedOTP = await bcrypt.hash(otp, saltRounds);
-    console.log(hashedOTP, "hashedOTP");
 
-   
+
+
 
     const otpRes = await insertNewDocument("userOTP", {
       userEmail: email,
-      userType:userType,
+      userType: userType,
       otp: hashedOTP,
-      status:"Pending",
+      status: "Pending",
       createdAt: Date.now(),
       expiresAt: Date.now() + 3600000,
     });
-  console.log(otpRes,"otpRes");
-  
-    await send_email(
-      "otpTemplate",
-      {
-        otp: otp,
-       user:user?.first_Name
-      },
-      "tkornyoh@firststab.com",
-      "Your FirstStab OTP Code",
-      email
-    );
-console.log("finalres");
 
-  // return res.json({
-  //     //status: "Pending",
-  //     message: "Verification otp email sent",
-  //     data: {
-  //       userEmail: email,
-  //     },
-  //   });
+
+
+    await send_email(
+      "otpTemplate", // Template name change
+      {
+        user: user?.first_Name,
+        otp: otp
+      },
+      process.env.SENDER_EMAIL,
+      "Your FirstStab Verification Code", // Better subject
+      user?.email // Changed from 'email' to 'user?.email' for consistency
+    );
 
   } catch (error) {
     res.status(400).json({

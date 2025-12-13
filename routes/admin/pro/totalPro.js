@@ -2,7 +2,7 @@ import { find } from "../../../helpers/index.js";
 
 const findUser = async (req, res) => {
   try {
-    console.log("in----------");
+
 
     const findUser = await find('user', { userType: 'pro' })
 
@@ -11,12 +11,7 @@ const findUser = async (req, res) => {
     const findUserInActive = await find('user', { userType: 'pro', status: "InActive" })
 
 
-    // if (!findUser || findUser.length === 0) {
-    //   return res.status(400).send({
-    //     status: 400,
-    //     message: "No Users found",
-    //   });
-    // }
+
     const counts = {
       Active: findUserActive.length || 0,
       Inactive: findUserInActive.length || 0,

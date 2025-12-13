@@ -4,7 +4,6 @@ import Joi from "joi";
 import {
   findOne,
   insertNewDocument,
-  updateDocument,
 } from "../../../helpers/index.js";
 import Stripe from "stripe";
 import proTaxJarCal from "../../../lib/taxCollector/proTaxCal.js";
@@ -14,7 +13,7 @@ let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const schema = Joi.object({
 
   professionalId: Joi.string().required(),
-//  proCategoryId: Joi.string().required(),
+  //  proCategoryId: Joi.string().required(),
   paymentMethod: Joi.string(),
 
 });
@@ -23,27 +22,22 @@ const createPaypalOrder = async (req, res) => {
   try {
     await schema.validateAsync(req.body);
     const {
-     
-    //  proCategoryId,
+
+      //  proCategoryId,
       professionalId,
-      
+
       paymentMethod,
-      
+
     } = req.body;
 
     const findProCategory = await findOne("proCategory", {
       proId: professionalId,
-    status: { $in: ["Pending", "InActive"] }
+      status: { $in: ["Pending", "InActive"] }
     });
 
 
-    console.log(findProCategory,"findProCategory");
-    
-//  const findProCategory = await findOne("proCategory", {
-//       _id: proCategoryId,
-//       status:'Pending'
-//     });
-    
+
+
     const platform = await findOne("adminFees");
 
     if (paymentMethod == "paypal") {
@@ -57,25 +51,11 @@ const createPaypalOrder = async (req, res) => {
 
       const paypalFixedFee = parseFloat(platform?.paypalFixedFee);
 
-      // let serviceAmount = proBookService?.service_fee;
-      // let paltformCharges = proBookService?.platformFees;
-      // let getTaxVal = proBookService?.tax_fee;
 
-      // const totalAmount = calculateTotalAmount(
-      //   serviceAmount,
-      //   paltformCharges,
-      //   Number(getTaxVal),
-      //   paypalFeePercentage || 0,
-      //   paypalFixedFee || 0
-      // );
-      // console.log("Total Amount user should pay:", totalAmount);
 
       // Get tax from TaxJar (assumed to be a number)
       const getTaxVal = await proTaxJarCal(professionalId, baseAmount);
-      // if (typeof getTaxVal !== 'number') {
-      //   throw new Error("Invalid tax value from TaxJar");
-      // }
-      console.log(getTaxVal, "getTaxVal---");
+
 
       // Calculate PayPal fee and total charge
       const paypalFee = parseFloat(
@@ -88,9 +68,9 @@ const createPaypalOrder = async (req, res) => {
       const finalAmount = parseFloat((baseAmount + paypalFee).toFixed(2)); // This is what user pays
 
       const getToken = await getAccessToken();
-      console.log(getToken, "getToken---------");
 
-      if (!getToken || getToken.length == 0) {
+
+      if (!getToken || getToken.length == 0 || getToken.status == 401) {
         return res
           .status(400)
           .json({ status: 400, message: "Paypal Authorization Failed!" });
@@ -126,11 +106,11 @@ const createPaypalOrder = async (req, res) => {
           },
         ],
         application_context: {
-         return_url: `http://3.110.42.187:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-       //    return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+          return_url: `${process.env.BACKEND_URL}/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+          //    return_url: `http://localhost:5000/api/v1/pro/payment/paypalsuccess?professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
 
           cancel_url:
-            "http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel",
+            `${process.env.BACKEND_URL}/api/v1/pro/payment/paypalcancel`,
           shipping_preference: "NO_SHIPPING",
           user_action: "PAY_NOW",
           brand_name: "firststab",
@@ -147,7 +127,7 @@ const createPaypalOrder = async (req, res) => {
         }
       );
 
-      console.log(response, "response...");
+
 
       if (!response || response.length == 0) {
         return res.status(400).json({ status: 400, message: "Try Again!" });
@@ -184,19 +164,16 @@ const createPaypalOrder = async (req, res) => {
       });
 
       return res.status(201).json({ status: 201, data: data });
-    } 
+    }
     else if (paymentMethod == "stripe") {
-      const pro = await findOne("payment", { professionalId,status:'Pending' });
-console.log(findProCategory,"findProCategory");
+      const pro = await findOne("payment", { professionalId, status: 'Pending' });
+
 
       if (pro?.stripeAccountId) {
         throw new Error("Stripe onboarding incomplete. Please onboard first.");
       }
 
-      // const account = await stripe.accounts.retrieve(pro.stripeAccountId);
-      // if (!account.details_submitted || !account.charges_enabled || !account.payouts_enabled) {
-      //   throw new Error("Stripe account not verified. Please complete onboarding.");
-      // }
+
 
       const amountInDollars = parseFloat(platform?.registerationFees);
 
@@ -206,31 +183,28 @@ console.log(findProCategory,"findProCategory");
 
       // Get tax from TaxJar (assumed to be a number)
       const getTaxVal = await proTaxJarCal(professionalId, amountInDollars);
-      // if (typeof getTaxVal !== 'number') {
-      //   throw new Error("Invalid tax value from TaxJar");
-      // }
-      console.log(getTaxVal, "getTaxVal---");
+
 
       // Example calculation - aapne jaisa fees logic diya tha
       const amountInCents = Math.round(amountInDollars * 100);
-      console.log(amountInCents, "amountcents");
+
 
       const stripeFeePercent = stripeFeePercentage;
-      console.log(stripeFeePercent, "fee percenet");
+
 
       const fixedFee = stripeFixedFee; // in cents
-      console.log(fixedFee, "fee");
+
 
       let taxAmount = Number(getTaxVal).toFixed(2);
-      console.log(taxAmount, "TAX");
+
 
       const totalAmountInCents = Math.ceil(
         (amountInCents + fixedFee + Number(taxAmount)) / (1 - stripeFeePercent)
       );
-      console.log(totalAmountInCents, "totalAmountInCents");
+
 
       const feeAmountInCents = totalAmountInCents - amountInCents;
-      console.log(feeAmountInCents, "feeAmountInCents");
+
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -247,9 +221,9 @@ console.log(findProCategory,"findProCategory");
           },
         ],
         mode: "payment",
-    //   success_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-        success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
-        cancel_url: `http://3.110.42.187:5000/api/v1/pro/payment/stripecancel?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.BACKEND_URL}/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+        //  success_url: `http://localhost:5000/api/v1/pro/payment/stripesuccess?session_id={CHECKOUT_SESSION_ID}&professionalId=${professionalId}&subCategorieId=${findProCategory?.subCategories[0]?.id}&proCategory=${findProCategory?._id}`,
+        cancel_url: `${process.env.BACKEND_URL}/api/v1/pro/payment/stripecancel?session_id={CHECKOUT_SESSION_ID}`,
         metadata: {
           professionalId: req.body.professionalId,
           netAmount: amountInCents, // user ka original amount (cents)
@@ -258,7 +232,7 @@ console.log(findProCategory,"findProCategory");
         },
       });
 
-      console.log(session, "session------");
+
 
       const data = {
         id: session.id,

@@ -2,27 +2,101 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pro Registration Payment Failed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: Arial, sans-serif; background:#f8f9fa; padding:20px;">
-  <div style="max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+  <!-- ==================== PAYMENT FAILED TEMPLATE (Optional) ==================== -->
+<div style="background: linear-gradient(135deg, #0880ff 0%, #04adff 100%); min-height: 100vh; padding: 40px 20px; margin-top: 50px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(8, 128, 255, 0.3);">
     
-    <h2 style="color:#dc3545;">Payment Failed, {{user}} ❌</h2>
-    <p>Unfortunately, your payment for Pro account registration was <strong>not successful</strong>.</p>
+    <!-- Header Section - Failed -->
+    <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 50px 30px; text-align: center;">
+      <div style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+      </div>
+      
+      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Payment Failed</h1>
+      <p style="margin: 15px 0 0 0; color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 500;">Transaction Could Not Be Completed</p>
+    </div>
     
-    <p>Payment Method: <strong>{{paymentMethod}}</strong><br/>
-    Reason: <strong>{{failureReason}}</strong></p>
+    <!-- Content Section -->
+    <div style="padding: 45px 30px;">
+      
+      <p style="margin: 0 0 20px 0; color: #2c3e50; font-size: 17px; line-height: 1.6;">
+        Hello <strong style="color: #0880ff;">{{user}}</strong>,
+      </p>
+      
+      <p style="margin: 0 0 25px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        We're sorry, but your payment via <strong>{{paymentMethod}}</strong> could not be processed at this time.
+      </p>
+      
+      <!-- Error Details Box -->
+      <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 4px solid #ef4444; padding: 25px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #991b1b; font-size: 16px; font-weight: 600;">
+          ⚠️ Possible Reasons
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #b91c1c; font-size: 14px; line-height: 1.8;">
+          <li style="margin-bottom: 10px;">Insufficient funds in your account</li>
+          <li style="margin-bottom: 10px;">Incorrect payment details</li>
+          <li style="margin-bottom: 10px;">Payment declined by your bank</li>
+          <li style="margin-bottom: 0;">Technical issue with payment processor</li>
+        </ul>
+      </div>
+      
+      <!-- Action Steps -->
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 22px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #78350f; font-size: 15px; font-weight: 600;">
+          💡 What You Can Do
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #92400e; font-size: 14px; line-height: 1.8;">
+          <li style="margin-bottom: 10px;">Verify your payment information</li>
+          <li style="margin-bottom: 10px;">Check your account balance</li>
+          <li style="margin-bottom: 10px;">Contact your bank if needed</li>
+          <li style="margin-bottom: 0;">Try again with a different payment method</li>
+        </ul>
+      </div>
+      
+      <p style="margin: 0 0 30px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        Please try again or contact our support team if you continue experiencing issues.
+      </p>
+      
+      <p style="margin: 30px 0 0 0; color: #2c3e50; font-size: 15px; line-height: 1.6;">
+        Best regards,<br/>
+        <strong style="color: #0880ff;">The FirstStab Team</strong>
+      </p>
+      
+    </div>
     
-    <p>Please try again or contact our support team if the issue persists.</p>
+    <!-- Footer Section -->
+    <div style="background: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0 0 10px 0; color: #6c757d; font-size: 13px; line-height: 1.5; text-align: center;">
+        <strong>FirstStab Inc.</strong><br/>
+        California, United States
+      </p>
+
+      <p style="margin: 0 0 20px 0; color: #6c757d; font-size: 13px; text-align: center;">
+        Need help? Contact our support team anytime.
+      </p>
+
+      <!-- Contact Support Button -->
+      <table align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center" bgcolor="#0880ff" style="border-radius: 30px;">
+            <a href="mailto:info@firststab.com" style="display: inline-block; padding: 14px 36px; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 30px; font-family: Arial, sans-serif;">
+              Contact Support
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
     
-    <a href="{{paymentRetryLink}}" style="display:inline-block; background:#dc3545; color:#fff; padding:10px 20px; text-decoration:none; border-radius:5px; margin-top:15px;">Retry Payment</a>
-    
-    <p style="margin-top:20px;">We're here to help if you need anything.</p>
-    
-    <p>Regards,<br/>The FirstStab Team</p>
-    
-    <hr style="border:none; border-top:1px solid #ddd; margin:20px 0;">
-    <p style="color:#888; font-size:12px;">FirstStab Inc, California<br/>This is an automated message, please do not reply.</p>
   </div>
+</div>
+
 </body>
 </html>

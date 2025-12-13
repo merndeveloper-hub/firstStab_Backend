@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument, updateDocument } from "../../../helpers/index.js";
+import { updateDocument } from "../../../helpers/index.js";
 
 const validationSchema = Joi.object({
   businessname: Joi.string(),
@@ -12,7 +12,7 @@ const validationSchema = Joi.object({
     }),
   userId: Joi.string().required(),
 });
- 
+
 const createbusiness = async (req, res) => {
   try {
     await validationSchema.validateAsync(req.body);
@@ -36,7 +36,7 @@ const createbusiness = async (req, res) => {
       data: createbus,
     });
   } catch (e) {
-  
+
     console.log(e);
     return res.status(400).json({ status: 400, message: e.message });
   }

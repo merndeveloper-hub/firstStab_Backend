@@ -14,7 +14,6 @@ router.get("/:id", getSingleProCertificate);
 
 
 //--------------Get Certn report status ---//
-
 router.get("/certnstatus/:id",getCertnStatus)
 
 // //-------------Get checkr invitation status --------------//

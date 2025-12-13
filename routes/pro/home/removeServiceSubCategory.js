@@ -22,7 +22,7 @@ const removeServiceSubCategory = async (req, res) => {
 
     return res
       .status(200)
-      .send({ status: 200, message: "Service Sub Category deleted successfully"});
+      .send({ status: 200, message: "Service Sub Category deleted successfully" });
   } catch (e) {
     console.log(e);
     return res.status(400).send({ status: 400, message: e.message });

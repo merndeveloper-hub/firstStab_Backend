@@ -1,5 +1,4 @@
 import Joi from "joi";
-// const { findOne } = require("../../../helpers");
 import { findOne } from "../../../helpers/index.js";
 
 const schema = Joi.object({

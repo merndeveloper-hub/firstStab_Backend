@@ -19,7 +19,7 @@ const getAllCategories = async (req, res) => {
       },
     
     ]);
-    console.log(categories,"categories");
+   
     
     return res.status(200).json({ status: 200, data:{categories} });
   } catch (e) {

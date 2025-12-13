@@ -6,7 +6,7 @@ import tokenVerification from "../../../middleware/token-verification/index.js";
 
 const router = express.Router();
 
-
+//---Get admin content pages
 router.get("/",tokenVerification, getContentPage);
 
 

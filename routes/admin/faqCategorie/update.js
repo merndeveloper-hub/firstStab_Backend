@@ -1,5 +1,4 @@
 import Joi from "joi";
-// const { findOne } = require("../../../helpers");
 import { findOne, updateDocument } from "../../../helpers/index.js";
 const schema = Joi.object({
   name: Joi.string(),
@@ -8,7 +7,7 @@ const schema = Joi.object({
 
 const schemaId = Joi.object({
   id: Joi.string().required(),
-  
+
 });
 const updatefaqCategory = async (req, res) => {
   try {
@@ -16,10 +15,10 @@ const updatefaqCategory = async (req, res) => {
     await schemaId.validateAsync(req.params);
 
     const { id } = req.params;
-    const { name,status } = req.body;
+    const { name, status } = req.body;
 
     let faqCategory = await findOne("faqCategory", { _id: id });
-    if (!faqCategory  || faqCategory.length === 0) {
+    if (!faqCategory || faqCategory.length === 0) {
       return res
         .status(400)
         .send({ status: 400, message: "No FAQ Category Found" });
@@ -31,7 +30,7 @@ const updatefaqCategory = async (req, res) => {
       { ...req.body }
     );
 
-   
+
 
     return res
       .status(200)

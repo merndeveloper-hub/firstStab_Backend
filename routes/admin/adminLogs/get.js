@@ -6,10 +6,10 @@ import { find } from "../../../helpers/index.js";
 
 const getApiLogs = async (req, res) => {
   try {
-    
+
 
     const getApiLog = await find("apiLog");
-console.log(getApiLog,"getApiLog----");
+
 
     if (!getApiLog || getApiLog.length === 0) {
       return res.status(400).send({

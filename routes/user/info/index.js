@@ -11,10 +11,7 @@ const router = express.Router();
 router.get("/getques", tokenVerification, getFaqQuestion);
 
 router.get("/", tokenVerification, getContentPage);
-//router.post("/add",multipartMiddleware, addCategory);
-//router.put("/:id",multipartMiddleware, updateCategory);
-//router.delete("/:id", deleteCategory);
-// Get Single Blog
+
 router.get("/:id", tokenVerification, singleContentPage);
 
 // Contact Us

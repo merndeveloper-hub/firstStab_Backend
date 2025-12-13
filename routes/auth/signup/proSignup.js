@@ -1,9 +1,7 @@
 import Joi from "joi";
 import {
-  findOne,
   insertNewDocument,
   findOneAndSelect,
-  updateDocument,
   getAggregate,
   deleteDocument,
 } from "../../../helpers/index.js";
@@ -21,17 +19,7 @@ import sendOTPSignup from "../otpVerification/sendOTPSignup.js";
 const schema = Joi.object({
   first_Name: Joi.string().min(3).required(),
   last_Name: Joi.string().min(3).required(),
-  // city: Joi.string().required(),
   totalPro: Joi.number(),
-  //zipCode: Joi.string().required(),
-  // zipCode: Joi.string()
-  //   .pattern(/^\d{5}(-\d{4})?$/) // Matches 5 digits or 5+4 format (e.g., 12345 or 12345-6789)
-  //   .required()
-  //   .messages({
-  //     'string.pattern.base': 'ZIP code must be in the format 12345 or 12345-6789',
-  //     'any.required': 'ZIP code is required',
-  //   }),
-  // full_Name: Joi.string().required(),
   email: Joi.string()
     .email({ tlds: { allow: true } }) // Ensures a valid domain with TLD (e.g., .com, .org)
     .pattern(new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) // Enforces common email rules
@@ -60,38 +48,7 @@ const schema = Joi.object({
     }),
   confirm_password: Joi.string().required().valid(Joi.ref("password")),
   status: Joi.string(),
-  // businessname: Joi.string(),
-  // businessaddress: Joi.string(),
-  // businessphoneNo: Joi.string().pattern(new RegExp("^\\+?[0-9]{8,15}$"))
-  //  .messages({
-  //    "string.pattern.base":
-  //      "Mobile number must be 8-15 digits and may include a country code (e.g., +123456789).",
-  //    "any.required": "Mobile number is required.",
-  //  }),
 
-  // dateOfBirth: Joi.date()
-  //   .less("now") // Ensures date is in the past
-  //   .iso() // Ensures format is valid (YYYY-MM-DD)
-  //   .required()
-  //   .messages({
-  //     "date.base": "Invalid date format. Use YYYY-MM-DD.",
-  //     "date.less": "Date of birth must be in the past.",
-  //     "any.required": "Date of birth is required.",
-  //   }),
-  // ssn_Number: Joi.string()
-  //   .pattern(new RegExp("^[0-9]{3}-[0-9]{2}-[0-9]{4}$")) // SSN format: XXX-XX-XXXX
-  //   .required()
-  //   .messages({
-  //     "string.pattern.base": "SSN must be in the format XXX-XX-XXXX.",
-  //     "any.required": "SSN is required.",
-  //   }),
-  // serviceType: Joi.array()
-  // .items(Joi.string().valid("video", "message", "remote", "in_personal"))
-  // .messages({
-  //   "array.min": "Please select at least one service type.",
-  //   "any.only": "Invalid service type selected.",
-  //   "any.required": "Service type is required.",
-  // }),
   userType: Joi.string().required(),
   country: Joi.string().required(),
 });
@@ -102,14 +59,7 @@ const proSignup = async (req, res) => {
 
   try {
     await schema.validateAsync(req.body);
-    // const { error, value } = schema.validate(req.body, { abortEarly: false });
 
-    // if (error) {
-    //   console.error("Validation Error:", error);
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: error.details[0].message });
-    // }
 
     const {
       country,
@@ -134,7 +84,7 @@ const proSignup = async (req, res) => {
     } = req.body;
 
 
-    console.log(req.body, "body");
+
 
     const deleteEmailExist = await findOneAndSelect("user", {
       email,
@@ -158,13 +108,7 @@ const proSignup = async (req, res) => {
           message: "Mobile number already exists with this email",
         });
     }
-    // const user_type = await findOne("userType", { type });
 
-    // if (!user_type) {
-    //   return res
-    //     .status(401)
-    //     .send({ status: 401, message: "No User Type Found" });
-    // }
 
     req.body.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
@@ -180,40 +124,8 @@ const proSignup = async (req, res) => {
       },
     ]);
 
-    // const result = await collection.aggregate([
-    //   { $match: { status: "active", userType: "pro" } },
-    //   { $count: "activeProUsers" }
-    // ]).toArray();
 
-    // const inscounter = await insertNewDocument("counter",{
-    //   id: userType
 
-    // }
-    // );
-
-    // console.log(inscounter,"inscounter");
-
-    //     const counter = await updateDocument(
-    //       "counter",
-    //       { id: userType }, // Find by ID
-    //       { $inc: { count: 1 } }// Fix: Move `$inc` inside `$set`
-    //     );
-
-    //     if(!counter){
-    //       const counterCre = await insertNewDocument("counter",{
-    //       id: userType
-
-    //     }
-    //     );
-    //     const counter = await updateDocument(
-    //       "counter",
-    //       { id: counterCre.userType }, // Find by ID
-    //       { $inc: { count: 1 } }// Fix: Move `$inc` inside `$set`
-    //     );
-    //      }
-    //  // Step 1: Increment the counter
-
-    // console.log(counter,"counter");
 
     const user = await insertNewDocument("user", {
       ...req.body,
@@ -247,35 +159,35 @@ const proSignup = async (req, res) => {
 
 
 
-      var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
-            expiresIn: JWT_EXPIRES_IN,
-          });
-          var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
-            expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
-          });
+    var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
+    var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
+      expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
+    });
 
- const inserttoken = await insertNewDocument("token", {
-        user_id: user._id,
-        accessToken: token,
-        refreshToken: refresh_token,
-        type: "refresh",
-      });
+    const inserttoken = await insertNewDocument("token", {
+      user_id: user._id,
+      accessToken: token,
+      refreshToken: refresh_token,
+      type: "refresh",
+    });
 
-            // Set Access Token in Cookie
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
-      });
+    // Set Access Token in Cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+    });
 
-      // Set Refresh Token in Cookie (optional)
-      res.cookie("refreshToken", refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production" ? true : false,
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
-      });
+    // Set Refresh Token in Cookie (optional)
+    res.cookie("refreshToken", refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
+    });
 
 
     req.userId = user._id;
@@ -293,12 +205,12 @@ const proSignup = async (req, res) => {
 
       },
     });
-    // return res.status(200).send({ status: 200, data:{user, token} });
+
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
     if (error.code === 11000) {
-      console.log(error, "error--------");
+
 
       // Duplicate key error
       return res.status(400).send({
@@ -306,12 +218,9 @@ const proSignup = async (req, res) => {
         message: "Email already exists. Please use a different email.",
       });
     }
-    // Handle other errors
-    console.error("Error saving user:", error);
-    return res
-      .status(400)
-      .send({ status: 400, message: "An unexpected error occurred." });
-    //  return res.status(400).send({ status: 400, message: e.message });
+
+
+    return res.status(400).send({ status: 400, message: error.message });
   }
 };
 

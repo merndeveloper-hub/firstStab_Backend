@@ -1,10 +1,9 @@
 import Joi from "joi";
-import { find, findOne, getAggregate, insertNewDocument, updateDocument } from "../../../helpers/index.js";
+import { findOne,  updateDocument } from "../../../helpers/index.js";
 import Stripe from "stripe";
 let stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-import mongoose, { Mongoose } from "mongoose";
-//mport getProfessional from "./getProfessionalService.js";
+
 
 const validationSchema = Joi.object({
   

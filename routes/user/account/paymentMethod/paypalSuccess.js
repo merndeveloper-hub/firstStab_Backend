@@ -1,6 +1,7 @@
 import axios from "axios";
 import getAccessToken from "./accessToken.js";
-import { updateDocument, findAndSort } from "../../../../helpers/index.js";
+import { findOne, updateDocument } from "../../../../helpers/index.js";
+import send_email from "../../../../lib/node-mailer/index.js";
 
 const paypalSuccess = async (req, res) => {
   try {
@@ -9,7 +10,7 @@ const paypalSuccess = async (req, res) => {
     const getToken = await getAccessToken();
 
     const executeResponse = await axios.post(
-      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${token}/capture`,
+      `${process.env.PAYPAL_API_DEVELOPMENT_URL}/v2/checkout/orders/${token}/capture`,
       {},
       {
         headers: {
@@ -18,11 +19,11 @@ const paypalSuccess = async (req, res) => {
         },
       }
     );
-    console.log("Payment Captured:", executeResponse.data);
+
 
     if (!executeResponse || executeResponse.length == 0) {
       res.redirect(
-        "http://3.110.42.187:5000/api/v1/user/account/payment/paypalcancel"
+        `${process.env.BACKEND_URL}/api/v1/user/account/payment/paypalcancel`
       );
     }
 
@@ -47,23 +48,12 @@ const paypalSuccess = async (req, res) => {
 
     const paypalLink = executeResponse.data.links[0].href; // links[0].href
 
-    // // Pehle se saved totalAmount nikal lo (agar hai)
-    // const lastPayment = await findAndSort("userPayment", { paypalOrderId: token,sender:'User' },{ createdAt: -1  });
 
-    // // Agar last totalAmount hai to use le lo, warna 0
-    // const previousAmount = lastPayment?.totalAmount || 0;
 
-    // // Ab ka amount (req.body se)
-    // const currentAmount = amount || 0;
 
-    // // Total calculate karo
-    // const totalAmount = previousAmount + currentAmount;
-
-    //pyapal payment cahrges
-    console.log(paymentSource.captureId, "captureId");
 
     const getPaymentPlatformCharges = await axios.get(
-      `https://api-m.sandbox.paypal.com/v2/payments/captures/${paymentSource.captureId}`,
+      `${process.env.BACKEND_URL}/v2/payments/captures/${paymentSource.captureId}`,
       {
         headers: {
           Authorization: `Bearer ${getToken}`,
@@ -71,7 +61,7 @@ const paypalSuccess = async (req, res) => {
         },
       }
     );
-    console.log("Payment Captured:", getPaymentPlatformCharges.data);
+
 
     const paypalCharges = {
       gross_amount:
@@ -107,19 +97,61 @@ const paypalSuccess = async (req, res) => {
       {
         userPayToAdmin: "Completed",
         adminPayToPro: "Pending",
-        userToAdminPaypalCharges:paypalCharges
+        userToAdminPaypalCharges: paypalCharges
       }
     );
 
-    console.log("Payment Success:", executeResponse.data);
+    let findUser = await findOne('user', { _id: updateProBookService?.userId })
+    let findPro = await findOne('user', { _id: updateProBookService?.professsionalId })
+
+    // 📧 Send payment success email to USER
+    await send_email(
+      "userBookingPaymentSuccess",
+      {
+        userName: findUser?.first_Name || findUser?.email,
+        requestId: updateProBookService?.requestId,
+        serviceName: updateProBookService?.serviceName,
+        serviceType: updateProBookService?.serviceType,
+        bookingDate: updateProBookService?.orderStartDate,
+        bookingTime: updateProBookService?.orderStartTime,
+        paymentMethod: userPayToAdmin?.paymentMethod,
+        transactionId: token,
+        totalAmount: updateProBookService?.total_amount_cus_pay_with_charges?.toFixed(2),
+        paymentDate: new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      },
+      process.env.SENDER_EMAIL,
+      "Payment Confirmed - Booking Successful",
+      findUser?.email
+    );
+
+    // 📧 Send new booking notification to PROFESSIONAL
+
+    await send_email(
+      "professionalNewBooking",
+      {
+        professionalName: findPro?.first_Name || findPro?.email,
+        userName: findUser?.first_Name || findUser?.email,
+        requestId: updateProBookService?.requestId,
+        serviceName: updateProBookService?.serviceName,
+        serviceType: updateProBookService?.serviceType,
+        bookingDate: updateProBookService?.orderStartDate,
+        bookingTime: updateProBookService?.orderStartTime,
+        problemDescription: updateProBookService?.problemDescription || "No description provided",
+        professionalEarnings: findPro?.totalEarnings
+      },
+      process.env.SENDER_EMAIL,
+      "New Booking Request - Action Required",
+      findPro?.email
+    );
+
     return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {
-    console.error(
-      "Error executing PayPal payment:",
-      error.response ? error.response.data : error.message
-    );
     res.redirect(
-      "http://3.110.42.187:5000/api/v1/user/account/payment/paypalcancel"
+      `${process.env.BACKEND_URL}/api/v1/user/account/payment/paypalcancel`
     );
   }
 };

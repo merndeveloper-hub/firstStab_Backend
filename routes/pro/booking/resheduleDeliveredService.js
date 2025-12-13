@@ -7,9 +7,9 @@ import { v2 as cloudinary } from "cloudinary";
 
 
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const schema = Joi.object().keys({
@@ -56,11 +56,11 @@ const resheduleDeliveredBooking = async (req, res) => {
         return res.status(400).json({ message: "Maximum 6 files allowed." });
       }
     
-   console.log(mediaFiles,"-----");
+   
    
       
       for (const file of mediaFiles) {
-        console.log("Uploaded file type:------------", file);
+     
         const fileSizeMB = file.size / (1024 * 1024);
         const isImage = allowedImageTypes.includes(file.type);
         const isVideo = allowedVideoTypes.includes(file.type);
@@ -109,7 +109,7 @@ const resheduleDeliveredBooking = async (req, res) => {
       .json({ status: 400, message: "No Booking Found!" });
     }
     
-    console.log(deliveredBooking.bookServiceId,"deliveredBooking.bookServiceId");
+   
     
     const deliveredRandomProBooking = await updateDocument(
       "userBookServ",

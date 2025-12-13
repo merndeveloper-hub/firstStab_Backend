@@ -1,5 +1,4 @@
 import Joi from "joi";
-// const { findOne } = require("../../../helpers");
 import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schema = Joi.object({
@@ -13,7 +12,7 @@ const hidePage = async (req, res) => {
     const { id } = req.params;
 
     let contentPage = await findOne("content", { _id: id });
-    if (!contentPage || contentPage.length === 0 ) {
+    if (!contentPage || contentPage.length === 0) {
       return res
         .status(400)
         .send({ status: 400, message: "No Content Page Found" });
@@ -25,7 +24,7 @@ const hidePage = async (req, res) => {
       { status: contentPage?.status == "Active" ? "InActive" : "Active" }
     );
 
- 
+
 
     return res
       .status(200)

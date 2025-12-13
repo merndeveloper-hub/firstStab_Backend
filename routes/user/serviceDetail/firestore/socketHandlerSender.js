@@ -1,6 +1,5 @@
 import {
   insertNewDocument,
-  updateDocument,
   find,
 } from "../../../../helpers/index.js";
 
@@ -79,13 +78,7 @@ const handleSocket = (io) => {
             }
           }
 
-          console.log(
-            chatId,
-            senderId,
-            receiverId,
-            message,
-            "chatId, senderId, receiverId, message"
-          );
+        
 
           const newMessage = await insertNewDocument("chatMessage", {
             chatId,
@@ -98,9 +91,7 @@ const handleSocket = (io) => {
             isBooking,
           });
 
-          console.log(newMessage, "messagenew");
-          console.log(senderId, "send");
-          console.log(receiverId, "reciever");
+       
 
           // emit message to chat room
           io.to("chatRoom").emit("message_sent", newMessage);
@@ -115,17 +106,9 @@ const handleSocket = (io) => {
       }
     );
 
-    console.log("final");
+  
 
-    // socket.on("disconnect", () => {
-    //   for (let [userId, socketId] of onlineUsers.entries()) {
-    //     if (socketId === socket.id) {
-    //       onlineUsers.delete(userId);
-    //       break;
-    //     }
-    //   }
-    //   console.log("[Socket] Disconnected:", socket.id);
-    // });
+   
   });
 };
 

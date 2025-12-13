@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const schema = Joi.object({
   id: Joi.string().required(),
@@ -24,9 +25,31 @@ const hideService = async (req, res) => {
       { status: findUser?.status == "Active" ? "InActive" : "Active" }
     );
 
+if (updateUser?.status == "Active") {
+      await send_email(
+        "adminApproved",
+        {
+        user: getPro?.first_Name,
+        },
+        process.env.SENDER_EMAIL,
+        "Congratulations! You’re Now an Active Pro on FirstStab",
+        getPro?.email
+      );
+    } else if (updateUser?.status == "InActive") {
+     await send_email(
+      "adminRejected",
+      {
+       user: getPro?.first_Name,
+      },
+      process.env.SENDER_EMAIL,
+      "Pro Service Review Result – Rejected",
+      getPro?.email
+    );
+    }
+
     return res.status(200).send({
       status: 200,
-      message: `Service ${findUser?.status} successfully`,
+      message: `Service ${updateUser?.status} Successfully`,
       data: { updateUser },
     });
   } catch (e) {

@@ -33,6 +33,6 @@ router.put("/completed/:id", tokenVerification, completedBookedService);
 router.post("/chat", tokenVerification, sendChat);
 
 // sendNotification
-router.post("/sendNotification", tokenVerification, sendNotification);
+router.post("/sendNotification", sendNotification);
 
 export default router;

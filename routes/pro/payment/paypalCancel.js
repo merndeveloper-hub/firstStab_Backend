@@ -1,15 +1,16 @@
 import { deleteDocument, findOne } from "../../../helpers/index.js";
 import send_email from "../../../lib/node-mailer/index.js";
 
+
 const paymentCancel = async (req, res) => {
   try {
     const { token } = req.query;
 
-const findPayment = await findOne("payment", {
+    const findPayment = await findOne("payment", {
       paypalOrderId: token,
     });
 
-const findPro = await findOne("user", {
+    const findPro = await findOne("user", {
       _id: findPayment?.professionalId,
     });
 
@@ -18,19 +19,18 @@ const findPro = await findOne("user", {
       paypalOrderId: token,
     });
 
-  
-     await send_email(
-    "proRegisterationPaymentSuccess",
-    {
-      user: findPro?.first_Name || findPro?.email,
-      paymentMethod:"Paypal",
-      failureReason:"Technical Problem"
-     
-    },
-     "owaisy028@gmail.com",
-    "Account Blocked Due to Multiple Failed Login Attempts",
-    findPro?.email
-  );
+    // PayPal Cancel ya Stripe Cancel route mein
+
+    await send_email(
+      "proRegisterationPaymentFailed",
+      {
+        user: findPro?.first_Name || findPro?.email,
+        paymentMethod: findPayment?.paymentMethod, // "PayPal" or "Stripe"
+      },
+      process.env.SENDER_EMAIL,
+      "Payment Failed - Please Try Again",
+      findPro?.email
+    );
 
     return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {

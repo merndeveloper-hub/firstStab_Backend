@@ -1,10 +1,9 @@
-// const Message = require('../models/Message');
-// const Chat = require('../models/Chat');
 
-import { insertNewDocument, updateDocument } from "../../../../helpers/index.js";
+
+import { insertNewDocument } from "../../../../helpers/index.js";
 
 const onlineUsers = new Map();
-console.log(onlineUsers,"online");
+
 
 const handleSocket = (io) => {
   io.on('connection', (socket) => {
@@ -12,39 +11,20 @@ const handleSocket = (io) => {
 
     socket.on('join', (userId) => {
       onlineUsers.set(userId, socket.id);
-      console.log(`User ${userId} joined socket`);
+
     });
 
-    socket.on('send_message', async ({ chatId, senderId, receiverId, message,role }) => {
-console.log(chatId, senderId, receiverId, message,"chatId, senderId, receiverId, message");
+    socket.on('send_message', async ({ chatId, senderId, receiverId, message, role }) => {
 
-      const newMessage = await insertNewDocument("chatMessage",{chatId, senderId, receiverId, message,role})
-      console.log(newMessage,"messagenew");
-    
-      // const newMessage = new Message({ chatId, senderId, receiverId, message });
-      // await newMessage.save();
-// await updateDocument('chat',{chatId},{
-//   lastMessage: newMessage._id,
-//   updatedAt: new Date()}
-// )
-      // await Chat.findByIdAndUpdate(chatId, {
-      //   lastMessage: newMessage._id,
-      //   updatedAt: new Date(),
-      // });
-// console.log(receiverId,"getttrev----------");
-// onlineUsers.set(receiverId, socket.id);
-//       const receiverSocket = onlineUsers.get(receiverId);
-//       console.log(receiverSocket,"receiverSocket");
-      
-      // if (receiverSocket) {
-      //   console.log("if");
-        
-      //   io.to(receiverSocket).emit('receive_message', newMessage);
-      // }
+
+      const newMessage = await insertNewDocument("chatMessage", { chatId, senderId, receiverId, message, role })
+
+
+
 
       socket.emit('message_sent', newMessage);
     });
-console.log("final");
+
 
     socket.on('disconnect', () => {
       for (let [userId, socketId] of onlineUsers.entries()) {

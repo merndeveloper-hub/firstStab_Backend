@@ -1,7 +1,5 @@
 import {
-  find,
   findOne,
-  insertNewDocument,
   updateDocument,
 } from "../../../helpers/index.js";
 
@@ -20,8 +18,7 @@ const updateServiceType = async (req, res) => {
     min_price,
     max_price,
   } = req.body.subCategories[0];
-  console.log(req.params, "prarm");
-  console.log(req.body, "body");
+
 
   let getSubCategories = subCategories[0].id;
   let updateBody = req.body.subCategories[0];
@@ -31,7 +28,7 @@ const updateServiceType = async (req, res) => {
       proId,
       "subCategories.id": getSubCategories,
     });
-    console.log("proCategories", proCategories);
+
 
     if (!proCategories || proCategories.length === 0) {
       return res
@@ -43,13 +40,13 @@ const updateServiceType = async (req, res) => {
       "proCategory",
       { proId, "subCategories.id": getSubCategories },
       {
-        subCategories:{
-          
-id,
-    isChat,
-    isInPerson,
-    isRemote,
-    isVirtual,
+        subCategories: {
+
+          id,
+          isChat,
+          isInPerson,
+          isRemote,
+          isVirtual,
         },
         updateBody,
         complexity_tier,

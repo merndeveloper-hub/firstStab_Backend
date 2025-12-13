@@ -1,11 +1,11 @@
-// const jwt = require("jsonwebtoken");
+
 import bcrypt from "bcryptjs";
-// const { ACCESS_TOKEN_SECRET } = require("../../../config");
 import {
   findOneAndSelect,
   insertNewDocument,
 } from "../../../helpers/index.js";
 import Joi from "joi";
+import send_email from "../../../lib/node-mailer/index.js";
 
 
 const schema = Joi.object({
@@ -38,13 +38,7 @@ const adminSignup = async (req, res) => {
   const { email, password, userType } = req.body;
   try {
     await schema.validateAsync(req.body);
-    // const checkType = await findOne("userType", { type });
-    // if (!checkType) {
-    //   return res.status(400).send({
-    //     status: 400,
-    //     message: "No Type found",
-    //   });
-    // }
+
     const checkEmail = await findOneAndSelect(
       "user",
       { email }
@@ -66,12 +60,21 @@ const adminSignup = async (req, res) => {
     user.password = undefined;
     // user.type = undefined;
     req.userId = user._id;
+    await send_email(
+      "adminSignup", // Template name change
+      {
+        adminName: user.first_Name,
 
+      },
+      process.env.SENDER_EMAIL,
+      "Welcome to FirstStab Admin Team",
+      user.email
+    );
     return res.status(200).send({ status: 200, user });
   } catch (error) {
 
     if (error.code === 11000) {
-      console.log(error, "error--------");
+
 
       // Duplicate key error
       return res.status(400).send({
@@ -79,12 +82,11 @@ const adminSignup = async (req, res) => {
         message: "Email already exists. Please use a different email.",
       });
     }
-    // Handle other errors
-    console.error("Error saving user:", error);
+
     return res
       .status(400)
-      .send({ status: 400, message: "An unexpected error occurred." });
-    //  return res.status(400).send({ status: 400, message: e.message });
+      .send({ status: 400, message: error.message});
+
 
   }
 };

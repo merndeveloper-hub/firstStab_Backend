@@ -1,5 +1,4 @@
 import sendOTPSignup from "./sendOTPSignup.js";
-//const  UserOTPVerification  = require("../../../models/otpVerification/index.js");
 import { deleteManyDocument } from "../../../helpers/index.js";
 
 const resendOTPVerificationCode = async (req, res) => {
@@ -24,9 +23,7 @@ const resendOTPVerificationCode = async (req, res) => {
         },
       });
 
-      // return res
-      //   .status(200)
-      //   .json({ status: 200, message: sendOTPVerificationEmail });
+      
     }
   } catch (error) {
     res.status(400).json({

@@ -43,18 +43,18 @@ const findPro = await findOne("user", {
       }
     );
 
-      await send_email(
-    "proRegisterationPaymentSuccess",
-    {
-      user: findPro?.first_Name || findPro?.email,
-      paymentMethod:"Paypal",
-      failureReason:"Technical Problem"
-     
-    },
-     "owaisy028@gmail.com",
-    "Account Blocked Due to Multiple Failed Login Attempts",
-    findPro?.email
-  );
+     // PayPal Cancel ya Stripe Cancel route mein
+
+await send_email(
+  "proRegisterationPaymentFailed",
+  {
+    user: findPro?.first_Name || findPro?.email,
+    paymentMethod: findPayment?.paymentMethod, // "PayPal" or "Stripe"
+  },
+  process.env.SENDER_EMAIL,
+  "Payment Failed - Please Try Again",
+  findPro?.email
+);
 
     return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {

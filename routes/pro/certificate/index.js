@@ -2,10 +2,9 @@ import express from "express";
 
 
 import addCertificate from "./add.js";
-// import updateSubCategory from "./update.js";
-// import getSubCategories from "./get.js";
+
 import getSingleProCertificate from "./getSingle.js";
-// import hideSubCategory from "./hide.js";
+
 
 //-----Media upload icon and image -------/
 import multipart from "connect-multiparty";

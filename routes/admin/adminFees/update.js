@@ -1,15 +1,14 @@
 import Joi from "joi";
-// const { findOne } = require("../../../helpers");
 import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schema = Joi.object({
   registerationFees: Joi.number(),
   platformFees: Joi.number(),
   currency: Joi.string(),
-    paypalFeePercentage:Joi.number(),
-    paypalFixedFee:Joi.number(),
-        stripeFeePercentage:Joi.number(),
-      stripeFixedFee:Joi.number()
+  paypalFeePercentage: Joi.number(),
+  paypalFixedFee: Joi.number(),
+  stripeFeePercentage: Joi.number(),
+  stripeFixedFee: Joi.number()
 });
 
 const schemaId = Joi.object({
@@ -21,7 +20,7 @@ const updateAdminCharge = async (req, res) => {
     await schemaId.validateAsync(req.params);
 
     const { id } = req.params;
-    const { registerationFees, platformFees, currency,paypalFeePercentage,paypalFixedFee,stripeFeePercentage,stripeFixedFee } = req.body;
+    const { registerationFees, platformFees, currency, paypalFeePercentage, paypalFixedFee, stripeFeePercentage, stripeFixedFee } = req.body;
     let getadminFees = await findOne("adminFees", { _id: id });
 
     if (!getadminFees || getadminFees.length === 0) {

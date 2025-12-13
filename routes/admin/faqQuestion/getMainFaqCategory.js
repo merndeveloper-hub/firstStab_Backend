@@ -10,7 +10,7 @@ const getMainCategories = async (req, res) => {
         message: "No faqCategory found",
       });
     }
-    console.log(faqcategories, "faqcategories");
+  
 
     let formattedCategories = faqcategories.map((cat) => ({
       name: cat.name,

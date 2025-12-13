@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { find } from "../../../helpers/index.js";
-import userType from "../../../models/userType/index.js";
+
 
 const schema = Joi.object({
   id: Joi.string().required()

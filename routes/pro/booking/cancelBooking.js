@@ -2,6 +2,7 @@ import Joi from "joi";
 import moment from "moment-timezone";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 import { convertToUTC, extractDate, extractTime } from "../../../utils/index.js";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().hex().length(24).required(),
@@ -47,6 +48,13 @@ const proCancelledBooking = async (req, res) => {
         message: "Cannot cancel a completed booking",
       });
     }
+
+    //find user 
+    let findUser = await findOne("user", { _id: goingbooking?.userId })
+
+
+    //find pro 
+    let findPro = await findOne("user", { _id: goingbooking?.professsionalId })
 
     // ========== VALIDATE AND CONVERT CANCEL TIME TO UTC ==========
     const validatedCancelDate = extractDate(CancelDate);
@@ -153,6 +161,37 @@ const proCancelledBooking = async (req, res) => {
           amountReturn: "Manually decide",
           cancelledAt: new Date().toISOString(),
         }
+      );
+
+      // ========== 1️⃣ USER-ISSUE CANCELLATION (Manual Review) ==========
+      // Line 138-164 ke baad add karein
+
+      await send_email(
+        "user-issue-cancellation",
+        {
+          userName: findUser?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          reasonCancel: reasonCancel,
+          reasonDescription: reasonDescription || "Not provided"
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancellation - Under Review",
+        findUser?.email
+      );
+
+      await send_email(
+        "pro-cancellation-confirmed",
+        {
+          professionalName: findPro?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          cancelDate: utcCancel.utcDate,
+          cancelTime: utcCancel.utcTime
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - Manual Review",
+        findPro?.email
       );
 
       return res.status(200).json({
@@ -268,12 +307,45 @@ const proCancelledBooking = async (req, res) => {
         }
       );
 
+      // ========== 2️⃣ PRO CANCEL <3 HOURS (Penalty Applied) ==========
+      // Line 251-275 ke baad add karein
+
+      await send_email(
+        "user-refund-notification",
+        {
+          userName: findUser?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          refundAmount: baseServiceFee.toFixed(2),
+          cancelDate: utcCancel.utcDate,
+          cancelTime: utcCancel.utcTime
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - Full Refund Issued",
+        findUser?.email
+      );
+
+      await send_email(
+        "pro-penalty-notification",
+        {
+          professionalName: findPro?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          penaltyAmount: cancelCharges.toFixed(2),
+          cancelDate: utcCancel.utcDate,
+          cancelTime: utcCancel.utcTime
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - Penalty Applied",
+        findPro?.email
+      );
+
       return res.status(200).json({
         status: 200,
         message: "Booking cancelled - Penalty applied to professional",
         cancelbooking,
-       // penalty: cancelCharges,
-       // refundedToUser: baseServiceFee,
+        // penalty: cancelCharges,
+        // refundedToUser: baseServiceFee,
       });
     }
 
@@ -285,8 +357,8 @@ const proCancelledBooking = async (req, res) => {
         Number(goingbooking?.service_fee || 0) +
         Number(goingbooking?.platformFees || 0);
 
-const cancelCharges =
-      
+      const cancelCharges =
+
         Number(findPaymentCharges || 0);
 
       const cancelbooking = await updateDocument(
@@ -341,7 +413,7 @@ const cancelCharges =
         }
       );
 
-       // Add penalty to pro's charges
+      // Add penalty to pro's charges
       await updateDocument(
         "user",
         { _id: goingbooking.professsionalId },
@@ -349,12 +421,44 @@ const cancelCharges =
           $inc: { totalCharges: cancelCharges },
         }
       );
+      // ========== 3️⃣ PRO CANCEL ≥3 HOURS (No Penalty) ==========
+      // Line 340-361 ke baad add karein
+
+      await send_email(
+        "user-refund-notification",
+        {
+          userName: findUser?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          refundAmount: baseServiceFee.toFixed(2),
+          cancelDate: utcCancel.utcDate,
+          cancelTime: utcCancel.utcTime
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - Full Refund Issued",
+        findUser?.email
+      );
+
+      await send_email(
+        "pro-cancellation-confirmed",
+        {
+          professionalName: findPro?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          cancelDate: utcCancel.utcDate,
+          cancelTime: utcCancel.utcTime
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancellation Confirmed - No Penalty",
+        findPro?.email
+      );
+
 
       return res.status(200).json({
         status: 200,
         message: "Booking cancelled - No penalty (3+ hours notice)",
         cancelbooking,
-     //   refundedToUser: baseServiceFee,
+        //   refundedToUser: baseServiceFee,
       });
     }
 

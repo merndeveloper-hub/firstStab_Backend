@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { insertNewDocument, updateDocument } from "../../../helpers/index.js";
+import {  updateDocument } from "../../../helpers/index.js";
 
 const validationSchema = Joi.object({
   businessname: Joi.string(),

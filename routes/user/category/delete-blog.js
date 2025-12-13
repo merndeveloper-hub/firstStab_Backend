@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 import {
-  insertNewDocument,
   deleteDocument,
   findOne,
 } from "../../../helpers/index.js";
@@ -24,7 +23,7 @@ const deleteCategory = async (req, res) => {
     const findBooking = await find("proBookingService", {
       categoryId: findCategory?.categoryId,
     });
-    console.log(findBooking, "booking");
+   
 
     if (findBooking.length > 0) {
       return res

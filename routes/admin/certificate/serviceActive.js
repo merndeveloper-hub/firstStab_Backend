@@ -21,7 +21,7 @@ const activeProService = async (req, res) => {
     const getPro = await findOne("user", { _id: getService?.proId });
     let activeService;
     if (getPro?.totalPro < 5000) {
-      console.log("if");
+   
 
       activeService = await updateDocument(
         "proCategory",
@@ -48,9 +48,9 @@ const activeProService = async (req, res) => {
       await send_email(
         "adminApproved",
         {
-          user: getPro?.first_Name,
+        user: getPro?.first_Name,
         },
-        "owaisy028@gmail.com",
+        process.env.SENDER_EMAIL,
         "Congratulations! You’re Now an Active Pro on FirstStab",
         getPro?.email
       );

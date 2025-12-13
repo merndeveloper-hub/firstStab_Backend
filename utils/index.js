@@ -185,17 +185,14 @@ export function hasTimeConflict(newDate, newTime, existingBookings) {
 // }
 
 function calculateTotalAmount(serviceFee, platformFeePercentage, taxJarTaxAmount, paypalFeePercentage, paypalFixedFee) {
-  // const platformFee = serviceFee * platformFeePercentage;
-  // console.log(platformFee,"platformFee");
+
   
   const subTotalBeforePayPalFee = serviceFee + platformFeePercentage + taxJarTaxAmount;
-console.log(subTotalBeforePayPalFee,"subTotalBeforePayPalFee");
-console.log(paypalFeePercentage,"paypalFeePercentage");
-console.log(paypalFixedFee,"paypalFixedFee");
+
 
 
   const totalAmount = (subTotalBeforePayPalFee + paypalFixedFee) / (1 - paypalFeePercentage);
-console.log(totalAmount,"totalAmount");
+
 
   return Number(totalAmount.toFixed(2));
 }
@@ -203,16 +200,5 @@ console.log(totalAmount,"totalAmount");
 
 
 
-// const { admin } = require("../firebase/admin");
-
-// async function sendPushNotification(token, title, body, data = {}) {
-//   return admin.messaging().send({
-//     token,
-//     notification: { title, body },
-//     data,
-//   });
-// }
-
-// module.exports = { sendPushNotification };
 
 export { generateUniqueNumber,calculateTotalAmount };

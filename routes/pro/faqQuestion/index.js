@@ -6,7 +6,7 @@ import tokenVerification from "../../../middleware/token-verification/index.js";
 
 const router = express.Router();
 
-
+//--get admin faq question
 router.get("/get",tokenVerification, getFaqQuestion);
 
 

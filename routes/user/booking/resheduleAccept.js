@@ -38,7 +38,7 @@ const rescheduleAcceptBooking = async (req, res) => {
       responseNote,
     } = req.body;
 
-    console.log("✅ Accept Reschedule Request:", { bookServiceId, timezone });
+   
 
     // ========== FIND EXISTING RESCHEDULE REQUEST ==========
     const findUserResheduleService = await findOne("userBookServ", {

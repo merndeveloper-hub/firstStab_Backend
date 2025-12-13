@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { find, findOne, getAggregate } from "../../../helpers/index.js";
+import { findOne, getAggregate } from "../../../helpers/index.js";
 import mongoose from "mongoose";
 
 
@@ -111,7 +111,7 @@ const newRequestBooking = async (req, res) => {
     
     ]);
 
-    console.log(getProBookService,"getProBookService");
+   
     
 
     if (!getProBookService || getProBookService.length == 0) {

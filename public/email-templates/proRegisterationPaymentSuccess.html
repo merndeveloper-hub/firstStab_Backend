@@ -2,25 +2,135 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pro Registration Payment Successful</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: Arial, sans-serif; background:#f8f9fa; padding:20px;">
-  <div style="max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+<!-- ==================== PAYMENT SUCCESS TEMPLATE (PayPal & Stripe) ==================== -->
+<div style="background: linear-gradient(135deg, #0880ff 0%, #04adff 100%); min-height: 100vh; padding: 40px 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(8, 128, 255, 0.3);">
     
-    <h2 style="color:#28a745;">Payment Successful, {{user}}! ✅</h2>
-    <p>We're excited to inform you that your payment for the Pro account registration has been <strong>successfully processed</strong>.</p>
+    <!-- Header Section - Success -->
+    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 50px 30px; text-align: center;">
+      <div style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      
+      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Payment Successful!</h1>
+      <p style="margin: 15px 0 0 0; color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 500;">Your Registration is Complete</p>
+    </div>
     
-    <p>Payment Method: <strong>{{paymentMethod}}</strong><br/>
-    Transaction ID: <strong>{{transactionId}}</strong></p>
+    <!-- Content Section -->
+    <div style="padding: 45px 30px;">
+      
+      <p style="margin: 0 0 20px 0; color: #2c3e50; font-size: 17px; line-height: 1.6;">
+        Hello <strong style="color: #0880ff;">{{user}}</strong>,
+      </p>
+      
+      <p style="margin: 0 0 25px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        Great news! Your payment has been <strong style="color: #10b981;">successfully processed</strong> and your professional account registration is now complete.
+      </p>
+      
+      <!-- Payment Details Box -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 4px solid #10b981; padding: 25px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #065f46; font-size: 16px; font-weight: 600;">
+          💳 Payment Details
+        </p>
+        <table style="width: 100%; color: #047857; font-size: 14px; line-height: 1.8;">
+          <tr>
+            <td style="padding: 8px 0;"><strong>Payment Method:</strong></td>
+            <td style="text-align: right;">{{paymentMethod}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Transaction ID:</strong></td>
+            <td style="text-align: right; font-family: monospace; font-size: 13px; color: #059669;">{{transactionId}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Amount Paid:</strong></td>
+            <td style="text-align: right; font-size: 18px; font-weight: 700; color: #10b981;">${{amountPaid}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Payment Date:</strong></td>
+            <td style="text-align: right;">{{paymentDate}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong>Status:</strong></td>
+            <td style="text-align: right;">
+              <span style="background: #10b981; color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">COMPLETED</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+      <!-- What's Next Section -->
+      <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 4px solid #0880ff; padding: 22px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #1e3a8a; font-size: 15px; font-weight: 600;">
+          🚀 What's Next?
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #1e40af; font-size: 14px; line-height: 1.8;">
+          <li style="margin-bottom: 10px;">Your account will be reviewed by our admin team</li>
+          <li style="margin-bottom: 10px;">You'll receive approval within 24-48 hours</li>
+          <li style="margin-bottom: 10px;">Once approved, you can start accepting service requests</li>
+          <li style="margin-bottom: 0;">Complete your profile to attract more clients</li>
+        </ul>
+      </div>
+      
+      <p style="margin: 0 0 30px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        A payment receipt has been sent to your registered email. You can also view your transaction history in your dashboard.
+      </p>
+      
+      <!-- Success Message -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; border-radius: 10px; margin: 35px 0 30px 0; text-align: center; border: 2px dashed #10b981;">
+        <p style="margin: 0; color: #2c3e50; font-size: 16px; font-weight: 600;">
+          🎉 Welcome to the FirstStab Professional Community!
+        </p>
+        <p style="margin: 10px 0 0 0; color: #6c757d; font-size: 14px;">
+          Your journey to success starts here
+        </p>
+      </div>
+      
+      <p style="margin: 0; color: #6c757d; font-size: 14px; line-height: 1.6;">
+        If you have any questions about your payment or registration, our support team is here to help.
+      </p>
+      
+      <p style="margin: 30px 0 0 0; color: #2c3e50; font-size: 15px; line-height: 1.6;">
+        Best regards,<br/>
+        <strong style="color: #0880ff;">The FirstStab Team</strong>
+      </p>
+      
+    </div>
     
-    <p>Our team will now review your profile. You'll be notified once your Pro account is fully activated.</p>
+    <!-- Footer Section -->
+    <div style="background: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0 0 10px 0; color: #6c757d; font-size: 13px; line-height: 1.5; text-align: center;">
+        <strong>FirstStab Inc.</strong><br/>
+        California, United States
+      </p>
+
+      <p style="margin: 0 0 18px 0; color: #adb5bd; font-size: 12px; text-align: center; line-height: 1.5;">
+        This is an automated message. Please do not reply to this email.
+      </p>
+
+      <p style="margin: 0 0 20px 0; color: #6c757d; font-size: 13px; text-align: center;">
+        Need help? Contact our support team anytime.
+      </p>
+
+      <!-- Contact Support Button -->
+      <table align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center" bgcolor="#0880ff" style="border-radius: 30px;">
+            <a href="mailto:info@firststab.com" style="display: inline-block; padding: 14px 36px; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 30px; font-family: Arial, sans-serif;">
+              Contact Support
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
     
-    <p style="margin-top:20px;">Thanks for joining the FirstStab Pro community! 🚀</p>
-    
-    <p>Regards,<br/>The FirstStab Team</p>
-    
-    <hr style="border:none; border-top:1px solid #ddd; margin:20px 0;">
-    <p style="color:#888; font-size:12px;">FirstStab Inc, California<br/>This is an automated message, please do not reply.</p>
   </div>
+</div>
 </body>
 </html>

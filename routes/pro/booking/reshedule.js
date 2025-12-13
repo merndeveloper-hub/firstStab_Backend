@@ -39,12 +39,7 @@ const proRescheduleRequest = async (req, res) => {
       timezone,
     } = req.body;
 
-    console.log("🔄 Pro Reschedule Request:", {
-      bookServiceId,
-      orderRescheduleStartDate,
-      orderRescheduleStartTime,
-      timezone,
-    });
+    
 
     // ========== FIND BOOKINGS ==========
     const userBooking = await findOne("userBookServ", {
@@ -154,7 +149,7 @@ const proRescheduleRequest = async (req, res) => {
       }
     }
 
-    console.log("🕒 Reschedule Time Conversion:", {
+    console.log(" Reschedule Time Conversion:", {
       proTimezone: timezone,
       proDateTime: `${validatedStartDate} ${validatedStartTime}`,
       utcDateTime: `${utcRescheduleStart.utcDate} ${utcRescheduleStart.utcTime}`,
@@ -257,7 +252,7 @@ const proRescheduleRequest = async (req, res) => {
       });
     }
 
-    console.log("✅ Pro Reschedule Request Created Successfully");
+    console.log(" Pro Reschedule Request Created Successfully");
 
     return res.status(200).json({
       status: 200,

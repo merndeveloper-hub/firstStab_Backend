@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 import {
-  insertNewDocument,
   deleteDocument,
   findOne,
 } from "../../../helpers/index.js";

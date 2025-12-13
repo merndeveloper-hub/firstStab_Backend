@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { find, getAggregate, findOne } from "../../../helpers/index.js";
+import { find } from "../../../helpers/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
@@ -45,14 +45,7 @@ const getServiceCategoryCount = async (req, res) => {
       };
     });
 
-    // const getBusinness = await find("user", { _id: id, userType: "pro" });
-
-    // if (!getBusinness || getBusinness.length === 0) {
-    //   return res.status(400).send({
-    //     status: 400,
-    //     message: "No Buniness Info found",
-    //   });
-    // }
+    
 
     return res
       .status(200)

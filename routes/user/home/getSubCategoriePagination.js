@@ -11,7 +11,7 @@ const getSubCateWithPagination = async (req, res) => {
     const { id } = req.params;
 
     const page = parseInt(req.query.page) || 1; // Default to page 1
-    console.log(page, "page");
+   
 
     const limit = 5; // Show 5 subcategories per page
     const skip = (page - 1) * limit;

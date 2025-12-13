@@ -6,7 +6,6 @@ const getFaqQuestion = async (req, res) => {
 
     const faqQuestions = await findAndSort("faqQuestion", { displayPostion: { $gte: 0 } }, { displayPostion: 1 });
 
-    console.log(faqQuestions, "contentPage...");
 
     if (!faqQuestions) {
       return res.status(401).send({ status: 401, message: "No FAQ Questions Found" });

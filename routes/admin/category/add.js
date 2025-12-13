@@ -1,23 +1,23 @@
 import Joi from "joi";
 import { insertNewDocument } from "../../../helpers/index.js";
 import { v2 as cloudinary } from "cloudinary";
-//import { cloudinary } from "../../../lib/index.js";
+
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const schema = Joi.object({
   name: Joi.string().required(),
- // commission: Joi.number().required(),
+  // commission: Joi.number().required(),
   taxCode: Joi.string().required(),
- 
+
   description: Joi.string(),
   status: Joi.string(),
   isRemote: Joi.string(),
   addToHome: Joi.string(),
-  serviceCountry:Joi.string()
+  serviceCountry: Joi.string()
 });
 
 const createCategory = async (req, res) => {
@@ -37,7 +37,7 @@ const createCategory = async (req, res) => {
     );
 
     req.body.image = category_Image.url;
- 
+
 
     if (!req?.files?.icon?.path) {
       return res.status(400).json({
@@ -51,7 +51,7 @@ const createCategory = async (req, res) => {
     );
 
     req.body.icon = category_Icon.url;
-    console.log(category_Icon, "category_Image");
+ 
 
     const category = await insertNewDocument("category", {
       ...req.body,

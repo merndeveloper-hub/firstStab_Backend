@@ -10,26 +10,23 @@ const getInvitationStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const url = `${process.env.CHECKR_CANDIDATE_INVITAION_DEVELOPMENT_URL}/${id}`;
-//const url = `https://api.checkr-staging.com//v1/invitations/${id}`
-   console.log(url,"url");
+
 
     const config = {
       headers: {
         "Content-Type": "application/json",
         Authorization:
-          "Basic ZjQ5YzZhMGExODBiODk5ZmJlNTY2ZGQ1NDEyNThiZWE1MGQ4NDRhMjo=", // 👈 Base64 encoded key:secret
+          `Basic ${process.env.CHECKR_CLIENT_SECRET}`,
       },
-     // data: {},
+
     };
-console.log(config,"config");
+
 
     const response = await axios.get(url, config);
 
-    console.log("Invitation Detail ✅", response);
 
     if (response?.data?.report_id) {
-      console.log("report");
-      console.log(response?.data?.report_id, "response?.data?.report_id");
+
 
       const url = `${process.env.CHECKR_REPORT_URL}/${response?.data?.report_id}?include=candidate,ssn_trace,county_criminal_searches,motor_vehicle_report`;
 
@@ -37,19 +34,18 @@ console.log(config,"config");
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            "Basic ZjQ5YzZhMGExODBiODk5ZmJlNTY2ZGQ1NDEyNThiZWE1MGQ4NDRhMjo=", // 👈 Base64 encoded key:secret
+            `Basic ${process.env.CHECKR_CLIENT_SECRET}`,
         },
         data: {},
       };
 
       const reportRes = await axios.get(url, config);
 
-      console.log("Invitation Detail ✅", reportRes.data);
+
       const getService = await findOne("proCategory", {
         invitationId: response?.data?.id,
       });
-      console.log(getService, "getservice");
-      //     let activeService;
+
 
       let activeService = await updateDocument(
         "proCategory",
@@ -57,17 +53,17 @@ console.log(config,"config");
         {
           serviceStatus: "pending",
           checkrReportStatus: reportRes?.data?.status,
-         checkrResult: reportRes?.data?.result
+          checkrResult: reportRes?.data?.result
         }
       );
 
-      return res.status(200).json({ status: 200, data:  reportRes?.data });
+      return res.status(200).json({ status: 200, data: reportRes?.data });
     }
 
     const getService = await findOne("proCategory", {
       invitationId: response?.data?.id,
     });
-    console.log(getService, "getservice");
+
     let activeService;
     if (getService) {
       activeService = await updateDocument(

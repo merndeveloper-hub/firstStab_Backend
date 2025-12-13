@@ -1,5 +1,4 @@
 import Joi from "joi";
-//import { findOne, updateDocument } from "../../../helpers/index.js";
 import {
   insertNewDocument,
   findOne,
@@ -51,17 +50,7 @@ const reviewService = async (req, res) => {
       });
     }
 
-    // const findProBooking = await findOne("proBookingService", {
-    //   _id: proBookId,
-    //   status: "Completed",
-    // });
-
-    // if (!findProBooking || findProBooking.length == 0) {
-    //   return res.status(400).json({
-    //     status: 400,
-    //     message: "No Booking found!",
-    //   });
-    // }
+    
 
     const findUserBooking = await findOne("userBookServ", {
       _id: bookServiceId,

@@ -24,7 +24,7 @@ const refreshAccessToken = async (req, res) => {
         .status(401)
         .send({ status: 401, message: "Refresh token not found in DB!" });
     }
-console.log(isTokenExist,"istoken");
+
 
     // Step 2: Verify refresh token
     jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
@@ -56,10 +56,10 @@ console.log(isTokenExist,"istoken");
         { expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN }
       );
 
-      // ✅ Step 5: Delete all old tokens of this user
+      //  Step 5: Delete all old tokens of this user
       await deleteManyDocument("token", { user_id: isUserExist._id });
 
-      // ✅ Step 6: Insert fresh token record
+      //  Step 6: Insert fresh token record
       await insertNewDocument("token", {
         user_id: isUserExist._id,
         accessToken: newAccessToken,
@@ -70,7 +70,7 @@ console.log(isTokenExist,"istoken");
       });
 
 
-       // Set Access Token in Cookie
+      // Set Access Token in Cookie
       res.cookie("token", newAccessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https

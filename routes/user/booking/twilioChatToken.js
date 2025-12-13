@@ -16,12 +16,11 @@ const schemaBody = Joi.object().keys({
 });
 
 const twilioChatToken = async (req, res) => {
-  console.log("Generating Twilio Chat Token");
-
+ 
   try {
     // Get user identity and channel from the request body
     const { userId, chatChannelName } = req.body;
-    console.log(req.body, "body");
+   
 
     if (!userId || !chatChannelName) {
       return res

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { findOne, getAggregate } from "../../../helpers/index.js";
+import { findOne } from "../../../helpers/index.js";
 
 
 const schema = Joi.object().keys({

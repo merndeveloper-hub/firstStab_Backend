@@ -1,5 +1,4 @@
 import Joi from "joi";
-// const { findOne } = require("../../../helpers");
 import { findOne, updateDocument } from "../../../helpers/index.js";
 
 const schema = Joi.object({
@@ -20,7 +19,7 @@ const updateFaqQuestion = async (req, res) => {
     await schemaId.validateAsync(req.params);
 
     const { id } = req.params;
-const {faqCategorieid,faqCategorieName,title,answer,status,displayPosition} = req.body
+    const { faqCategorieid, faqCategorieName, title, answer, status, displayPosition } = req.body
     let faqQuestion = await findOne("faqQuestion", { _id: id });
 
     if (!faqQuestion || faqQuestion.length === 0) {

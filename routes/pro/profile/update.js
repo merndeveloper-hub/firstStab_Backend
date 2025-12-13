@@ -6,9 +6,9 @@ import { v2 as cloudinary } from "cloudinary";
 import send_email from "../../../lib/node-mailer/index.js";
 
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const bodySchema = Joi.object({
@@ -103,8 +103,8 @@ const updateProfile = async (req, res) => {
         {
           user: updatedUser?.first_Name,
         },
-        "owaisy028@gmail.com",
-        "Your Pro Signup is Successful – Pending Review",
+        process.env.SENDER_EMAIL,
+        "Pro Registration Under Review",
         email
       );
 

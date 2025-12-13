@@ -40,12 +40,7 @@ const userRescheduleRequest = async (req, res) => {
       timezone,
     } = req.body;
 
-    console.log("🔄 Reschedule Request:", {
-      bookServiceId,
-      orderRescheduleStartDate,
-      orderRescheduleStartTime,
-      timezone,
-    });
+   
 
     // ========== FIND BOOKINGS ==========
     const userBooking = await findOne("userBookServ", {

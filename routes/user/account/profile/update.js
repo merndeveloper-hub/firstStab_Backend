@@ -2,11 +2,12 @@ import Joi from "joi";
 import { updateDocument, findOne } from "../../../../helpers/index.js";
 import { v2 as cloudinary } from "cloudinary";
 
-//import { cloudinary } from "../../../lib/index.js";
+
+
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const schema = Joi.object({

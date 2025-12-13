@@ -3,27 +3,16 @@ import { findOne } from "../../../helpers/index.js";
 const getbgLink = async (req, res) => {
   try {
     const { id, register } = req.params;
-    console.log(req.params, "params");
 
-    // const getPayment = await findOne(
-    //   "payment",
-    //   {professionalId:id,status:"COMPLETED"},
 
-    // );
 
-    // if (!getPayment || getPayment.length === 0) {
-    //   return res.status(400).send({
-    //     status: 400,
-    //     message: "Pay your register payment",
-    //   });
-    // }
 
-    // jb register tru hoga toh pro ke id jye ge,jb login kr ke a rha hoga tb proCategory id jye
+    // jb register tru hoga toh pro ke id jye ge,jb login kr ke a rha hoga tb proCategory ke id jye ge.
     if (register == "true") {
-      console.log("true---------------");
+
 
       const getURL = await findOne("proCategory", { proId: id });
-      console.log(getURL, "url-----");
+
 
       if (!getURL) {
         return res
@@ -47,7 +36,7 @@ const getbgLink = async (req, res) => {
         userType: "pro",
       });
       let getCountry = US_COUNTRIES.includes(findPro?.country);
-      console.log(getCountry, "getcouintry");
+
 
       let url = getURL?.invitationUrl;
 
@@ -59,9 +48,7 @@ const getbgLink = async (req, res) => {
         .json({ status: 200, data: { url, certnURL, decideCountry } });
     } else {
       const getURL = await findOne("proCategory", { _id: id });
-      console.log(getURL, "url-----");
 
-      console.log("false--------------");
 
       if (!getURL) {
         return res
@@ -85,7 +72,7 @@ const getbgLink = async (req, res) => {
         userType: "pro",
       });
       let getCountry = US_COUNTRIES.includes(findPro?.country);
-      console.log(getCountry, "getcouintry");
+
 
       let url = getURL?.invitationUrl;
 

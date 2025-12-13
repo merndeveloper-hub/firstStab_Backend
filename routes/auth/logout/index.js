@@ -15,11 +15,11 @@ const logout = async (req, res) => {
     const { id } = req.params;
 
     const deleteToken = await deleteDocument("token", { user_id: id });
-    console.log(deleteToken, "delete");
+   
 
     if (!deleteToken || deleteToken.deletedCount === 0) {
-      return res.status(400).send({
-        status: 400,
+      return res.status(401).send({
+        status: 401,
         message: "No token found for the specified user.",
         details:
           "Ensure the user ID is correct and that a token exists for this user.",

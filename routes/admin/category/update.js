@@ -1,22 +1,22 @@
 import Joi from "joi";
 import { updateDocument, findOne } from "../../../helpers/index.js";
 import { v2 as cloudinary } from "cloudinary";
-//import { cloudinary } from "../../../lib/index.js";
+
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const schema = Joi.object({
   name: Joi.string(),
- // commission: Joi.number(),
+  // commission: Joi.number(),
   taxCode: Joi.string(),
   description: Joi.string(),
   status: Joi.string(),
   isRemote: Joi.string(),
   addToHome: Joi.string(),
-  serviceCountry:Joi.string()
+  serviceCountry: Joi.string()
 });
 const schemaForId = Joi.object({
   id: Joi.string().required(),
@@ -27,42 +27,42 @@ const updateCategory = async (req, res) => {
     await schemaForId.validateAsync(req.params);
     await schema.validateAsync(req.body);
     const { id } = req.params;
-    const {  name,
+    const { name,
       platFormFees,
-  
-  taxCode,
-  description,
-  status,
-  isRemote,
-  addToHome,
-  serviceCountry} =req.body
+
+      taxCode,
+      description,
+      status,
+      isRemote,
+      addToHome,
+      serviceCountry } = req.body
     const findCategory = await findOne("category", { _id: id });
-    if (!findCategory || findCategory.length === 0 ) {
+    if (!findCategory || findCategory.length === 0) {
       return res
         .status(400)
         .send({ status: 400, message: "Category not found" });
     }
 
-    
+
     if (req?.files?.image?.path) {
       const category_Image = await cloudinary.uploader.upload(
         req?.files?.image?.path,
         { quality: 20, allowed_formats: ["jpg", "jpeg", "png", "jfif", "avif"] }
       );
-  
+
       req.body.image = category_Image?.url;
-     
+
     }
 
     if (req?.files?.icon?.path) {
-    const category_Icon = await cloudinary.uploader.upload(
-      req?.files?.icon?.path,
-      { quality: 20, allowed_formats: ["jpg", "jpeg", "png", "jfif", "avif"] }
-    );
+      const category_Icon = await cloudinary.uploader.upload(
+        req?.files?.icon?.path,
+        { quality: 20, allowed_formats: ["jpg", "jpeg", "png", "jfif", "avif"] }
+      );
 
-    req.body.icon = category_Icon?.url;
-  }
-  
+      req.body.icon = category_Icon?.url;
+    }
+
     const category = await updateDocument(
       "category",
       {

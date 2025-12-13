@@ -17,11 +17,7 @@ const adminVerification = async (req, res, next) => {
           .status(400)
           .send({ status: 400, message: "Token Unauthorized!" });
       }
-      // if (!decoded.id) {
-      //   return res
-      //     .status(400)
-      //     .send({ status: 400, message: "Upgrade your token" });
-      // }
+  
       const isUserExist = await findOne("user", { _id: decoded.id });
       if (!isUserExist) {
         return res.status(401).send({
@@ -38,7 +34,7 @@ const adminVerification = async (req, res, next) => {
           message: "No user-type found",
         });
       }
-      console.log("USerType", checkType);
+    
       const accessArr = ["Owner", "Admin", "Moderator", "Creator", "Director"];
       if (!accessArr.includes(checkType.type)) {
         return res.status(400).send({

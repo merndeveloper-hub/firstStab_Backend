@@ -23,7 +23,7 @@ const completedBooking = async (req, res) => {
     const { id } = req.params;
     const { FinishedTime, FinishedDate, timezone, completionNotes, rating } = req.body;
 
-    console.log("✅ Complete Request:", { id, FinishedDate, FinishedTime, timezone });
+ 
 
     // ========== FIND BOOKINGS ==========
     const deliveredUserBooking = await findOne("userBookServ", { _id: id });

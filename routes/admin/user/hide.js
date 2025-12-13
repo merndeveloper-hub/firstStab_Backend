@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const schema = Joi.object({
   id: Joi.string().required(),
@@ -25,9 +26,31 @@ const hideUser = async (req, res) => {
       { status: findUser?.status == "Active" ? "InActive" : "Active" }
     );
 
+    if (updateUser?.status == "Active") {
+      await send_email(
+        "adminAccountActive", // Template name change
+        {
+          user: findUser?.first_Name,
+        },
+        process.env.SENDER_EMAIL,
+        "Your FirstStab Account is Now Active ", // Consistent subject
+        findUser?.email
+      );
+    } else if (updateUser?.status == "InActive") {
+      await send_email(
+        "adminAccountDeactive", // Template name change
+        {
+          user: findUser?.first_Name,
+        },
+        process.env.SENDER_EMAIL,
+        "Important: Your FirstStab Account Has Been Deactivated", // Better subject
+        findUser?.email
+      );
+    }
+
     return res.status(200).send({
       status: 200,
-      message: "User Inactive successfully",
+      message: `User ${updateUser?.status} successfully`,
       data: { updateUser },
     });
   } catch (e) {

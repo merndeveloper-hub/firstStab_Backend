@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { updateDocument, findOne } from "../../../helpers/index.js";
 import { v2 as cloudinary } from "cloudinary";
-//import { cloudinary } from "../../../lib/index.js";
+
 cloudinary.config({
   cloud_name: "dwebxmktr",
   api_key: "988681166781262",
@@ -23,11 +23,11 @@ const schema = Joi.object({
   commission: Joi.number(),
   bgServiceName: Joi.string(),
   bgValidation: Joi.array(),
-    complexity_tier: Joi.string(),
-     price_model: Joi.string().allow(null, ''),
-      fixed_price: Joi.string().allow(null, ''),
-       min_price: Joi.string().allow(null, ''),
-        max_price: Joi.string().allow(null, ''),
+  complexity_tier: Joi.string(),
+  price_model: Joi.string().allow(null, ''),
+  fixed_price: Joi.string().allow(null, ''),
+  min_price: Joi.string().allow(null, ''),
+  max_price: Joi.string().allow(null, ''),
 });
 const schemaForId = Joi.object({
   id: Joi.string().required(),
@@ -37,7 +37,7 @@ const updateSubCategory = async (req, res) => {
   try {
     await schemaForId.validateAsync(req.params);
     await schema.validateAsync(req.body);
-    const{categoryName,
+    const { categoryName,
       name,
       description,
       status,
@@ -49,7 +49,7 @@ const updateSubCategory = async (req, res) => {
       commission,
       serviceCountry,
       bgServiceName,
-      bgValidation,complexity_tier,price_model,fixed_price,min_price,max_price } = req.body
+      bgValidation, complexity_tier, price_model, fixed_price, min_price, max_price } = req.body
     const { id } = req.params;
     const findCategory = await findOne("subCategory", { _id: id });
     if (!findCategory) {
@@ -78,7 +78,7 @@ const updateSubCategory = async (req, res) => {
 
     const updateData = {};
 
- 
+
     const subCategory = await updateDocument(
       "subCategory",
       {
@@ -87,10 +87,10 @@ const updateSubCategory = async (req, res) => {
       {
         image: req?.body?.image,
         icon: req?.body?.icon,
-       ...req.body
+        ...req.body
       }
     );
-    console.log(subCategory, "dub");
+
 
     return res.status(200).send({
       status: 200,

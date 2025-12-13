@@ -10,7 +10,6 @@ const getMainCategories = async (req, res) => {
         message: "No category found",
       });
     }
-    console.log(categories, "categories");
 
     let formattedCategories = categories.map((cat) => ({
       name: cat.name,

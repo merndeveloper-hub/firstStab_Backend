@@ -15,7 +15,7 @@ const addUserType = async (req, res) => {
     session.startTransaction();
 
     const validate = await schema.validateAsync(req.body);
-    console.log(validate, "validate");
+  
 
     const user_type = await insertNewDocument("userType", req.body);
 

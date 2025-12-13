@@ -4,7 +4,7 @@ import createbusiness from "./add.js";
 import getBusinInfo from "./get.js";
 import updateBusiness from "./update.js";
 import tokenVerification from "../../../middleware/token-verification/index.js";
-//import tokenVerification from "../../../middleware/token-verification/index.js";
+
 
 
 

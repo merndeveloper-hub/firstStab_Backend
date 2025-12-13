@@ -13,75 +13,61 @@ const getProfessionalService = async (req, res) => {
     await schema.validateAsync(req.query);
 
     const { categoryId, subCategorieId, servieType } = req.query;
-    console.log(req.query, "query");
+   
 
     const proService = await getAggregate("proCategory", [
       {
         $match: {
           categoryId: new mongoose.Types.ObjectId(categoryId),
           status: "Active",
-        serviceStatus :"success"
+          serviceStatus: "success"
         },
       },
       {
         $project: {
-proId: 1,
-  price: 1,
-  rating: 1,
-  categoryId: 1,
-  userBookServId: 1,
-  complexity_tier: 1,
-  price_model: 1,
-  fixed_price: 1,
-  min_price: 1,
-  max_price: 1,
-   status: 1,
-  serviceStatus: 1,
-  serviceCountry: 1,
-  bgServiceName: 1,
-  candidateId: 1,
-  invitationUrl: 1,
-  invitationId: 1,
-  package: 1,
-  candidateIdCertn: 1,
-  invitationUrlCertn: 1,
-  invitationIdCertn: 1,
-  packageCertn: 1,
-
-  bgValidation: 1,
-  paymentStatus: 1,
-  certificate: 1,
-  platformLinks: 1,
-  socialMediaVerification: 1,
-  isCompany: 1,
-  isUSBased: 1,
-  governmentId: 1,
-  selfAssessment: 1,
-  certificationOrLicense: 1,
-  proofOfInsurance: 1,
-  companyRegistrationUrl: 1,
-  formW9: 1,
-  w8BenUrl: 1,
-  w8BenEUrl: 1,
-  otherDocuments: 1,
-  passport: 1,
-  drivingLicence: 1,
-  selfieVideo: 1,
-  createdAt: 1,
-  updatedAt: 1, // Added due to `timestamps: true`,
-
-
-          _id: 1,
-          subCategories: 1,
           proId: 1,
+          price: 1,
           rating: 1,
+          categoryId: 1,
+          userBookServId: 1,
           complexity_tier: 1,
           price_model: 1,
           fixed_price: 1,
           min_price: 1,
           max_price: 1,
-          price: 1,
-          categoryId: 1,
+          status: 1,
+          serviceStatus: 1,
+          serviceCountry: 1,
+          bgServiceName: 1,
+          candidateId: 1,
+          invitationUrl: 1,
+          invitationId: 1,
+          package: 1,
+          candidateIdCertn: 1,
+          invitationUrlCertn: 1,
+          invitationIdCertn: 1,
+          packageCertn: 1,
+          bgValidation: 1,
+          paymentStatus: 1,
+          certificate: 1,
+          platformLinks: 1,
+          socialMediaVerification: 1,
+          isCompany: 1,
+          isUSBased: 1,
+          governmentId: 1,
+          selfAssessment: 1,
+          certificationOrLicense: 1,
+          proofOfInsurance: 1,
+          companyRegistrationUrl: 1,
+          formW9: 1,
+          w8BenUrl: 1,
+          w8BenEUrl: 1,
+          otherDocuments: 1,
+          passport: 1,
+          drivingLicence: 1,
+          selfieVideo: 1,
+          createdAt: 1,
+          updatedAt: 1,
           subCategories: {
             $filter: {
               input: "$subCategories",
@@ -151,7 +137,7 @@ proId: 1,
           preserveNullAndEmptyArrays: true,
         },
       },
-        {
+      {
         $lookup: {
           from: "tokens",
           localField: "proId",
@@ -165,55 +151,50 @@ proId: 1,
           preserveNullAndEmptyArrays: true,
         },
       },
+      // LOOKUP: Saari bookings laao (array mein)
       {
         $lookup: {
           from: "probookingservices",
           localField: "_id",
           foreignField: "proServiceId",
-          as: "userBookingStatus",
+          as: "allBookings",
         },
       },
+      // FILTER: Sirf non-Completed bookings filter karo
       {
-        $unwind: {
-          path: "$userBookingStatus",
-          preserveNullAndEmptyArrays: true,
-        },
+        $addFields: {
+          activeBookings: {
+            $filter: {
+              input: "$allBookings",
+              as: "booking",
+              cond: { $ne: ["$$booking.status", "Completed"] }
+            }
+          }
+        }
       },
-      //   {
-      //   $lookup: {
-      //     from: "procategories",
-      //     localField: "proId",
-      //     foreignField: "proId",
-      //     as: "proCategoriesdata",
-      //   },
-      // },
-      // {
-      //   $unwind: {
-      //     path: "$proCategoriesdata",
-      //     preserveNullAndEmptyArrays: true,
-      //   },
-      // },
-      //{
-    // $match: {
-    //   $or: [
-    //     { "userBookingStatus.status": { $ne: "Completed" } },
-    //     { "userBookingStatus": { $eq: null } } // keep documents with no match
-    //   ]
-    // }
-  //},
+      // UNWIND: Pehli active booking lelo (ya null agar koi nahi)
+      {
+        $addFields: {
+          userBookingStatus: {
+            $cond: {
+              if: { $gt: [{ $size: "$activeBookings" }, 0] },
+              then: { $arrayElemAt: ["$activeBookings", 0] }, // Pehli non-Completed booking
+              else: null // Koi active booking nahi
+            }
+          }
+        }
+      },
       {
         $group: {
+          _id: "$_id",
           proFcmToken: {
             $first: "$proFcmToken.fcmToken",
           },
           bookingRequestTime: {
             $first: "$proDetails.bookingRequestTime",
           },
-          _id: "$_id",
           userbookingstatus: { $first: "$userBookingStatus.status" },
-          quoteAmount:{ $first: "$userBookingStatus.quoteAmount" },
-          //videoRoomName:{ $first: "$userBookingStatus.videoRoomName" },
-
+          quoteAmount: { $first: "$userBookingStatus.quoteAmount" },
           total_amount_cus_pay: {
             $first: "$userBookingStatus.total_amount_cus_pay",
           },
@@ -224,66 +205,50 @@ proId: 1,
           service_fee: { $first: "$userBookingStatus.service_fee" },
           quoteInfo: { $first: "$userBookingStatus.quoteInfo" },
           quoteDetail: { $first: "$userBookingStatus.quoteDetail" },
-          quoteAmount: { $first: "$userBookingStatus.quoteAmount" },
           subCategories: { $first: "$subCategories" },
           proId: { $first: "$proId" },
+          price: { $first: "$price" },
           rating: { $first: "$rating" },
+          categoryId: { $first: "$categoryId" },
+          userBookServId: { $first: "$userBookServId" },
           complexity_tier: { $first: "$complexity_tier" },
           price_model: { $first: "$price_model" },
           fixed_price: { $first: "$fixed_price" },
           min_price: { $first: "$min_price" },
           max_price: { $first: "$max_price" },
-          price: { $first: "$price" },
-          
-  proId: { $first: "$proId" },
-  price: { $first: "$price" },
-  rating: { $first: "$rating" },
-  categoryId: { $first: "$categoryId" },
-  userBookServId: { $first: "$userBookServId" },
-  complexity_tier: { $first: "$complexity_tier" },
-  price_model: { $first: "$price_model" },
-  fixed_price: { $first: "$fixed_price" },
-  min_price: { $first: "$min_price" },
-  max_price: { $first: "$max_price" },
- 
-  status: { $first: "$status" },
-  serviceStatus: { $first: "$serviceStatus" },
-  serviceCountry: { $first: "$serviceCountry" },
-  bgServiceName: { $first: "$bgServiceName" },
-  candidateId: { $first: "$candidateId" },
-  invitationUrl: { $first: "$invitationUrl" },
-  invitationId: { $first: "$invitationId" },
-  package: { $first: "$package" },
-  candidateIdCertn: { $first: "$candidateIdCertn" },
-  invitationUrlCertn: { $first: "$invitationUrlCertn" },
-  invitationIdCertn: { $first: "$invitationIdCertn" },
-  packageCertn: { $first: "$packageCertn" },
- 
-  bgValidation: { $first: "$bgValidation" },
-  paymentStatus: { $first: "$paymentStatus" },
-  certificate: { $first: "$certificate" },
-  platformLinks: { $first: "$platformLinks" },
-  socialMediaVerification: { $first: "$socialMediaVerification" },
-  isCompany: { $first: "$isCompany" },
-  isUSBased: { $first: "$isUSBased" },
-  governmentId: { $first: "$governmentId" },
-  selfAssessment: { $first: "$selfAssessment" },
-  certificationOrLicense: { $first: "$certificationOrLicense" },
-  proofOfInsurance: { $first: "$proofOfInsurance" },
-  companyRegistrationUrl: { $first: "$companyRegistrationUrl" },
-  formW9: { $first: "$formW9" },
-  w8BenUrl: { $first: "$w8BenUrl" },
-  w8BenEUrl: { $first: "$w8BenEUrl" },
-  otherDocuments: { $first: "$otherDocuments" },
-  passport: { $first: "$passport" },
-  drivingLicence: { $first: "$drivingLicence" },
-  selfieVideo: { $first: "$selfieVideo" },
-  createdAt: { $first: "$createdAt" },
-  updatedAt: { $first: "$updatedAt" },
-
-
-          categoryId: { $first: "$categoryId" },
-          avgRating: { $first: "$avgReviewsPro" },
+          status: { $first: "$status" },
+          serviceStatus: { $first: "$serviceStatus" },
+          serviceCountry: { $first: "$serviceCountry" },
+          bgServiceName: { $first: "$bgServiceName" },
+          candidateId: { $first: "$candidateId" },
+          invitationUrl: { $first: "$invitationUrl" },
+          invitationId: { $first: "$invitationId" },
+          package: { $first: "$package" },
+          candidateIdCertn: { $first: "$candidateIdCertn" },
+          invitationUrlCertn: { $first: "$invitationUrlCertn" },
+          invitationIdCertn: { $first: "$invitationIdCertn" },
+          packageCertn: { $first: "$packageCertn" },
+          bgValidation: { $first: "$bgValidation" },
+          paymentStatus: { $first: "$paymentStatus" },
+          certificate: { $first: "$certificate" },
+          platformLinks: { $first: "$platformLinks" },
+          socialMediaVerification: { $first: "$socialMediaVerification" },
+          isCompany: { $first: "$isCompany" },
+          isUSBased: { $first: "$isUSBased" },
+          governmentId: { $first: "$governmentId" },
+          selfAssessment: { $first: "$selfAssessment" },
+          certificationOrLicense: { $first: "$certificationOrLicense" },
+          proofOfInsurance: { $first: "$proofOfInsurance" },
+          companyRegistrationUrl: { $first: "$companyRegistrationUrl" },
+          formW9: { $first: "$formW9" },
+          w8BenUrl: { $first: "$w8BenUrl" },
+          w8BenEUrl: { $first: "$w8BenEUrl" },
+          otherDocuments: { $first: "$otherDocuments" },
+          passport: { $first: "$passport" },
+          drivingLicence: { $first: "$drivingLicence" },
+          selfieVideo: { $first: "$selfieVideo" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
           first_Name: { $first: "$proDetails.first_Name" },
           last_Name: { $first: "$proDetails.last_Name" },
           badge: { $first: "$proDetails.badge" },
@@ -307,62 +272,14 @@ proId: 1,
       },
       {
         $sort: {
-          _id: 1, // Replace with createdAt: 1 if you have a timestamp field
+          createdAt: -1, // Latest first
         },
       },
       {
         $project: {
-          bookingRequestTime: 1,
-          proFcmToken:1,
-        //  chatChannelName:1,
-         // videoRoomName:1,
           _id: 1,
-          proId: 1,
-  price: 1,
-  rating: 1,
-  categoryId: 1,
-  userBookServId: 1,
-  complexity_tier: 1,
-  price_model: 1,
-  fixed_price: 1,
-  min_price: 1,
-  max_price: 1,
- quoteAmount:1,
-  status: 1,
-  serviceStatus: 1,
-  serviceCountry: 1,
-  bgServiceName: 1,
-  candidateId: 1,
-  invitationUrl: 1,
-  invitationId: 1,
-  package: 1,
-  candidateIdCertn: 1,
-  invitationUrlCertn: 1,
-  invitationIdCertn: 1,
-  packageCertn: 1,
- 
-  bgValidation: 1,
-  paymentStatus: 1,
-  certificate: 1,
-  platformLinks: 1,
-  socialMediaVerification: 1,
-  isCompany: 1,
-  isUSBased: 1,
-  governmentId: 1,
-  selfAssessment: 1,
-  certificationOrLicense: 1,
-  proofOfInsurance: 1,
-  companyRegistrationUrl: 1,
-  formW9: 1,
-  w8BenUrl: 1,
-  w8BenEUrl: 1,
-  otherDocuments: 1,
-  passport: 1,
-  drivingLicence: 1,
-  selfieVideo: 1,
-  createdAt: 1,
-  updatedAt: 1, // Added due to `timestamps: true`
-
+          bookingRequestTime: 1,
+          proFcmToken: 1,
           userbookingstatus: 1,
           proBookingServiceId: 1,
           userBookServiceId: 1,
@@ -376,14 +293,46 @@ proId: 1,
           categoryId: 1,
           subCategories: 1,
           proId: 1,
+          price: 1,
           rating: 1,
           complexity_tier: 1,
           price_model: 1,
           fixed_price: 1,
           min_price: 1,
           max_price: 1,
-          price: 1,
-          avgRating: 1,
+          status: 1,
+          serviceStatus: 1,
+          serviceCountry: 1,
+          bgServiceName: 1,
+          candidateId: 1,
+          invitationUrl: 1,
+          invitationId: 1,
+          package: 1,
+          candidateIdCertn: 1,
+          invitationUrlCertn: 1,
+          invitationIdCertn: 1,
+          packageCertn: 1,
+          bgValidation: 1,
+          paymentStatus: 1,
+          certificate: 1,
+          platformLinks: 1,
+          socialMediaVerification: 1,
+          isCompany: 1,
+          isUSBased: 1,
+          governmentId: 1,
+          selfAssessment: 1,
+          certificationOrLicense: 1,
+          proofOfInsurance: 1,
+          companyRegistrationUrl: 1,
+          formW9: 1,
+          w8BenUrl: 1,
+          w8BenEUrl: 1,
+          otherDocuments: 1,
+          passport: 1,
+          drivingLicence: 1,
+          selfieVideo: 1,
+          createdAt: 1,
+          updatedAt: 1,
           first_Name: 1,
           last_Name: 1,
           badge: 1,
@@ -407,7 +356,7 @@ proId: 1,
       },
     ]);
 
-    console.log(proService, "proService");
+   
 
     if (!proService || proService.length === 0) {
       return res.status(400).json({
@@ -415,10 +364,8 @@ proId: 1,
         message: "No professionals available for the selected service",
       });
     }
-   
-    return res
-      .status(200)
-      .json({ status: 200, proService });
+
+    return res.status(200).json({ status: 200, proService });
   } catch (e) {
     console.log("error", e.message);
     return res.status(400).json({ status: 400, message: e.message });

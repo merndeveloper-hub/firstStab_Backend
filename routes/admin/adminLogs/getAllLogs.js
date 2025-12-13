@@ -1,4 +1,4 @@
-import { find, getDataWithLimit } from "../../../helpers/index.js";
+import { getDataWithLimit } from "../../../helpers/index.js";
 
 const getLogs = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ const getLogs = async (req, res) => {
     const logs = await getDataWithLimit(
       "apiLog",
       {},
-    {},
+      {},
       skip,
       limit
     )
@@ -21,7 +21,7 @@ const getLogs = async (req, res) => {
         message: "No logs found",
       });
     }
-//const findLogs = await find('apiLog')
+
     return res.status(200).json({ status: 200, data: { logs } });
   } catch (e) {
     console.log(e);

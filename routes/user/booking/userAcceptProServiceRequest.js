@@ -1,6 +1,5 @@
 import Joi from "joi";
 import {
-  insertNewDocument,
   updateDocument,
   updateDocuments,
 } from "../../../helpers/index.js";
@@ -64,7 +63,7 @@ const userAcceptProServiceRequest = async (req, res) => {
         { status: "Rejected" }
       );
 
-      //const getPaymentLink = await createPaypalOrder()
+  
 
       return res.status(200).json({
         status: 200,
@@ -97,7 +96,7 @@ const userAcceptProServiceRequest = async (req, res) => {
         { status: "Rejected" }
       );
 
-      //const getPaymentLink = await createPaypalOrder()
+     
 
       return res.status(200).json({
         status: 200,

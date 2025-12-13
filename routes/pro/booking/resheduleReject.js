@@ -23,22 +23,22 @@ const cancelledRescheduleBooking = async (req, res) => {
     const cancelbooking = await updateDocument(
       "userBookServ",
       { _id: id },
-      { status: "Cancelled",orderRescheduleStatus:"Cancelled", cancelledReason: "Cancelled By Professional" }
+      { status: "Cancelled", orderRescheduleStatus: "Cancelled", cancelledReason: "Cancelled By Professional" }
     );
 
-    
+
     if (!cancelbooking) {
       return res
-      .status(400)
-      .json({ status: 400, message: "No Reshedule Booking Found!" });
+        .status(400)
+        .json({ status: 400, message: "No Reshedule Booking Found!" });
     }
-    
+
     const cancelRandomProBooking = await updateDocument(
       "proBookingService",
-      { bookServiceId: id},
-      { status: "Cancelled",orderRescheduleStatus:"Cancelled", cancelledReason: "Cancelled By Professional" }
+      { bookServiceId: id },
+      { status: "Cancelled", orderRescheduleStatus: "Cancelled", cancelledReason: "Cancelled By Professional" }
     );
-    
+
     return res
       .status(200)
       .json({
@@ -47,7 +47,7 @@ const cancelledRescheduleBooking = async (req, res) => {
         cancelbooking,
       });
   } catch (e) {
-   
+
     return res.status(400).json({ status: 400, message: e.message });
   }
 };

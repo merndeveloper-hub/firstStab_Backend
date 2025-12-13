@@ -26,7 +26,7 @@ const stripeSuccess = async (req, res) => {
       userType: "pro",
     });
     let getCountry = US_COUNTRIES.includes(findPro?.country);
-    console.log(getCountry, "getcouintry");
+   
 
     const findSubCategorie = await findOne("subCategory", {
       _id: subCategorieId,
@@ -39,14 +39,14 @@ const stripeSuccess = async (req, res) => {
     const id = professionalId;
     const proCategoryId = proCategory;
 
-    console.log(proCategoryId, "proCategoryId-------");
+    
 
     if (
       serviceCountry == "NON-US" ||
       ("Both" && bgServiceName == "certn") ||
       ("Both" && getCountry == false)
     ) {
-      console.log("vertn");
+     
 
     const  invitationUrl = await createCandidatesCertn(
         id,
@@ -119,21 +119,27 @@ const stripeSuccess = async (req, res) => {
         }
       );
     }
-//console.log(invitationURL,"invitationURL...");
 
-  //^^ send email --------//
- await send_email(
-    "proRegisterationPaymentSuccess",
-    {
-      user: findPro?.first_Name || findPro?.email,
-      paymentMethod:"Stripe",
-      transactionId:session.payment_intent?.id,
-     
-    },
-     "owaisy028@gmail.com",
-    "Account Blocked Due to Multiple Failed Login Attempts",
-    findPro?.email
-  );
+
+   // File: paypalsuccess.js (success route mein)
+
+await send_email(
+  "proRegisterationPaymentSuccess",
+  {
+    user: findPro?.first_Name || findPro?.email,
+    paymentMethod: "Stripe",
+    transactionId: session.payment_intent?.id, // Stripe payment intent ID
+    amountPaid: (session.amount_total / 100).toFixed(2), // Convert cents to dollars
+    paymentDate: new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })
+  },
+  process.env.SENDER_EMAIL,
+  "Payment Successful - Registration Complete",
+  findPro?.email
+);
 
  return res.send(`
   <html>
@@ -143,12 +149,7 @@ const stripeSuccess = async (req, res) => {
   </html>
 `);
 
-    // return res.json({
-    //   status: 200,
-    //   data: { message: "Success", invitationURL: invitationURL?.invitation_url },
-    // });
-
-    //  return res.send("<html><body style='background:#fff;'></body></html>");
+    
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }

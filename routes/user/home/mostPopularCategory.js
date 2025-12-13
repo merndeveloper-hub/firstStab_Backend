@@ -37,8 +37,6 @@ const mostPopularCategory = async (req, res) => {
     ]);
 
    
- 
-console.log(categories,"mostPopularCategory");
 
     if (!categories || categories.length === 0) {
      

@@ -14,13 +14,14 @@ import {
 } from "../../../utils/index.js";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
+import send_email from "../../../lib/node-mailer/index.js";
 
 cloudinary.config({
-  cloud_name: "dwebxmktr",
-  api_key: "988681166781262",
-  api_secret: "f4gUgqo7htBtD3eOGhfirdKd8kA",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
   secure: true,
-  upload_prefix: "https://api.cloudinary.com",
+  //upload_prefix: "https://api.cloudinary.com",
   chunk_size: 6000000,
 });
 
@@ -421,6 +422,26 @@ const bookService = async (req, res) => {
     }
 
     let proBookServiceId = probookService?._id;
+
+    // 📧 Send booking confirmation email to USER
+await send_email(
+  "userBookingCreated",
+  {
+    userName: findUser?.first_Name || findUser?.email,
+    requestId: genrateRequestID,
+    serviceName: findSubCategorie.name,
+    serviceType: bookServ.subCategories.serviceType || req.body.subCategories.serviceType.replace('is', ''),
+    bookingDate: bookServ.subCategories.orderStartDate,
+    bookingTime: bookServ.subCategories.orderStartTime,
+    // servicePrice: servicePrice,
+    // platformFee: platformFee,
+    // totalAmount: totalAmount
+  },
+  process.env.SENDER_EMAIL,
+  "Booking Created - Complete Payment to Confirm",
+  findUser?.email
+);
+
     return res.status(201).json({
       status: 201,
       message: "Book Service successfully",

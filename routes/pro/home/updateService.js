@@ -1,6 +1,6 @@
 import Joi from "joi";
-import { deleteManyDocument, insertManyDocuments, insertNewDocument, updateDocument } from "../../../helpers/index.js";
-import userType from "../../../models/userType/index.js";
+import {  updateDocument } from "../../../helpers/index.js";
+
 
 
 const schema = Joi.object({
@@ -8,17 +8,7 @@ const schema = Joi.object({
   businessaddress: Joi.string(),
   businessphoneNo: Joi.string(),
   proId: Joi.string().hex().length(24).required(), // Must be a valid MongoDB ObjectId
-  // price: Joi.number().min(0).required(),
-  // categoryId: Joi.string().hex().length(24).required(),
-  // subCategories: Joi.array().items(
-  //   Joi.object({
-  //     id: Joi.string().hex().length(24).required(),
-  //     isRemote: Joi.boolean(),
-  //     isChat: Joi.boolean(),
-  //     isVirtual: Joi.boolean(),
-  //     isInPerson: Joi.boolean(),
-  //   })
-  // ),
+ 
 });
 
 const updateService = async (req, res) => {

@@ -6,7 +6,6 @@ const findUserBalance = async (req, res) => {
     if (!findUser) {
       return res.status(401).send({ status: 401, message: "No User found" });
     }
-console.log(findUser,"finduser");
 
     let data = {
       first_Name:findUser?.first_Name,

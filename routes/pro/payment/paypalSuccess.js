@@ -25,7 +25,7 @@ const paypalSuccess = async (req, res) => {
       userType: "pro",
     });
     let getCountry = US_COUNTRIES.includes(findPro?.country);
-    console.log(getCountry, "getcouintry");
+
 
     const findSubCategorie = await findOne("subCategory", {
       _id: subCategorieId,
@@ -38,14 +38,14 @@ const paypalSuccess = async (req, res) => {
     const id = professionalId;
     const proCategoryId = proCategory;
 
-    console.log(proCategoryId, "proCategoryId-------");
+
 
     if (
       serviceCountry == "Both" &&
       bgServiceName == "Both" &&
-    getCountry == false
+      getCountry == false
     ) {
-      console.log("vertn");
+
 
       const invitationUrl = await createCandidatesCertn(
         id,
@@ -66,12 +66,12 @@ const paypalSuccess = async (req, res) => {
       );
     }
 
-  //  console.log(invitationUrl, "invitationUrl-------------");
+
 
     const getToken = await getAccessToken();
 
     const executeResponse = await axios.post(
-      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${token}/capture`,
+      `${process.env.PAYPAL_API_DEVELOPMENT_URL}/v2/checkout/orders/${token}/capture`,
       {},
       {
         headers: {
@@ -80,10 +80,10 @@ const paypalSuccess = async (req, res) => {
         },
       }
     );
-    console.log("Payment Captured:", executeResponse.data);
+
 
     if (!executeResponse || executeResponse.length == 0) {
-      res.redirect("http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel");
+      res.redirect(`${process.env.BACKEND_URL}/api/v1/pro/payment/paypalcancel`);
     }
 
     const payer = {
@@ -119,24 +119,30 @@ const paypalSuccess = async (req, res) => {
       }
     );
 
-    console.log("Payment Success:", executeResponse.data);
+   
 
-    //return res.json({status:200,data:{message:"Success",invitationURL:invitationURL.invitation_url}})
-    //return res.redirect(`myapp://payment-success?invitationUrl=${encodeURIComponent(invitationURL.invitation_url)}`);
+    
+    
+    // File: paypalsuccess.js (success route mein)
 
-    //^^ send email --------//
- await send_email(
-    "proRegisterationPaymentSuccess",
-    {
-      user: findPro?.first_Name || findPro?.email,
-      paymentMethod:"Paypal",
-      transactionId:token
-     
-    },
-     "owaisy028@gmail.com",
-    "Account Blocked Due to Multiple Failed Login Attempts",
-    findPro?.email
-  );
+await send_email(
+  "proRegisterationPaymentSuccess",
+  {
+    user: findPro?.first_Name || findPro?.email,
+    paymentMethod: "PayPal",
+    transactionId: token, // PayPal transaction ID
+    amountPaid: findPayment?.finalAmount?.toFixed(2) || "0.00",
+    paymentDate: new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })
+  },
+  process.env.SENDER_EMAIL,
+  "Payment Successful - Registration Complete",
+  findPro?.email
+);
+
     return res.send(`
   <html>
     <body style="background:#fff; text-align:center; padding-top:50px;">
@@ -149,7 +155,7 @@ const paypalSuccess = async (req, res) => {
       "Error executing PayPal payment:",
       error.response ? error.response.data : error.message
     );
-    res.redirect("http://3.110.42.187:5000/api/v1/pro/payment/paypalcancel");
+    res.redirect(`${process.env.BACKEND_URL}/api/v1/pro/payment/paypalcancel`);
   }
 };
 

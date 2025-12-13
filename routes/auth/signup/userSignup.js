@@ -1,9 +1,7 @@
 import Joi from "joi";
 import {
-  findOne,
   insertNewDocument,
   findOneAndSelect,
-  getAggregate,
   deleteDocument,
 } from "../../../helpers/index.js";
 import { JWT_EXPIRES_IN, JWT_EXPIRES_IN_REFRESH_TOKEN, REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } from "../../../config/index.js";
@@ -59,14 +57,7 @@ const userSignup = async (req, res) => {
   try {
 
     await schema.validateAsync(req.body)
-    // const { error, value } = schema.validate(req.body, { abortEarly: false });
 
-    // if (error) {
-    //   console.error("Validation Error:", error);
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: error.details[0].message });
-    // }
 
     const {
       country,
@@ -96,27 +87,11 @@ const userSignup = async (req, res) => {
         .status(400)
         .send({ status: 400, message: "Mobile number already exists with this email" });
     }
-    // const user_type = await findOne("userType", { type });
-
-    // if (!user_type) {
-    //   return res
-    //     .status(401)
-    //     .send({ status: 401, message: "No User Type Found" });
-    // }
+  
 
     req.body.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-    // const userCount = await getAggregate("user", [
-    //   {
-    //     $match: { status: "Active", userType: "pro" },
-    //   },
-    //   { $count: "activeProUsers" },
-    //   {
-    //     $sort: {
-    //       _id: -1,
-    //     },
-    //   },
-    // ]);
+   
     const user = await insertNewDocument("user", {
       ...req.body,
       password: req.body.password,
@@ -128,42 +103,41 @@ const userSignup = async (req, res) => {
       last_Name,
       avgReviewsPro: 0,
       totalReviewsPro: 0
-      // totalPro: userCount[0]? userCount[0]?.activeProUsers + 1: 1
-      // type: user_type._id,
+ 
     });
 
-    console.log(user, "user");
+  
 
-  var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
-             expiresIn: JWT_EXPIRES_IN,
-           });
-           var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
-             expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
-           });
- 
-  const inserttoken = await insertNewDocument("token", {
-         user_id: user._id,
-         accessToken: token,
-         refreshToken: refresh_token,
-         type: "refresh",
-       });
- 
-             // Set Access Token in Cookie
-       res.cookie("token", token, {
-         httpOnly: true,
-         secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
-         sameSite: "none",
-         maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
-       });
- 
-       // Set Refresh Token in Cookie (optional)
-       res.cookie("refreshToken", refresh_token, {
-         httpOnly: true,
-         secure: process.env.NODE_ENV === "production" ? true : false,
-         sameSite: "none",
-         maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
-       });
- 
+    var token = jwt.sign({ id: user._id, role: user.userType }, ACCESS_TOKEN_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
+    var refresh_token = jwt.sign({ id: user._id, role: user.userType }, REFRESH_TOKEN_SECRET, {
+      expiresIn: JWT_EXPIRES_IN_REFRESH_TOKEN,
+    });
+
+    const inserttoken = await insertNewDocument("token", {
+      user_id: user._id,
+      accessToken: token,
+      refreshToken: refresh_token,
+      type: "refresh",
+    });
+
+    // Set Access Token in Cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false, // sirf prod me https
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 // 1 day (ya JWT_EXPIRES_IN ke hisaab se)
+    });
+
+    // Set Refresh Token in Cookie (optional)
+    res.cookie("refreshToken", refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 din
+    });
+
     req.userId = user._id;
     await sendOTPSignup({ email, userType })
     await session.commitTransaction();
@@ -173,10 +147,10 @@ const userSignup = async (req, res) => {
       message: "OTP sent to your email. Check inbox to proceed.",
       data: {
         userId: user._id,
-          token, refresh_token
+        token, refresh_token
       },
     });
-    //   return res.status(200).send({ status: 200, data:{user, token} });
+   
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -189,8 +163,8 @@ const userSignup = async (req, res) => {
     }
     // Handle other errors
     console.error("Error saving user:", error);
-    return res.status(400).send({ status: 400, message: "An unexpected error occurred." });
-    //  return res.status(400).send({ status: 400, message: e.message });
+
+    return res.status(400).send({ status: 400, message: error.message });
   }
 };
 

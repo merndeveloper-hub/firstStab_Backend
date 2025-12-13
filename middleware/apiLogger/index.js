@@ -36,19 +36,7 @@ export const apiLogger = async (req, res, next) => {
         userId: req.user?.id || null,
         reqId,
       });
-      // await ApiLog.create({
-      //   route: originalUrl,
-      //   method,
-      //   statusCode: res.statusCode,
-      //   reqHeaders: headers,
-      //   reqBody: body,
-      //   resBody: tryParse(responseBody),
-      //   responseTime: duration,
-      //   timestamp: new Date(),
-      //   ip,
-      //   userId: req.user?.id || null,
-      //   reqId
-      // });
+    
     } catch (err) {
       console.error("Failed to log API request:", err);
     }

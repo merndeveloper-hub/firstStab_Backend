@@ -1,16 +1,11 @@
 import Joi from "joi";
 import {
-  findOne,
-  insertNewDocument,
   findOneAndSelect,
   updateDocument
 } from "../../../helpers/index.js";
-import { ACCESS_TOKEN_SECRET } from "../../../config/index.js";
-
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
-import userType from "../../../models/userType/index.js";
+
 
 const schema = Joi.object({
   userType: Joi.string(),
@@ -49,14 +44,7 @@ const forgotPaasswd = async (req, res) => {
 
   try {
     await schema.validateAsync(req.body)
-    // const { error, value } = schema.validate(req.body, { abortEarly: false });
 
-    // if (error) {
-    //   console.error("Validation Error:", error);
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: error.details[0].message });
-    // }
 
     const { password, email, userType } = req.body;
 
@@ -71,7 +59,6 @@ const forgotPaasswd = async (req, res) => {
 
     req.body.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-    console.log(req.body.password, "req.body.password");
 
 
     const user_passwd_updated = await updateDocument(
@@ -80,7 +67,7 @@ const forgotPaasswd = async (req, res) => {
       { password: req.body.password }
 
     );
-    console.log(user_passwd_updated, "user_passwd_updated");
+
 
     await session.commitTransaction();
     session.endSession();

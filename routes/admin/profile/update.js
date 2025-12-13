@@ -5,18 +5,13 @@ const cloudinary = require("cloudinary").v2;
 const updateAdminProfile = async (req, res) => {
   try {
     if (req?.files?.profile_img?.path) {
-      // console.log(req.file.path);
       const nft_img = await cloudinary.uploader.upload(
         req?.files?.profile_img?.path, { quality: 20 }
       );
       req.body.profile_img = nft_img.url;
-      // fs.unlinkSync(req.file.path);
-      // console.log(nft_img);
+
     }
-    // const findUser = await findOne("user", { _id: req.userId });
-    // if (!findUser) {
-    //   return res.status(401).send({ status: 401, message: "User not found" });
-    // }
+
     const user = await updateDocument(
       "user",
       {

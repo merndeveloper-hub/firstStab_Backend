@@ -1,32 +1,19 @@
 import Joi from "joi";
 import {
-  insertNewDocument,
   updateDocument,
-  updateDocuments,
+
 } from "../../../helpers/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().required(),
 });
 
-// const schemaBody = Joi.object().keys({
-//   amount: Joi.string(),
-//   userId: Joi.string(),
-//   proServiceId: Joi.string(),
-//   professsionalId: Joi.string(),
-//  // bookServiceId: Joi.string(),
-//   addInstruction: Joi.string(),
-//  // userAccpetBookingId: Joi.string(),
-//   serviceType: Joi.string().required(),
-// });
 
 
 const timerCancelBooking = async (req, res) => {
   try {
     await schema.validateAsync(req.params);
-   // await schemaBody.validateAsync(req.body);
-
-   // const { amount, userId, professsionalId, serviceType } = req.body;
+  
     const { id } = req.params;
 
    
@@ -51,7 +38,6 @@ const timerCancelBooking = async (req, res) => {
 
     
 
-      //const getPaymentLink = await createPaypalOrder()
 
       return res.status(200).json({
         status: 200,
