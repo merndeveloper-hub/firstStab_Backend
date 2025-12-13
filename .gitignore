@@ -1,3 +1,4 @@
 node_modules
 .env
 .serviceKey.jsonconfig/firebase/serviceKey.json
+.serviceKey.json
