@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 import { convertToUTC, extractDate, extractTime } from "../../../utils/index.js";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().hex().length(24).required(),
@@ -92,6 +93,13 @@ const completedBooking = async (req, res) => {
       });
     }
 
+
+     // ========== FIND USER ==========
+    const findUser = await findOne("user", {
+      _id: getProBooking?.userId,
+    });
+
+
     // ========== CALCULATE PAYMENT ==========
     let serviceFees = parseFloat(getProBooking?.service_fee || 0);
     const pendingCharges = parseFloat(findPro.totalCharges || 0);
@@ -166,6 +174,49 @@ const completedBooking = async (req, res) => {
     );
 
     console.log("✅ Booking Completed Successfully");
+
+
+// ========== SEND EMAILS ==========
+
+// 1. Email to USER - Service Completed
+await send_email(
+  "bookingCompletedUser",
+  {
+    userName: findUser?.first_Name || "User",
+    bookingId:  deliveredUserBooking?.requestId,
+    serviceName: deliveredUserBooking?.subCategories?.serviceType || "Service",
+    proName: findPro?.first_Name || "Professional",
+    completedDate: utcComplete.utcDate,
+    completedTime: utcComplete.utcTime,
+    totalAmount: getProBooking?.total_amount?.toFixed(2) || "0.00"
+  },
+  process.env.SENDER_EMAIL,
+  "Service Completed Successfully ✅",
+  findUser?.email // User's email
+);
+
+// 2. Email to PROFESSIONAL - Payment Received
+await send_email(
+  "bookingCompletedPro",
+  {
+    proName: findPro?.first_Name || "Professional",
+   bookingId:  deliveredUserBooking?.requestId,
+    userName: findUser?.first_Name || "Client",
+    serviceName: deliveredUserBooking?.subCategories?.serviceType || "Service",
+    completedDate: utcComplete.utcDate,
+    completedTime: utcComplete.utcTime,
+    originalServiceFee: parseFloat(getProBooking?.service_fee || 0).toFixed(2),
+    deductedCharges: deductedFromCharges.toFixed(2) || '0',
+    netPayment: serviceFees.toFixed(2),
+    currentBalance: (parseFloat(findPro.currentBalance || 0) + serviceFees).toFixed(2),
+    totalEarnings: (parseFloat(findPro.totalEarnings || 0) + parseFloat(getProBooking?.service_fee || 0)).toFixed(2),
+    serviceDuration: "N/A" // Calculate if you have start/end time
+  },
+  process.env.SENDER_EMAIL,
+  "Payment Received - Service Completed 💰",
+  findPro?.email // Professional's email
+);
+
 
     return res.status(200).json({
       status: 200,

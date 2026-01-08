@@ -70,7 +70,7 @@ const createService = async (req, res) => {
       let getMinPrice = Number(getSubcategory?.min_price) <= min_price;  
    
       
-      let getMaxPrice = Number(getSubcategory?.max_price) <= max_price;
+      let getMaxPrice = Number(getSubcategory?.max_price) >= max_price;
       if (!getMinPrice) {
         return res.status(400).json({
           status: 400,

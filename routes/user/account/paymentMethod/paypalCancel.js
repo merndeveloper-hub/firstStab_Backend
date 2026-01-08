@@ -7,6 +7,7 @@ const paymentCancel = (req, res) => {
       paypalOrderId: token,
     });
 
+
     return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });

@@ -32,7 +32,7 @@ router.post(
 );
 
 //--------Get All Admin Categories With subcategories---//
-router.get("/subcategory", tokenVerification, getAllCategoriesWithSubcate);
+router.get("/subcategory",tokenVerification, getAllCategoriesWithSubcate);
 
 //--------Get All Admin Categories-------//
 router.get("/", tokenVerification, getCategories);

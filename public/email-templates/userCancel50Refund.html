@@ -1,0 +1,84 @@
+<!-- ==================== 2. USER CANCELS 3-24HRS - 50% REFUND ==================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Cancelled - Partial Refund</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #0880ff 0%, #04adff 100%); min-height: 100vh; padding: 40px 20px;">
+  
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(8, 128, 255, 0.3);">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+      <div style="width: 70px; height: 70px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Booking Cancelled</h1>
+      <p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 15px;">50% Refund Applied</p>
+    </div>
+    
+    <!-- Content -->
+    <div style="padding: 40px 30px;">
+      <p style="margin: 0 0 20px 0; color: #2c3e50; font-size: 16px;">Hi <strong style="color: #0880ff;">{{userName}}</strong>,</p>
+      
+      <p style="margin: 0 0 25px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        Your booking <strong>{{bookingId}}</strong> has been cancelled. Since you cancelled between 3-24 hours before the scheduled service, a <strong style="color: #f59e0b;">50% cancellation fee</strong> applies as per our policy.
+      </p>
+      
+      <!-- Refund Info Box -->
+      <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 22px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #92400e; font-size: 15px; font-weight: 600;">💰 Refund Breakdown:</p>
+        <div style="background: #ffffff; padding: 15px; border-radius: 6px;">
+          <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">Original Service Fee:</p>
+          <p style="margin: 0 0 15px 0; color: #1e293b; font-size: 16px; font-weight: 600;">${{originalAmount}}</p>
+          
+          <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">Cancellation Fee (50%):</p>
+          <p style="margin: 0 0 15px 0; color: #dc2626; font-size: 16px; font-weight: 600;">-${{cancelFee}}</p>
+          
+          <hr style="border: none; border-top: 1px dashed #e5e7eb; margin: 12px 0;">
+          
+          <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">Refund Amount (50%):</p>
+          <p style="margin: 0; color: #059669; font-size: 18px; font-weight: 700;">${{refundAmount}}</p>
+        </div>
+        <p style="margin: 15px 0 0 0; color: #92400e; font-size: 14px;">
+          Refunded to your wallet: <strong>${{refundAmount}}</strong>
+        </p>
+      </div>
+      
+      <!-- Policy Info -->
+      <div style="background: #f0f9ff; border-left: 4px solid #0880ff; padding: 18px; margin: 25px 0; border-radius: 8px;">
+        <p style="margin: 0; color: #075985; font-size: 14px; line-height: 1.6;">
+          <strong>📋 Cancellation Policy:</strong><br/>
+          Cancellations made 3-24 hours before the scheduled service are subject to a 50% cancellation fee to compensate the professional for their reserved time.
+        </p>
+      </div>
+      
+      <!-- Booking Details -->
+      <div style="background: #f8f9fa; padding: 20px; margin: 25px 0; border-radius: 8px;">
+        <p style="margin: 0 0 12px 0; color: #495057; font-size: 14px; font-weight: 600;">Cancelled Booking Details:</p>
+        <p style="margin: 0 0 6px 0; color: #6c757d; font-size: 14px;"><strong>Service:</strong> {{serviceName}}</p>
+        <p style="margin: 0 0 6px 0; color: #6c757d; font-size: 14px;"><strong>Professional:</strong> {{proName}}</p>
+        <p style="margin: 0 0 6px 0; color: #6c757d; font-size: 14px;"><strong>Scheduled Date:</strong> {{bookingDate}}</p>
+        <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>Cancellation Reason:</strong> {{cancelReason}}</p>
+      </div>
+      
+      <p style="margin: 30px 0 0 0; color: #2c3e50; font-size: 15px;">
+        Best regards,<br/><strong style="color: #0880ff;">The FirstStab Team</strong>
+      </p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="background: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0; color: #6c757d; font-size: 13px; text-align: center;">
+        <strong>FirstStab Inc.</strong> | California, United States
+      </p>
+    </div>
+  </div>
+</body>
+</html>

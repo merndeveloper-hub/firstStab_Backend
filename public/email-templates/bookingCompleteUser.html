@@ -1,0 +1,108 @@
+<!-- ==================== 1. USER - BOOKING COMPLETED ==================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Completed</title>
+</head>
+
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #0880ff 0%, #04adff 100%); min-height: 100vh; padding: 40px 20px;">
+  
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(8, 128, 255, 0.3);">
+    
+    <!-- Header Section -->
+    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 50px 30px; text-align: center;">
+      <div style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      
+      <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Service Completed! ✅</h1>
+      <p style="margin: 15px 0 0 0; color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 500;">Thank You for Using FirstStab</p>
+    </div>
+    
+    <!-- Content Section -->
+    <div style="padding: 45px 30px;">
+      
+      <p style="margin: 0 0 20px 0; color: #2c3e50; font-size: 17px; line-height: 1.6;">
+        Hi <strong style="color: #0880ff;">{{userName}}</strong>,
+      </p>
+      
+      <p style="margin: 0 0 25px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        Great news! Your booking <strong>{{bookingId}}</strong> has been successfully completed. We hope you're satisfied with the service provided by <strong style="color: #10b981;">{{proName}}</strong>.
+      </p>
+      
+      <!-- Service Summary Box -->
+      <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 4px solid #10b981; padding: 22px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #065f46; font-size: 15px; font-weight: 600;">
+          📋 Service Summary:
+        </p>
+        <div style="background: #ffffff; padding: 18px; border-radius: 6px;">
+          <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px;">Service:</p>
+          <p style="margin: 0 0 15px 0; color: #1e293b; font-size: 16px; font-weight: 600;">{{serviceName}}</p>
+          
+          <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px;">Professional:</p>
+          <p style="margin: 0 0 15px 0; color: #1e293b; font-size: 16px; font-weight: 600;">{{proName}}</p>
+          
+          <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px;">Completed On:</p>
+          <p style="margin: 0 0 15px 0; color: #1e293b; font-size: 15px; font-weight: 600;">{{completedDate}} at {{completedTime}}</p>
+          
+          <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px;">Total Amount Paid:</p>
+          <p style="margin: 0; color: #059669; font-size: 20px; font-weight: 700;">${{totalAmount}}</p>
+        </div>
+      </div>
+      
+      <!-- Rating Request Box -->
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 22px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 12px 0; color: #92400e; font-size: 15px; font-weight: 600;">
+          ⭐ Rate Your Experience
+        </p>
+        <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.7;">
+          Your feedback helps us maintain quality service. Please take a moment to rate your experience with {{proName}}. Your review helps other users make informed decisions.
+        </p>
+      </div>
+      
+      <!-- Next Steps -->
+      <div style="background: #f0f9ff; border-left: 4px solid #0880ff; padding: 20px; margin: 25px 0; border-radius: 8px;">
+        <p style="margin: 0 0 12px 0; color: #075985; font-size: 14px; font-weight: 600;">
+          💡 What's Next?
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #0369a1; font-size: 14px; line-height: 1.7;">
+          <li style="margin-bottom: 8px;">Rate and review the professional</li>
+          <li style="margin-bottom: 8px;">Book another service if needed</li>
+          <li style="margin-bottom: 0;">Contact support if you have any concerns</li>
+        </ul>
+      </div>
+      
+      <p style="margin: 0; color: #6c757d; font-size: 14px; line-height: 1.6;">
+        If you have any questions or concerns about the completed service, please don't hesitate to contact our support team at <a href="mailto:Info@firststab.com" style="color: #0880ff; text-decoration: none;">Info@firststab.com</a>
+      </p>
+      
+      <p style="margin: 30px 0 0 0; color: #2c3e50; font-size: 15px; line-height: 1.6;">
+        Thank you for choosing FirstStab!<br/>
+        <strong style="color: #0880ff;">The FirstStab Team</strong>
+      </p>
+      
+    </div>
+    
+    <!-- Footer Section -->
+    <div style="background: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0 0 8px 0; color: #6c757d; font-size: 13px; line-height: 1.5; text-align: center;">
+        <strong>FirstStab Inc.</strong><br/>
+        California, United States
+      </p>
+      <p style="margin: 0; color: #adb5bd; font-size: 12px; text-align: center; line-height: 1.4;">
+        This is an automated message. Please do not reply to this email.<br/>
+        Need help? Visit our support center or contact us directly.
+      </p>
+    </div>
+    
+  </div>
+  
+  <div style="height: 40px;"></div>
+  
+</body>
+</html>

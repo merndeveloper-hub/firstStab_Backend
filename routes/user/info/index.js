@@ -10,7 +10,7 @@ import tokenVerification from "../../../middleware/token-verification/index.js";
 const router = express.Router();
 router.get("/getques", tokenVerification, getFaqQuestion);
 
-router.get("/", tokenVerification, getContentPage);
+router.get("/", getContentPage);
 
 router.get("/:id", tokenVerification, singleContentPage);
 

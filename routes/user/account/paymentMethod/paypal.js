@@ -111,11 +111,12 @@ const createPaypalOrder = async (req, res) => {
         ],
         application_context: {
           return_url:
-      //      "http://localhost:5000/api/v1/user/account/payment/paypalsuccess",
+         //"http://localhost:5000/api/v1/user/account/payment/paypalsuccess",
           `${process.env.BACKEND_URL}/api/v1/user/account/payment/paypalsuccess`,
 
           cancel_url:
-            `${process.env.BACKEND_URL}/api/v1/user/account/payment/paypalcancel`,
+           // "http://localhost:5000/api/v1/user/account/payment/paypalcancel",
+          `${process.env.BACKEND_URL}/api/v1/user/account/payment/paypalcancel`,
           shipping_preference: "NO_SHIPPING",
           user_action: "PAY_NOW",
           brand_name: "firststab",
@@ -132,6 +133,10 @@ const createPaypalOrder = async (req, res) => {
           },
         }
       );
+      console.log(orderData,"orderData");
+      
+      console.log(response,"response...");
+      
 
       if (!response || response.length == 0) {
         return res.status(400).json({ status: 400, message: "Try Again!" });
@@ -180,6 +185,8 @@ const createPaypalOrder = async (req, res) => {
           paypalFeePercentage: paypalFeePercentage,
         }
       );
+      console.log("sucess");
+      
       return res.status(201).json({ status: 201, data: data });
     } else if (paymentMethod == "stripe") {
       const { userId, amount } = req.body;

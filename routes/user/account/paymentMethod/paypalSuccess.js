@@ -53,7 +53,7 @@ const paypalSuccess = async (req, res) => {
 
 
     const getPaymentPlatformCharges = await axios.get(
-      `${process.env.BACKEND_URL}/v2/payments/captures/${paymentSource.captureId}`,
+      `${process.env.PAYPAL_API_DEVELOPMENT_URL}/v2/payments/captures/${paymentSource.captureId}`,
       {
         headers: {
           Authorization: `Bearer ${getToken}`,
@@ -150,6 +150,8 @@ const paypalSuccess = async (req, res) => {
 
     return res.send("<html><body style='background:#fff;'></body></html>");
   } catch (error) {
+     console.error("❌❌❌ PayPal Success Error:", error.message);
+    console.error("Error Details:", error.response?.data || error);
     res.redirect(
       `${process.env.BACKEND_URL}/api/v1/user/account/payment/paypalcancel`
     );

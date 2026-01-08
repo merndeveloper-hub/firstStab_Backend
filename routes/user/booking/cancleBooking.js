@@ -2,6 +2,7 @@ import Joi from "joi";
 import { findOne, updateDocument } from "../../../helpers/index.js";
 import { convertToUTC, extractDate, extractTime } from "../../../utils/index.js";
 import moment from "moment-timezone";
+import send_email from "../../../lib/node-mailer/index.js";
 
 const schema = Joi.object().keys({
   id: Joi.string().hex().length(24).required(),
@@ -39,6 +40,13 @@ const cancelledBooking = async (req, res) => {
         message: "Booking is already cancelled",
       });
     }
+
+    // =======Find User
+    const findUser = await findOne("user", { _id: goingbooking?.userId });
+
+
+    // ============= Find Pro ==============
+    const findPro = await findOne("user", { _id: goingbooking?.professionalId });
 
     // ========== VALIDATE AND CONVERT CANCEL TIME TO UTC ==========
     const validatedCancelDate = extractDate(CancelDate);
@@ -186,6 +194,25 @@ const cancelledBooking = async (req, res) => {
 
       const cancelCharges = Number(findPaymentCharges || 0);
 
+      // EMAIL SEND KARO - LINE 203 SE PEHLE
+      await send_email(
+        "userCancelFullRefund",
+        {
+          userName: findUser?.first_Name || "User", // goingbooking user ka data hai
+          bookingId: goingbooking?.requestId,
+          refundAmount: baseServiceFee.toFixed(2),
+          paymentFee: findPaymentCharges.toFixed(2),
+          totalRefund: baseServiceFee.toFixed(2),
+          serviceName: goingbooking?.subCategories?.serviceType || "Service",
+          proName: findPro?.first_Name || "Professional",
+          bookingDate: `${storedOrderDate} at ${storedOrderTime}`,
+          cancelReason: reasonCancel
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - Full Refund Processed",
+        findUser?.email // User ka email
+      );
+
       await updateDocument(
         "proBookingService",
         { bookServiceId: id },
@@ -226,8 +253,8 @@ const cancelledBooking = async (req, res) => {
         }
       );
 
-      console.log(goingbooking.userId,"goingbooking.userId");
-      
+      console.log(goingbooking.userId, "goingbooking.userId");
+
       // Refund to user
       await updateDocument(
         "user",
@@ -241,7 +268,7 @@ const cancelledBooking = async (req, res) => {
         status: 200,
         message: "Cancelled Booking By User - Full Refund",
         cancelbooking,
-      //  refundAmount: baseServiceFee,
+        //  refundAmount: baseServiceFee,
       });
     }
 
@@ -255,6 +282,25 @@ const cancelledBooking = async (req, res) => {
 
       let refundAmount = baseServiceFee * 0.5; // 50% refund
       let cancelCharges = baseServiceFee - refundAmount;
+
+      // EMAIL SEND KARO - LINE 261 SE PEHLE
+      await send_email(
+        "userCancel50Refund",
+        {
+          userName: findUser?.first_Name || "User",
+          bookingId: goingbooking?.requestId,
+          originalAmount: baseServiceFee.toFixed(2),
+          cancelFee: cancelCharges.toFixed(2),
+          refundAmount: refundAmount.toFixed(2),
+          serviceName: goingbooking?.subCategories?.serviceType || "Service",
+          proName: findPro?.first_Name || "Professional",
+          bookingDate: `${storedOrderDate} at ${storedOrderTime}`,
+          cancelReason: reasonCancel
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - 50% Refund Applied",
+        findUser?.email // User ka email
+      );
 
       await updateDocument(
         "proBookingService",
@@ -309,7 +355,7 @@ const cancelledBooking = async (req, res) => {
         status: 200,
         message: "Cancelled Booking By User - 50% Refund",
         cancelbooking,
-      //  refundAmount: refundAmount,
+        //  refundAmount: refundAmount,
       });
     }
 
@@ -322,6 +368,23 @@ const cancelledBooking = async (req, res) => {
       let cancelCharges =
         Number(getProbooking?.service_fee || 0) +
         Number(getProbooking?.platformFees || 0);
+
+      // EMAIL SEND KARO - LINE 318 SE PEHLE
+      await send_email(
+        "userCancelNoRefund",
+        {
+          userName: findUser?.first_Name || "User",
+          bookingId: goingbooking?.requestId,
+          serviceFee: cancelCharges.toFixed(2),
+          serviceName: goingbooking?.subCategories?.serviceType || "Service",
+          proName: findPro?.first_Name || "Professional",
+          bookingDate: `${storedOrderDate} at ${storedOrderTime}`,
+          cancelReason: reasonCancel
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled - No Refund (Late Cancellation)",
+        findUser?.email
+      );
 
       await updateDocument(
         "proBookingService",
@@ -378,7 +441,7 @@ const cancelledBooking = async (req, res) => {
         status: 200,
         message: "Cancelled Booking By User - No Refund",
         cancelbooking,
-     //   refundAmount: 0,
+        //   refundAmount: 0,
       });
     }
 
@@ -398,6 +461,23 @@ const cancelledBooking = async (req, res) => {
 
     if (specialReasons.includes(reasonCancel)) {
       console.log("📌 Special Reason - Manual Review Required");
+
+      // EMAIL SEND KARO - LINE 398 KE BAAD
+      await send_email(
+        "userProCancel",
+        {
+          userName: findUser?.first_Name || "User",
+          bookingId: goingbooking?.requestId,
+          // refundAmount: proBookingTotal.toFixed(2),
+          serviceName: goingbooking?.subCategories?.serviceType || "Service",
+          proName: findPro?.first_Name || "Professional",
+          bookingDate: `${storedOrderDate} at ${storedOrderTime}`,
+          cancelReason: reasonCancel || "Professional cancelled"
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancelled by User - Full Refund Issued",
+        findUser?.email
+      );
 
       await updateDocument(
         "proBookingService",

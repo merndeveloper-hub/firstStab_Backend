@@ -1,0 +1,83 @@
+<!-- ==================== 4. PROFESSIONAL CANCELS - USER FULL REFUND ==================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Cancelled by User</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #0880ff 0%, #04adff 100%); min-height: 100vh; padding: 40px 20px;">
+  
+  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(8, 128, 255, 0.3);">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 40px 30px; text-align: center;">
+      <div style="width: 70px; height: 70px; background: rgba(255, 255, 255, 0.25); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+      <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Booking Cancelled</h1>
+      <!-- <p style="margin: 12px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 15px;">Professional Unable to Attend</p> -->
+    </div>
+    
+    <!-- Content -->
+    <div style="padding: 40px 30px;">
+      <p style="margin: 0 0 20px 0; color: #2c3e50; font-size: 16px;">Hi <strong style="color: #0880ff;">{{userName}}</strong>,</p>
+      
+      <p style="margin: 0 0 25px 0; color: #495057; font-size: 15px; line-height: 1.7;">
+        We regret to inform you that your booking <strong>{{bookingId}}</strong> has been cancelled. We sincerely apologize for any inconvenience this may cause.
+      </p>
+      
+      <!-- Refund Info Box -->
+      <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 4px solid #10b981; padding: 22px; margin: 30px 0; border-radius: 8px;">
+        <p style="margin: 0 0 15px 0; color: #065f46; font-size: 15px; font-weight: 600;">💰 Full Refund Issued:</p>
+        <!-- <div style="background: #ffffff; padding: 15px; border-radius: 6px;">
+          <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">Refund Amount:</p>
+          <p style="margin: 0; color: #059669; font-size: 20px; font-weight: 700;">${{refundAmount}}</p>
+        </div> -->
+        <p style="margin: 15px 0 0 0; color: #047857; font-size: 14px;">
+          The full amount including all fees has been refunded to your wallet immediately.
+        </p>
+      </div>
+      
+      <!-- Apology & Next Steps -->
+      <div style="background: #f0f9ff; border-left: 4px solid #0880ff; padding: 20px; margin: 25px 0; border-radius: 8px;">
+        <p style="margin: 0 0 12px 0; color: #075985; font-size: 14px; font-weight: 600;">
+          🔄 What You Can Do Next:
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #0369a1; font-size: 14px; line-height: 1.7;">
+          <li style="margin-bottom: 8px;">Browse and book another professional from our platform</li>
+          <li style="margin-bottom: 8px;">Contact support for assistance in finding a replacement</li>
+          <li style="margin-bottom: 0;">Use your refunded balance for your next booking</li>
+        </ul>
+      </div>
+      
+      <!-- Booking Details -->
+      <div style="background: #f8f9fa; padding: 20px; margin: 25px 0; border-radius: 8px;">
+        <p style="margin: 0 0 12px 0; color: #495057; font-size: 14px; font-weight: 600;">Cancelled Booking Details:</p>
+        <p style="margin: 0 0 6px 0; color: #6c757d; font-size: 14px;"><strong>Service:</strong> {{serviceName}}</p>
+        <p style="margin: 0 0 6px 0; color: #6c757d; font-size: 14px;"><strong>Professional:</strong> {{proName}}</p>
+        <p style="margin: 0 0 6px 0; color: #6c757d; font-size: 14px;"><strong>Scheduled Date:</strong> {{bookingDate}}</p>
+        <p style="margin: 0; color: #6c757d; font-size: 14px;"><strong>Reason:</strong> {{cancelReason}}</p>
+      </div>
+      
+      <p style="margin: 0 0 20px 0; color: #495057; font-size: 14px; line-height: 1.6;">
+        We sincerely apologize for this inconvenience. If you need any assistance or would like help finding an alternative professional, please don't hesitate to contact our support team.
+      </p>
+      
+      <p style="margin: 30px 0 0 0; color: #2c3e50; font-size: 15px;">
+        Best regards,<br/><strong style="color: #0880ff;">The FirstStab Team</strong>
+      </p>
+    </div>
+    
+    <!-- Footer -->
+    <div style="background: #f8f9fa; padding: 25px 30px; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0; color: #6c757d; font-size: 13px; text-align: center;">
+        <strong>FirstStab Inc.</strong> | California, United States
+      </p>
+    </div>
+  </div>
+</body>
+</html>

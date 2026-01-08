@@ -56,12 +56,12 @@ const addCategory = async (req, res) => {
       });
     }
 
-    if (categoryData?.serviceCountry == 'US' && bgServiceName != 'checkr') {
-      return res.status(400).send({
-        status: 400,
-        message: "Select correct background service",
-      });
-    }
+    // if (categoryData?.serviceCountry == 'US' || bgServiceName != 'checkr' || bgServiceName != 'certn' ) {
+    //   return res.status(400).send({
+    //     status: 400,
+    //     message: "Select correct background service",
+    //   });
+    // }
 
     if (categoryData?.serviceCountry == 'NON-US' && bgServiceName != 'certn') {
       return res.status(400).send({
