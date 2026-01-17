@@ -46,7 +46,7 @@ const connectPayPalAccount = async (req, res) => {
         paypalLastName: lastName,
         paypalCountry: country,
         paypalConnected: true,
-        paypalVerified: false // Will be verified on first payout
+        paypalVerified: true // Will be verified on first payout
       }
     );
 

@@ -55,14 +55,14 @@ const createService = async (req, res) => {
 
     if (price_model == "fixed" && getSubcategory?.price_model == "fixed") {
       let getFixedPrice = Number(getSubcategory?.fixed_price) == fixed_price;
-      if (!getFixedPrice) {
-        return res.status(400).json({
-          status: 400,
-          message: `The fixed price for this service is ${Number(
-            getSubcategory?.fixed_price
-          )}`,
-        });
-      }
+      // if (!getFixedPrice) {
+      //   return res.status(400).json({
+      //     status: 400,
+      //     message: `The fixed price for this service is ${Number(
+      //       getSubcategory?.fixed_price
+      //     )}`,
+      //   });
+      // }
     } else if (
       price_model == "range" &&
       getSubcategory?.price_model == "range"
@@ -71,18 +71,18 @@ const createService = async (req, res) => {
    
       
       let getMaxPrice = Number(getSubcategory?.max_price) >= max_price;
-      if (!getMinPrice) {
-        return res.status(400).json({
-          status: 400,
-          message: `The minimum price must be at least ${Number(getSubcategory?.min_price)}`,
-        });
-      }
-      if (!getMaxPrice) {
-        return res.status(400).json({
-          status: 400,
-          message:`The maximum price must not exceed ${Number(getSubcategory?.max_price)}`,
-        });
-      }
+      // if (!getMinPrice) {
+      //   return res.status(400).json({
+      //     status: 400,
+      //     message: `The minimum price must be at least ${Number(getSubcategory?.min_price)}`,
+      //   });
+      // }
+      // if (!getMaxPrice) {
+      //   return res.status(400).json({
+      //     status: 400,
+      //     message:`The maximum price must not exceed ${Number(getSubcategory?.max_price)}`,
+      //   });
+      // }
     }
     // else if(price_model == "quote_only" && getSubcategory?.price_model == "quote_only"){
 
