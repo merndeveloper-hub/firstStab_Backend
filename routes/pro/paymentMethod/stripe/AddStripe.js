@@ -9,27 +9,28 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // ==========================================
 
 const createStripeAccountSchema = Joi.object({
- // email: Joi.string().email().required(),
+  // email: Joi.string().email().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   //phone: Joi.string().required(),
   country: Joi.string().default("US"),
   userId: Joi.string().required(),
   email: Joi.string()
-      .email({ tlds: { allow: true } }) // Ensures a valid domain with TLD (e.g., .com, .org)
-      .pattern(new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) // Enforces common email rules
-      .required()
-      .messages({
-        "string.email": "Invalid email format",
-        "any.required": "Email is required",
-        "string.pattern.base": "Invalid email structure",
-      }),
-    phone: Joi.string()
-      .required()
-      .messages({
-        "string.pattern.base": "Mobile number must be digits",
-        "any.required": "Mobile number is required.",
-      }),
+    .email({ tlds: { allow: true } }) // Ensures a valid domain with TLD (e.g., .com, .org)
+    .pattern(new RegExp("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) // Enforces common email rules
+    .required()
+    .messages({
+      "string.email": "Invalid email format",
+      "any.required": "Email is required",
+      "string.pattern.base": "Invalid email structure",
+    }),
+  phone: Joi.string()
+    .pattern(/^\+[1-9]\d{7,14}$/)
+    .required()
+    .messages({
+      "string.pattern.base": "Mobile number must be a valid phone number (e.g. +923001234567)",
+      "any.required": "Mobile number is required."
+    }),
 });
 
 const createStripeAccount = async (req, res) => {
@@ -80,7 +81,7 @@ const createStripeAccount = async (req, res) => {
       { _id: userId },
       {
         stripeAccountId: account.id,
-        stripeAccountStatus: "pending",
+        stripeAccountStatus: "Active",
         // onboardingComplete: false
         onboardingCompleteStripe: false,
       }
@@ -101,7 +102,7 @@ const createStripeAccount = async (req, res) => {
       data: {
         stripeAccountId: account.id,
         onboardingUrl: accountLink.url,
-       
+
       },
     });
   } catch (e) {

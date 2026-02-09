@@ -134,10 +134,7 @@ const cancelledBooking = async (req, res) => {
 
     // 1️⃣ Provider-related issues (Manual decision)
     const providerIssues = [
-      "Provider No Show",
-      "Provider Delayed",
-      "Provider Cancelled",
-      "Provider Double Booked",
+      "Emergency Situation"
     ];
 
     if (providerIssues.includes(reasonCancel)) {
@@ -187,12 +184,14 @@ const cancelledBooking = async (req, res) => {
       console.log("✅ Cancel >24hrs - Full refund minus payment fees");
 
 
+
+
+      const cancelCharges = Number(findPaymentCharges || 0) +
+        Number(getProbooking?.platformFees || 0);;
+
       const baseServiceFee =
-        Number(getProbooking?.service_fee || 0) +
-        Number(getProbooking?.platformFees || 0);
+        Number(getProbooking?.total_amount || 0) - cancelCharges
 
-
-      const cancelCharges = Number(findPaymentCharges || 0);
 
       // EMAIL SEND KARO - LINE 203 SE PEHLE
       await send_email(
@@ -276,12 +275,23 @@ const cancelledBooking = async (req, res) => {
     if (diffInHours <= 24 && diffInHours > 3) {
       console.log("⚠️ Cancel 3-24hrs - 50% refund");
 
-      const baseServiceFee =
-        Number(getProbooking?.service_fee || 0) +
-        Number(getProbooking?.platformFees || 0);
+      let refundAmount = 0;
+      let cancelCharges = 0;
 
-      let refundAmount = baseServiceFee * 0.5; // 50% refund
-      let cancelCharges = baseServiceFee - refundAmount;
+      if (getProbooking?.serviceType === "isChat") {
+        // Chat-based: no refund, full amount charged
+        refundAmount = 0;
+        cancelCharges = Number(getProbooking?.total_amount || 0);
+      } else {
+        // In-Person / Virtual
+        const totalAmount = Number(getProbooking?.total_amount || 0);
+        const platformFee = Number(getProbooking?.platformFees || 0);
+
+        const baseServiceFee = totalAmount - platformFee;
+
+        refundAmount = baseServiceFee * 0.5; // 50% refund
+        cancelCharges = (baseServiceFee * 0.5) + platformFee; // platform fee retained
+      }
 
       // EMAIL SEND KARO - LINE 261 SE PEHLE
       await send_email(
@@ -298,7 +308,7 @@ const cancelledBooking = async (req, res) => {
           cancelReason: reasonCancel
         },
         process.env.SENDER_EMAIL,
-        "Booking Cancelled - 50% Refund Applied",
+        "Booking Cancelled - Refund Applied",
         findUser?.email // User ka email
       );
 
@@ -365,9 +375,13 @@ const cancelledBooking = async (req, res) => {
 
       const baseServiceFee = Number(getProbooking?.service_fee || 0);
 
+      // let cancelCharges =
+      //   Number(getProbooking?.service_fee || 0) +
+      //   Number(getProbooking?.platformFees || 0);
+
+
       let cancelCharges =
-        Number(getProbooking?.service_fee || 0) +
-        Number(getProbooking?.platformFees || 0);
+        Number(getProbooking?.total_amount || 0)
 
       // EMAIL SEND KARO - LINE 318 SE PEHLE
       await send_email(
@@ -444,53 +458,58 @@ const cancelledBooking = async (req, res) => {
         //   refundAmount: 0,
       });
     }
-
-    // 5️⃣ Special reasons (Manual decision)
     const specialReasons = [
-      "Change of Plans",
-      "Delayed Need",
-      "Emergency Situation",
-      "Financial Reasons",
-      "Found an Alternative Solution",
-      "Schedule Conflict",
-      "Service No Longer Needed",
-      "Unsatisfactory Provider Options",
-      "Booking Time End",
-      "Rescheduling",
+      "Provider No Show",
+      "Provider Delayed",
+      "Provider Cancelled",
+      "Provider Double Booked"
     ];
-
     if (specialReasons.includes(reasonCancel)) {
-      console.log("📌 Special Reason - Manual Review Required");
+      console.log("❌ provider No Show");
 
-      // EMAIL SEND KARO - LINE 398 KE BAAD
+      const baseServiceFee = Number(getProbooking?.total_amount || 0);
+
+      // let cancelCharges =
+      //   Number(getProbooking?.service_fee || 0) +
+      //   Number(getProbooking?.platformFees || 0);
+
+
+      let cancelCharges =
+        Number(getProbooking?.service_fee || 0) * 0.1
+
+      // EMAIL SEND KARO - LINE 318 SE PEHLE
       await send_email(
-        "userProCancel",
+        "userCancelNoRefund",
         {
           userName: findUser?.first_Name || "User",
           bookingId: goingbooking?.requestId,
-          // refundAmount: proBookingTotal.toFixed(2),
+          serviceFee: cancelCharges.toFixed(2),
           serviceName: goingbooking?.subCategories?.serviceType || "Service",
           proName: findPro?.first_Name || "Professional",
           bookingDate: `${storedOrderDate} at ${storedOrderTime}`,
-          cancelReason: reasonCancel || "Professional cancelled"
+          cancelReason: reasonCancel
         },
         process.env.SENDER_EMAIL,
-        "Booking Cancelled by User - Full Refund Issued",
+        "Booking Cancelled - Refund",
         findUser?.email
       );
 
       await updateDocument(
         "proBookingService",
-        { _id: getProbooking?._id },
+        { bookServiceId: id },
         {
+          CancelCharges: cancelCharges,
           status: "Cancelled",
-          cancelledReason: "Cancelled By User - Special Reason",
+          cancelledReason: "Cancelled By User",
           CancelDate: utcCancel.utcDate,
           CancelTime: utcCancel.utcTime,
           cancelTimezone: timezone,
+          priceToReturn: 0,
           reasonDescription,
           reasonCancel,
-          amountReturn: "Manually decide",
+          CancellationChargesApplyTo: "pro",
+          amountReturn: "user",
+          ProfessionalPayableAmount: baseServiceFee,
           cancelledAt: new Date().toISOString(),
         }
       );
@@ -500,23 +519,121 @@ const cancelledBooking = async (req, res) => {
         { _id: id },
         {
           status: "Cancelled",
-          cancelledReason: "Cancelled By User - Special Reason",
+          cancelledReason: "Cancelled By User",
           CancelDate: utcCancel.utcDate,
           CancelTime: utcCancel.utcTime,
           cancelTimezone: timezone,
+          CancelCharges: cancelCharges,
+          priceToReturn: 0,
           reasonDescription,
           reasonCancel,
-          amountReturn: "Manually decide",
+          CancellationChargesApplyTo: "pro",
+          amountReturn: "user",
+          ProfessionalPayableAmount: baseServiceFee,
           cancelledAt: new Date().toISOString(),
+        }
+      );
+
+      // Pay professional
+
+      await updateDocument(
+        "user",
+        { _id: goingbooking.userId },
+        {
+          $inc: { currentBalance: baseServiceFee },
+        }
+      );
+
+
+      // Add penalty to pro's charges
+      await updateDocument(
+        "user",
+        { _id: goingbooking?.professionalId },
+        {
+          $inc: { totalCharges: cancelCharges },
         }
       );
 
       return res.status(200).json({
         status: 200,
-        message: "Cancelled Booking - Manual Review Required",
+        message: "Cancelled Booking By User - No Refund",
         cancelbooking,
+        //   refundAmount: 0,
       });
     }
+
+    // // // 5️⃣ Special reasons (Manual decision)
+    // const specialReasons = [
+    //   "Change of Plans",
+    //   "Delayed Need",
+    //   "Emergency Situation",
+    //   "Financial Reasons",
+    //   "Found an Alternative Solution",
+    //   "Schedule Conflict",
+    //   "Service No Longer Needed",
+    //   "Unsatisfactory Provider Options",
+    //   "Booking Time End",
+    //   "Rescheduling",
+    // ];
+
+    // if (specialReasons.includes(reasonCancel)) {
+    //   console.log("📌 Special Reason - Manual Review Required");
+
+    //   // EMAIL SEND KARO - LINE 398 KE BAAD
+    //   await send_email(
+    //     "userProCancel",
+    //     {
+    //       userName: findUser?.first_Name || "User",
+    //       bookingId: goingbooking?.requestId,
+    //       // refundAmount: proBookingTotal.toFixed(2),
+    //       serviceName: goingbooking?.subCategories?.serviceType || "Service",
+    //       proName: findPro?.first_Name || "Professional",
+    //       bookingDate: `${storedOrderDate} at ${storedOrderTime}`,
+    //       cancelReason: reasonCancel || "Professional cancelled"
+    //     },
+    //     process.env.SENDER_EMAIL,
+    //     "Booking Cancelled by User - Full Refund Issued",
+    //     findUser?.email
+    //   );
+
+    //   await updateDocument(
+    //     "proBookingService",
+    //     { _id: getProbooking?._id },
+    //     {
+    //       status: "Cancelled",
+    //       cancelledReason: "Cancelled By User - Special Reason",
+    //       CancelDate: utcCancel.utcDate,
+    //       CancelTime: utcCancel.utcTime,
+    //       cancelTimezone: timezone,
+    //       reasonDescription,
+    //       reasonCancel,
+    //       amountReturn: "Manually decide",
+    //       cancelledAt: new Date().toISOString(),
+    //     }
+    //   );
+
+    //   const cancelbooking = await updateDocument(
+    //     "userBookServ",
+    //     { _id: id },
+    //     {
+    //       status: "Cancelled",
+    //       cancelledReason: "Cancelled By User - Special Reason",
+    //       CancelDate: utcCancel.utcDate,
+    //       CancelTime: utcCancel.utcTime,
+    //       cancelTimezone: timezone,
+    //       reasonDescription,
+    //       reasonCancel,
+    //       amountReturn: "Manually decide",
+    //       cancelledAt: new Date().toISOString(),
+    //     }
+    //   );
+
+    //   return res.status(200).json({
+    //     status: 200,
+    //     message: "Cancelled Booking - Manual Review Required",
+    //     cancelbooking,
+    //   });
+    // }
 
     // 6️⃣ Default case - Professional cancelled
     console.log("📌 Default - Professional Cancelled");

@@ -78,7 +78,7 @@ const refundBookingAmtDecide = async (req, res) => {
         CancelCharges: totalCancelCharges,
 
         priceToReturn: baseServiceFee,
-
+        status:"Completed",
         refundReason: reason,
         CancellationChargesApplyTo,
         amountReturn,
@@ -95,7 +95,7 @@ const refundBookingAmtDecide = async (req, res) => {
         CancelCharges: totalCancelCharges,
 
         priceToReturn: baseServiceFee,
-
+        status:"Completed",
         refundReason: reason,
         CancellationChargesApplyTo,
         amountReturn,

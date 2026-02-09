@@ -123,7 +123,7 @@ const proCancelledBooking = async (req, res) => {
     // ========== CANCELLATION LOGIC ==========
 
     // 1️⃣ User-related issues (Manual decision)
-    const userIssues = ["User No Show", "User Cancelled", "User Did Not Respond"];
+    const userIssues = ["Emergency Situation"];
 
     if (userIssues.includes(reasonCancel)) {
       console.log("📌 User Issue - Manual Review Required");
@@ -201,14 +201,29 @@ const proCancelledBooking = async (req, res) => {
       });
     }
 
-    // 2️⃣ Cancel less than 3 hours before (Pro pays penalty)
-    if (diffInHours < 3 && diffInHours >= 0) {
-      console.log("❌ Pro Cancel <3hrs - Penalty applies");
+    const userNoShow = ["User No Show", "User Cancelled", "User Did Not Respond"];
+    // 2️⃣ User-related issues (No show)
+    // User side specific
+    //         "User No Show", // User meeting mein nahi aaya
+    //         "User Cancelled", // User ne khud cancel kiya
+    //         "User Did Not Respond", // User ne timely response nahi diya
+
+    // user chrages:
+    // full amount charged
+
+    // pro return:
+    // service fee only
+
+    if (userNoShow.includes(reasonCancel)) {
+      console.log("❌ User-related issues (No show) - Penalty applies");
 
       const baseServiceFee =
-        Number(goingbooking?.service_fee || 0) +
-        Number(goingbooking?.platformFees || 0) +
-        Number(findPaymentCharges || 0);
+        Number(goingbooking?.total_amount || 0)
+
+
+
+      const serviceFee =
+        Number(goingbooking?.service_fee || 0)
 
       let cancelCharges = 0;
 
@@ -216,31 +231,181 @@ const proCancelledBooking = async (req, res) => {
       switch (goingbooking.serviceType) {
         case "isInPerson":
           // 50% penalty, max $100
-          cancelCharges = Math.min(baseServiceFee * 0.5, 100);
+          cancelCharges = baseServiceFee;
           break;
 
         case "isVirtual":
-          // 50% penalty
-          cancelCharges = baseServiceFee * 0.5;
+          // 10% penalty
+          cancelCharges = baseServiceFee;
           break;
 
         case "isChat":
           // $10 + payment charges
-          cancelCharges = 10 + Number(findPaymentCharges || 0);
+          cancelCharges = baseServiceFee;
           break;
 
         case "isRemote":
-          // 20% of service fee + payment charges
-          cancelCharges = Number(goingbooking?.service_fee || 0) * 0.2 + Number(findPaymentCharges || 0);
+          // 10% of service fee 
+          cancelCharges = baseServiceFee;
           break;
 
         default:
-          cancelCharges = baseServiceFee * 0.5;
+          cancelCharges = baseServiceFee;
       }
 
       console.log("💰 Penalty Calculation:", {
         serviceType: goingbooking.serviceType,
-        baseServiceFee,
+        serviceFee,
+        cancelCharges,
+      });
+
+      // Update pro booking
+      const cancelbooking = await updateDocument(
+        "proBookingService",
+        { _id: id },
+        {
+          CancelCharges: cancelCharges,
+          status: "Cancelled",
+          cancelledReason: "Cancelled By Professional",
+          CancelDate: utcCancel.utcDate,
+          CancelTime: utcCancel.utcTime,
+          cancelTimezone: timezone,
+          priceToReturn: serviceFee,
+          reasonDescription,
+          reasonCancel,
+          CancellationChargesApplyTo: "user",
+          amountReturn: "pro",
+          ProfessionalPayableAmount: cancelCharges,
+          cancelledAt: new Date().toISOString(),
+        }
+      );
+
+      // Update user booking
+      await updateDocument(
+        "userBookServ",
+        {
+          _id: cancelbooking?.bookServiceId,
+          status: { $in: ["Accepted", "Pending", "Confirmed"] },
+        },
+        {
+          status: "Cancelled",
+          cancelledReason: "Cancelled By Professional",
+          CancelDate: utcCancel.utcDate,
+          CancelTime: utcCancel.utcTime,
+          cancelTimezone: timezone,
+          CancelCharges: cancelCharges,
+          priceToReturn: serviceFee,
+          reasonDescription,
+          reasonCancel,
+          CancellationChargesApplyTo: "user",
+          amountReturn: "pro",
+          ProfessionalPayableAmount: cancelCharges,
+          cancelledAt: new Date().toISOString(),
+        }
+      );
+
+      // Add penalty to pro's charges
+      await updateDocument(
+        "user",
+        { _id: goingbooking.userId },
+        {
+          $inc: { totalCharges: cancelCharges },
+        }
+      );
+
+      // Refund user
+      await updateDocument(
+        "user",
+        { _id: goingbooking.professsionalId },
+        {
+          $inc: { currentBalance: serviceFee },
+        }
+      );
+
+      // ========== 1️⃣ USER-ISSUE CANCELLATION (Manual Review) ==========
+      // Line 138-164 ke baad add karein
+
+      await send_email(
+        "user-issue-cancellation",
+        {
+          userName: findUser?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          reasonCancel: reasonCancel,
+          reasonDescription: reasonDescription || "Not provided"
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancellation - User No Show Policy",
+        findUser?.email
+      );
+
+      await send_email(
+        "pro-cancellation-confirmed",
+        {
+          professionalName: findPro?.first_Name,
+          bookingId: id,
+          serviceRequestId: goingbooking?.requestId,
+          cancelDate: utcCancel.utcDate,
+          cancelTime: utcCancel.utcTime
+        },
+        process.env.SENDER_EMAIL,
+        "Booking Cancellation - User No Show Policy",
+        findPro?.email
+      );
+
+      return res.status(200).json({
+        status: 200,
+        message: "Booking cancelled - Penalty applied to professional",
+        cancelbooking,
+        // penalty: cancelCharges,
+        // refundedToUser: baseServiceFee,
+      });
+    }
+
+
+    // 2️⃣ Cancel less than 3 hours before (Pro pays penalty)
+    if (diffInHours < 3 && diffInHours >= 0 || diffInHours >= 3) {
+      console.log("❌ Pro Cancel <3hrs - Penalty applies");
+
+      const baseServiceFee =
+        Number(goingbooking?.total_amount || 0)
+
+
+
+      const serviceFee =
+        Number(goingbooking?.service_fee || 0)
+
+      let cancelCharges = 0;
+
+      // Calculate penalty based on service type
+      switch (goingbooking.serviceType) {
+        case "isInPerson":
+          // 50% penalty, max $100
+          cancelCharges = Math.min(serviceFee * 0.5, 100);
+          break;
+
+        case "isVirtual":
+          // 10% penalty
+          cancelCharges = serviceFee * 0.5;
+          break;
+
+        case "isChat":
+          // $10 + payment charges
+          cancelCharges = serviceFee * 0.1;
+          break;
+
+        case "isRemote":
+          // 10% of service fee 
+          cancelCharges = serviceFee * 0.2;
+          break;
+
+        default:
+          cancelCharges = serviceFee * 0.1;
+      }
+
+      console.log("💰 Penalty Calculation:", {
+        serviceType: goingbooking.serviceType,
+        serviceFee,
         cancelCharges,
       });
 
@@ -349,118 +514,118 @@ const proCancelledBooking = async (req, res) => {
       });
     }
 
-    // 3️⃣ Cancel 3+ hours before (No penalty - but still notify)
-    if (diffInHours >= 3) {
-      console.log("✅ Pro Cancel >=3hrs - No penalty");
+    // // 3️⃣ Cancel 3+ hours before (No penalty - but still notify)
+    // if (diffInHours >= 3) {
+    //   console.log("✅ Pro Cancel >=3hrs - No penalty");
 
-      const baseServiceFee =
-        Number(goingbooking?.service_fee || 0) +
-        Number(goingbooking?.platformFees || 0);
+    //   const baseServiceFee =
+    //     Number(goingbooking?.service_fee || 0) +
+    //     Number(goingbooking?.platformFees || 0);
 
-      const cancelCharges =
+    //   const cancelCharges =
 
-        Number(findPaymentCharges || 0);
+    //     Number(findPaymentCharges || 0);
 
-      const cancelbooking = await updateDocument(
-        "proBookingService",
-        { _id: id },
-        {
-          CancelCharges: cancelCharges,
-          status: "Cancelled",
-          cancelledReason: "Cancelled By Professional",
-          CancelDate: utcCancel.utcDate,
-          CancelTime: utcCancel.utcTime,
-          cancelTimezone: timezone,
-          priceToReturn: baseServiceFee,
-          reasonDescription,
-          reasonCancel,
-          CancellationChargesApplyTo: "none",
-          amountReturn: "user",
-          ProfessionalPayableAmount: cancelCharges,
-          cancelledAt: new Date().toISOString(),
-        }
-      );
+    //   const cancelbooking = await updateDocument(
+    //     "proBookingService",
+    //     { _id: id },
+    //     {
+    //       CancelCharges: cancelCharges,
+    //       status: "Cancelled",
+    //       cancelledReason: "Cancelled By Professional",
+    //       CancelDate: utcCancel.utcDate,
+    //       CancelTime: utcCancel.utcTime,
+    //       cancelTimezone: timezone,
+    //       priceToReturn: baseServiceFee,
+    //       reasonDescription,
+    //       reasonCancel,
+    //       CancellationChargesApplyTo: "none",
+    //       amountReturn: "user",
+    //       ProfessionalPayableAmount: cancelCharges,
+    //       cancelledAt: new Date().toISOString(),
+    //     }
+    //   );
 
-      await updateDocument(
-        "userBookServ",
-        {
-          _id: cancelbooking?.bookServiceId,
-          status: { $in: ["Accepted", "Pending", "Confirmed"] },
-        },
-        {
-          status: "Cancelled",
-          cancelledReason: "Cancelled By Professional",
-          CancelDate: utcCancel.utcDate,
-          CancelTime: utcCancel.utcTime,
-          cancelTimezone: timezone,
-          CancelCharges: cancelCharges,
-          priceToReturn: baseServiceFee,
-          reasonDescription,
-          reasonCancel,
-          CancellationChargesApplyTo: "none",
-          amountReturn: "user",
-          ProfessionalPayableAmount: cancelCharges,
-          cancelledAt: new Date().toISOString(),
-        }
-      );
+    //   await updateDocument(
+    //     "userBookServ",
+    //     {
+    //       _id: cancelbooking?.bookServiceId,
+    //       status: { $in: ["Accepted", "Pending", "Confirmed"] },
+    //     },
+    //     {
+    //       status: "Cancelled",
+    //       cancelledReason: "Cancelled By Professional",
+    //       CancelDate: utcCancel.utcDate,
+    //       CancelTime: utcCancel.utcTime,
+    //       cancelTimezone: timezone,
+    //       CancelCharges: cancelCharges,
+    //       priceToReturn: baseServiceFee,
+    //       reasonDescription,
+    //       reasonCancel,
+    //       CancellationChargesApplyTo: "none",
+    //       amountReturn: "user",
+    //       ProfessionalPayableAmount: cancelCharges,
+    //       cancelledAt: new Date().toISOString(),
+    //     }
+    //   );
 
-      // Refund user
-      await updateDocument(
-        "user",
-        { _id: goingbooking.userId },
-        {
-          $inc: { currentBalance: baseServiceFee },
-        }
-      );
+    //   // Refund user
+    //   await updateDocument(
+    //     "user",
+    //     { _id: goingbooking.userId },
+    //     {
+    //       $inc: { currentBalance: baseServiceFee },
+    //     }
+    //   );
 
-      // Add penalty to pro's charges
-      await updateDocument(
-        "user",
-        { _id: goingbooking.professsionalId },
-        {
-          $inc: { totalCharges: cancelCharges },
-        }
-      );
-      // ========== 3️⃣ PRO CANCEL ≥3 HOURS (No Penalty) ==========
-      // Line 340-361 ke baad add karein
+    //   // Add penalty to pro's charges
+    //   await updateDocument(
+    //     "user",
+    //     { _id: goingbooking.professsionalId },
+    //     {
+    //       $inc: { totalCharges: cancelCharges },
+    //     }
+    //   );
+    //   // ========== 3️⃣ PRO CANCEL ≥3 HOURS (No Penalty) ==========
+    //   // Line 340-361 ke baad add karein
 
-      await send_email(
-        "user-refund-notification",
-        {
-          userName: findUser?.first_Name,
-          bookingId: id,
-          serviceRequestId: goingbooking?.requestId,
-          refundAmount: baseServiceFee.toFixed(2),
-          cancelDate: utcCancel.utcDate,
-          cancelTime: utcCancel.utcTime
-        },
-        process.env.SENDER_EMAIL,
-        "Booking Cancelled - Full Refund Issued",
-        findUser?.email
-      );
+    //   await send_email(
+    //     "user-refund-notification",
+    //     {
+    //       userName: findUser?.first_Name,
+    //       bookingId: id,
+    //       serviceRequestId: goingbooking?.requestId,
+    //       refundAmount: baseServiceFee.toFixed(2),
+    //       cancelDate: utcCancel.utcDate,
+    //       cancelTime: utcCancel.utcTime
+    //     },
+    //     process.env.SENDER_EMAIL,
+    //     "Booking Cancelled - Full Refund Issued",
+    //     findUser?.email
+    //   );
 
-      await send_email(
-        "pro-cancellation-confirmed",
-        {
-          professionalName: findPro?.first_Name,
-          bookingId: id,
-          serviceRequestId: goingbooking?.requestId,
-          cancelDate: utcCancel.utcDate,
-          cancelTime: utcCancel.utcTime
-        },
-        process.env.SENDER_EMAIL,
-        "Booking Cancellation Confirmed - No Penalty",
-        findPro?.email
-      );
+    //   await send_email(
+    //     "pro-cancellation-confirmed",
+    //     {
+    //       professionalName: findPro?.first_Name,
+    //       bookingId: id,
+    //       serviceRequestId: goingbooking?.requestId,
+    //       cancelDate: utcCancel.utcDate,
+    //       cancelTime: utcCancel.utcTime
+    //     },
+    //     process.env.SENDER_EMAIL,
+    //     "Booking Cancellation Confirmed - No Penalty",
+    //     findPro?.email
+    //   );
 
 
-      return res.status(200).json({
-        status: 200,
-        message: "Booking cancelled - No penalty (3+ hours notice)",
-        cancelbooking,
-        //   refundedToUser: baseServiceFee,
-      });
-    }
+    //   return res.status(200).json({
+    //     status: 200,
+    //     message: "Booking cancelled - No penalty (3+ hours notice)",
+    //     cancelbooking,
+    //     //   refundedToUser: baseServiceFee,
+    //   });
+    // }
 
     // 4️⃣ Default case (after booking time has passed)
     console.log("📌 Default - Cancellation after booking time");
