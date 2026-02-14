@@ -32,13 +32,13 @@ router.post(
 );
 
 //--------Get All Admin Categories With subcategories---//
-router.get("/subcategory",tokenVerification, getAllCategoriesWithSubcate);
+router.get("/subcategory", getAllCategoriesWithSubcate);
 
 //--------Get All Admin Categories-------//
-router.get("/", tokenVerification, getCategories);
+router.get("/", getCategories);
 
 //--------Get Single Admin Category With subcategories Pagination---//
-router.get("/subcategory/:id", tokenVerification, getSubCateWithPagination);
+router.get("/subcategory/:id", getSubCateWithPagination);
 
 //--------Get Single Admin Category With subcategories Pagination---//
 router.get("/mostpopular", tokenVerification, mostPopularCategory);

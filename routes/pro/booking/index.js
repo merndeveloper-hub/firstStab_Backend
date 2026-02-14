@@ -29,10 +29,10 @@ const router = express.Router();
 //router.post("/add",multipartMiddleware, addCategory);
 
 //-----pro accept user request booking----//
- router.put("/newrequest/:id",tokenVerification,updateNewRequestBooking);
+ router.put("/newrequest/:id",updateNewRequestBooking);
  
  //pro quote the user booking before booking accept
- router.put("/quote/:id",tokenVerification,priceQuoteBooking)
+ router.put("/quote/:id",priceQuoteBooking)
 
  //----- Pro delivered service--------//
  router.put("/delivered/:id",tokenVerification, multipartMiddleware, deliveredBooking);
@@ -43,10 +43,10 @@ const router = express.Router();
 
 
  //-----Pro cancelled pro request booking----//
- router.put("/reject/:id",tokenVerification, rejectBooking);
+ router.put("/reject/:id", rejectBooking);
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
-router.get("/newrequest/:id",tokenVerification, newRequestBooking);
+router.get("/newrequest/:id", newRequestBooking);
 
 //-----Get User pending,Accepted and OnGoing request related to categorie,subCategory with serviceType----//
 router.get("/bookservices/:id",tokenVerification, getOnGoingBooking);

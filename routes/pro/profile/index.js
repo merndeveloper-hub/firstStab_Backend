@@ -21,7 +21,7 @@ router.put(
 
 
 // pro availability badge update
-router.put("/availabilityUpdate/:id",tokenVerification,updateAvailability)
+router.put("/availabilityUpdate/:id",updateAvailability)
 
 
 // get pro profile
